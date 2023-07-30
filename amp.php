@@ -276,14 +276,14 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers');
   layout="nodisplay"
   side="left">
 <div><nav class="tm-position-offcanvas tm-modid-129 tm-modclass- uk-margin-top"><ul class="uk-nav">
-<li class="item-460"><a href="/exclusive?types[0]=1">Эксклюзивы</a></li><li class="item-103"><a href="/v-mire">В мире</a></li><li class="item-102 uk-active uk-active"><a href="/kazakhstan" aria-current="location">Казахстан</a></li><li class="item-107"><a href="/vlast">Власть</a></li><li class="item-204"><a href="/dengi">Деньги</a></li><li class="item-104"><a href="/sport">Спорт</a></li><li class="item-106"><a href="/chp">ЧП</a></li><li class="item-459"><a href="/woman">Woman</a></li><li class="item-246"><a href="/prislat-novost">Прислать новость</a></li></ul>
+<li class="item-460"><a href="/">Эксклюзивы</a></li><li class="item-103"><a href="/">В мире</a></li><li class="item-102 uk-active uk-active"><a href="/" aria-current="location">Казахстан</a></li><li class="item-107"><a href="/">Власть</a></li><li class="item-204"><a href="/">Деньги</a></li><li class="item-104"><a href="/">Спорт</a></li><li class="item-106"><a href="/">ЧП</a></li><li class="item-459"><a href="/">Woman</a></li><li class="item-246"><a href="/">Прислать новость</a></li></ul>
 </nav></div>
 
 </amp-sidebar>
 
 
 
-<header class="amp-header flex justify-start items-center top-0 left-0 right-0 pl2 pr4 fixed"> <div role="button" on="tap:sidebar-left.toggle" tabindex="0" class="amp-menu-toggle align-middle inline-block">☰</div> <div class="h3 center truncate caps col-12"><div class="uk-navbar-item uk-logo uk-text-large uk-text-bold ">Bestnews.kz</div></div> 
+<header class="amp-header flex justify-start items-center top-0 left-0 right-0 pl2 pr4 fixed"> <div role="button" on="tap:sidebar-left.toggle" tabindex="0" class="amp-menu-toggle align-middle inline-block">☰</div> <div class="h3 center truncate caps col-12"><div class="uk-navbar-item uk-logo uk-text-large uk-text-bold ">Название сайта</div></div> 
 <div id="target-element-left">
 </div>
 </header>
