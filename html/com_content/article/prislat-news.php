@@ -1,0 +1,674 @@
+<?php
+/**
+ * @package     Joomla.Site
+ * @subpackage  com_content
+ * @copyright   Copyright (C) Open Source Matters, Inc. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Associations;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\FileLayout;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Component\Content\Administrator\Extension\ContentComponent;
+use Joomla\Component\Content\Site\Helper\RouteHelper;
+
+// Create shortcuts to some parameters.
+$params  = $this->item->params;
+$canEdit = $params->get('access-edit');
+$user    = Factory::getUser();
+$info    = $params->get('info_block_position', 0);
+$htag    = $this->params->get('show_page_heading') ? 'h2' : 'h1';
+$images = json_decode($this->item->images);
+$urls = json_decode($this->item->urls);
+$user = Factory::getUser();
+
+// Check if associations are implemented. If they are, define the parameter.
+$assocParam        = (Associations::isEnabled() && $params->get('show_associations'));
+$currentDate       = Factory::getDate()->format('Y-m-d H:i:s');
+$isNotPublishedYet = $this->item->publish_up > $currentDate;
+$isExpired         = !is_null($this->item->publish_down) && $this->item->publish_down < $currentDate;
+
+foreach($this->item->jcfields as $jcfield)
+    {
+      $this->item->jcFields[$jcfield->name] = $jcfield;
+    }
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers');
+
+$input = \Joomla\CMS\Factory::getApplication()->input;
+
+$id     = $input->getInt('id'); // JRequest::getInt
+$option = $input->getWord('option'); // JRequest::getWord
+
+$document = JFactory::getDocument();
+$view   = $input->getCmd('view', null); // JRequest::getCmd
+if ($view == 'article') {
+$document->addCustomTag( '<link rel="amphtml" href="'.JURI::current().'?tmpl=amp" />' );
+}
+
+if (!empty($this->item->pagination) && $this->item->pagination && !$this->item->paginationposition && $this->item->paginationrelative) {
+    echo $this->item->pagination;
+}
+
+$this->item->tagLayout = new JLayoutFile('joomla.content.tags-key');
+
+$fixed_str = preg_replace('/[\s]{2,}/', ' ', $this->item->tagLayout->render($this->item->tags->itemTags));
+
+$docTitle = $document->title;
+$docTitle_new = preg_replace("/^(\s*(\S+\s+){0,7}\S+).*/s", '$1', $docTitle);
+
+$config = JFactory::getConfig();
+
+
+
+$document->setTitle(strip_tags(trim($docTitle_new.'... | '.$this->escape($this->item->metakey).''. $fixed_str.' ' . $config->get( 'sitename' ))));
+
+if($this->item->metakey == "") {$mmk = $str = html_entity_decode(strip_tags(trim($docTitle.', '.$this->escape($this->item->metakey).' '.$this->escape($this->item->category_title).', ' . $fixed_str.'' . $config->get( 'sitename' ))));
+$fixed_str = preg_replace(array('<br />','<br/>', '<br>'), ' ', $str);}
+else {$mmk = $this->item->metakey;}
+
+$document->setMetadata('keywords', $mmk);
+
+
+
+if($this->item->metadesc == "") {$mmd = $str = html_entity_decode(strip_tags (trim((JHtml::_('string.truncate', ($this->item->text), '150'))))); $fixed_str = preg_replace('/[\s]{2,}/', ' ', $str);} else {$mmd = $this->item->metadesc;}
+$document->setMetadata('description', $mmd);
+
+
+
+
+// Create shortcuts to some parameters.
+
+$app    = JFactory::getApplication();
+$mailfrom   = $app->getCfg('mailfrom');
+
+
+
+$datepubl = $this->item->created;
+if (isset($images -> image_intro) and !empty($images -> image_intro)) {
+   $timage = htmlspecialchars(JURI :: root().$images -> image_intro);
+   }
+elseif (isset($images -> image_fulltext) and !empty($images -> image_fulltext)) {
+   $timage = htmlspecialchars(JURI :: root().$images -> image_fulltext);
+   }
+else {
+   $timage = $pathToImage = 'templates/wmarka/images/logotype.jpg';
+   }
+
+$lang = JText::_('OG_LANG');
+$countrycity = JText::_('SEO_COUNTRY_CITY');
+$postalcode = JText::_('SEO_POSTALCODE');
+$country = JText::_('SEO_COUNTRY');
+$region = JText::_('SEO_REGION');
+$locality = JText::_('SEO_LOCALITY');
+$street = JText::_('SEO_STREET_ADDRESS');
+$tel = JText::_('SEO_TEL');
+$latitude = JText::_('SEO_LATITUDE');
+$longitude = JText::_('SEO_LONGITUDE');
+$descauthor = JText::_('SEO_DESCRIPTION_AUTHOR');
+$descpublisher = JText::_('SEO_DESCRIPTION_PUBLISHER');
+
+$document -> addCustomTag( '
+
+
+<!-- Twitter card -->
+<meta name="twitter:title" content="'.$this->escape($this->item->title).'">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@NewsVrk">
+<meta name="twitter:creator" content="@NewsVrk">
+<meta name="twitter:url" content="'.str_replace('" ','&quot;',JURI::current()).'">
+<meta name="twitter:description" content="'.$mmd.'">
+<meta name="twitter:image" content="'.JUri::root().''.LayoutHelper::render('joomla.content.full_image2', $this->item).'">
+<meta name="twitter:image:src" content="'.JUri::root().''.LayoutHelper::render('joomla.content.full_image2', $this->item).'">
+<!-- Open Graph data -->
+<meta property="og:title" content="'.$this->escape($this->item->title).'">
+<meta property="og:description" content="'.$mmd.'">
+<meta property="og:type" content="article">
+<meta property="og:url" content="'.JURI :: current().'">
+<meta property="og:image" content="'.JUri::root().''.LayoutHelper::render('joomla.content.full_image2', $this->item).'">
+<meta property="og:image:secure_url" content="'.JUri::root().''.LayoutHelper::render('joomla.content.full_image2', $this->item).'">
+<meta property = "og:image:type" content = "image/jpg" />
+<meta property="og:image:width" content="900" />
+<meta property="og:image:height" content="506" />
+<meta property="og:locale" content="'.$lang.'">
+<meta property="og:site_name" content="'.$config->get( 'sitename' ).'">
+<meta property="og:headline" content="'.$this -> escape($this -> item -> title).'">
+<meta property="article:published_time" content="'.JLayoutHelper::render('joomla.content.info_block.publish_date_seo', array('item' => $this->item, 'params' => $params, 'position' => 'above')).'" />
+<meta property="article:modified_time" content="'.JLayoutHelper::render('joomla.content.info_block.modify_date_seo', array('item' => $this->item, 'params' => $params, 'position' => 'above')).'" />
+<meta property="article:expiration_time" content="3000-01-01" />
+<meta property="article:section" content="'.$this->escape($this->item->category_title).'" />
+<meta property="article:author" content="'.$this->escape($this->item->author).'">
+<meta property="news_keywords" content="'.$mmk.'">
+<meta property="fb:admins" content="100001722532567">
+<meta property="fb:app_id" content="170575822955644">
+<!-- Open Graph data end-->
+
+<link href="//img.youtube.com" rel="dns-prefetch preconnect" />
+<link href="//ajax.googleapis.com" rel="dns-prefetch preconnect" />
+<link href="//www.google-analytics.com" rel="dns-prefetch preconnect">
+<link href="//pagead2.googlesyndication.com" rel="dns-prefetch preconnect">
+<link href="//static.doubleclick.net" rel="dns-prefetch preconnect">
+<link href="//www.youtube.com" rel="dns-prefetch preconnect">
+<link href="//graph.facebook.com" rel="dns-prefetch preconnect">
+<link href="//metrika.yandex.ru" rel="dns-prefetch preconnect" />
+<link href="//informer.yandex.ru" rel="dns-prefetch preconnect" />
+');
+
+?>
+<script type="application/ld+json">
+{
+"@context": "http://schema.org",
+"@type": "NewsArticle",
+"headline": "<?php echo $this->escape($this->item->title); ?>",
+"dateCreated":"<?php echo JLayoutHelper::render('joomla.content.info_block.publish_date_seo', array('item' => $this->item, 'params' => $params, 'position' => 'above')); ?>",
+"datePublished": "<?php echo JLayoutHelper::render('joomla.content.info_block.publish_date_seo', array('item' => $this->item, 'params' => $params, 'position' => 'above')); ?>",
+"dateModified": "<?php echo JLayoutHelper::render('joomla.content.info_block.modify_date_seo', array('item' => $this->item, 'params' => $params, 'position' => 'above')); ?>",
+"description": "<?php echo $mmd; ?>",
+"url":"<?php echo JURI :: current(); ?>",
+"author": {
+  "@type": "Person",
+  "name": "<?php echo $this->escape($this->item->author); ?>"
+},
+"creator":"<?php echo $this->escape($this->item->author); ?>",
+ "mainEntityOfPage":"True",
+"publisher": {
+  "@type": "Organization",
+  "name": "VRK.News",
+  "url":"<?php echo JUri::root(); ?>",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png",
+    "width": 180,
+    "height": 180
+  }
+},
+"image": {
+  "@type": "ImageObject",
+  "url": "<?php echo JUri::root(); ?><?php echo LayoutHelper::render('joomla.content.full_image2', $this->item) ?>",
+  "height": 900,
+  "width": 506
+}
+}
+</script>
+<?php
+$this->item->extrafields = array();
+$this->item->extragroups = array();
+if (isset($this->item->jcfields) && is_array($this->item->jcfields))
+{
+    foreach ($this->item->jcfields as $field)
+	{
+		if (!empty($field->rawvalue))
+		{
+			$this->item->extrafields[$field->name] = $field;
+			if (!empty($field->group_title))
+			{
+				$field->group_transliterate = str_replace(' ', '_', JLanguage::getInstance(JFactory::getLanguage()->getTag())->transliterate($field->group_title));
+				if (!isset($this->item->extragroups[$field->group_transliterate]))
+				{
+					$group                                          = new stdClass();
+					$group->title                                   = $field->group_title;
+					$group->transliterate                           = $field->group_transliterate;
+					$group->state                                   = $field->group_state;
+					$group->access                                  = $field->group_access;
+					$group->fields                                  = array();
+					$this->item->extragroups[$group->transliterate] = $group;
+				}
+				$this->item->extragroups[$field->group_transliterate]->fields[$field->name] = $field;
+			}
+		}
+	}
+}
+$this->item->tagLayout = new JLayoutFile('joomla.content.tags');
+?>
+<article class="uk-article item-page<?php echo $this->pageclass_sfx; ?>" itemscope itemtype="https://schema.org/Article">
+<div class="microdata data-hidden"> 
+<meta itemscope itemprop="mainEntityOfPage" itemType="https://schema.org/WebPage" itemid="<?php echo JURI :: current(); ?>" >   
+		<div itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
+			<div itemprop="logo" itemscope itemtype="https://schema.org/ImageObject">
+				<link itemprop="url" href="<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png">
+				<meta itemprop="image" content="<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png">
+				<meta itemprop="width" content="180">
+				<meta itemprop="height" content="180">
+				<meta itemprop="thumbnail" content="<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png">
+			</div>
+   			<meta itemprop="name" content="<?php echo $config->get( 'sitename' ); ?>" />
+   			<meta itemprop="description" content="<?php echo $descpublisher; ?>">			
+			<link itemprop="url" href="<?php echo JUri::root(); ?>">
+			<div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+				<span itemprop="streetAddress"><?php echo JText::_('SEO_STREET_ADDRESS'); ?></span>
+				<span itemprop="postalCode"><?php echo JText::_('SEO_POSTALCODE'); ?></span>
+				<span itemprop="addressLocality"><?php echo JText::_('SEO_LOCALITY'); ?></span>
+				<span itemprop="addressRegion"><?php echo JText::_('SEO_REGION'); ?></span>
+				<span itemprop="addressCountry"><?php echo JText::_('SEO_COUNTRY'); ?></span>
+			</div>
+			<meta itemprop="telephone" content="<?php echo JText::_('SEO_TEL'); ?>">
+			<meta itemprop="email" content="<?php echo $mailfrom; ?>">
+		</div>	
+</div>
+    <?php
+    // Todo Not that elegant would be nice to group the params
+    $useDefList = ($params->get('show_modify_date') ||
+        $params->get('show_publish_date') ||
+        $params->get('show_create_date') ||
+        $params->get('show_hits') ||
+        $params->get('show_category') ||
+        $params->get('show_parent_category') ||
+        $params->get('show_author') ||
+        $assocParam);
+    ?>
+
+    <?php if ($params->get('show_page_heading') && !$params->get('show_title')) { ?>
+    <h1 class="uk-article-title uk-margin-medium-bottom  uk-margin-remove-top" itemprop="headline"><?php echo $this->escape($params->get('page_heading')); ?></h1>
+    <?php } elseif ($params->get('show_title') != false) { ?>
+    <h1 class="uk-article-title uk-margin-medium-bottom  uk-margin-remove-top" itemprop="headline"><?php echo $this->escape($this->item->title); ?></h1>
+    <?php } else { ?>
+    <h1 class="uk-hidden" itemprop="headline"><?php echo $this->escape($this->item->title); ?></h1>
+    <?php } ?>
+
+    <meta itemprop="inLanguage" content="<?php echo ($this->item->language === '*') ? Factory::getConfig()->get('language') : $this->item->language; ?>" />
+
+	<?php $useDefList = $params->get('show_modify_date') || $params->get('show_publish_date') || $params->get('show_create_date')
+	|| $params->get('show_hits') || $params->get('show_category') || $params->get('show_parent_category') || $params->get('show_author') || $assocParam; ?>
+
+    <?php
+    if (!$this->print) {
+        if ($canEdit || $params->get('show_print_icon') || $params->get('show_email_icon')) {
+            echo LayoutHelper::render('joomla.content.icons', array('params' => $params, 'item' => $this->item, 'print' => false));
+        }
+    } else {
+        if ($useDefList) {
+            echo HTMLHelper::_('icon.print_screen', $this->item, $params, ['class' => 'uk-button uk-button-link', 'data-uk-tooltip' => str_replace(['<', '>'], ['«', '»'], Text::sprintf('JGLOBAL_PRINT_TITLE', $this->item->title))]);
+        }
+    }
+
+    // Content is generated by content plugin event "onContentAfterTitle"
+    echo $this->item->event->afterDisplayTitle;
+    ?>
+
+    <div class="uk-margin-bottom uk-article-meta uk-flex2">
+		<?php if ($this->item->state == ContentComponent::CONDITION_UNPUBLISHED) : ?>
+			<span class="badge bg-warning text-light"><?php echo Text::_('JUNPUBLISHED'); ?></span>
+		<?php endif; ?>
+		<?php if ($isNotPublishedYet) : ?>
+			<span class="badge bg-warning text-light"><?php echo Text::_('JNOTPUBLISHEDYET'); ?></span>
+		<?php endif; ?>
+		<?php if ($isExpired) : ?>
+			<span class="badge bg-warning text-light"><?php echo Text::_('JEXPIRED'); ?></span>
+		<?php endif; ?>
+
+        <?php
+        if ($useDefList && ($info == 0 || $info == 2)) {
+            // Todo: for Joomla4 joomla.content.info_block.block can be changed to joomla.content.info_block
+            echo LayoutHelper::render('joomla.content.info_block', array('item' => $this->item, 'params' => $params, 'position' => 'above'));
+        }
+        ?>
+    </div>
+
+    <?php
+
+    // Content is generated by content plugin event "onContentBeforeDisplay"
+    echo $this->item->event->beforeDisplayContent;
+
+    if (isset($urls) && ((!empty($urls->urls_position) && ($urls->urls_position == '0')) || ($params->get('urls_position') == '0' && empty($urls->urls_position))) || (empty($urls->urls_position) && (!$params->get('urls_position')))) {
+        echo $this->loadTemplate('links');
+    }
+
+    if ($params->get('access-view')) {
+        echo LayoutHelper::render('joomla.content.full_image', $this->item);
+		
+    }
+
+    if (!empty($this->item->pagination) && $this->item->pagination && !$this->item->paginationposition && !$this->item->paginationrelative) {
+        echo $this->item->pagination;
+    }
+
+    if (isset($this->item->toc)) {
+        echo $this->item->toc;
+    }
+    ?>
+	<h2 class="uk-margin-remove  uk-h3">
+<?php echo $mmd;?>
+<hr class="uk-divider-icon">
+</h2>
+    <div itemprop="articleBody">
+	<div class="uk-text-left uk-margin uk-margin-auto-right uk-margin-auto@m  uk-article-body ">
+		<div class="uk-flex uk-flex-center">
+			<h4 class="uk-text-bold uk-padding-small">Ждём ваши новости, фото и видео интересных событий на email и WhatsApp и Telegram</h4>
+		</div>
+<div class="uk-flex uk-flex-center">		
+	<div class="uk-child-width-1-3@m uk-grid-small  " uk-grid>
+<div class="uk-card ">
+<a href="mailto:mail@bestnews.kz" target="_blank" rel="nofollow noopener" title="Отправить заявку по электронной почте " class="uk-link-heading">
+        <div class="uk-grid-small uk-flex-middle" uk-grid>
+            <div class="uk-width-auto uk-text-center">
+                <span uk-icon="icon: mail; ratio: 2"></span>
+            </div>
+            <div class="uk-width-expand">
+                <div class="uk-text-bold uk-card-header uk-padding-small">Отправить новость <br>на email</div>
+            </div>
+        </div>
+</a>
+</div>
+<div class="uk-card ">
+<a class="uk-link-heading" href="https://api.whatsapp.com/send?phone=77017070537&amp;text=Я%20отправляю%20новость%20для%20Bestnews.kz" target="_blank" rel="nofollow noopener" class="" title="Отправить по WhatsApp">
+        <div class="uk-grid-small uk-flex-middle" uk-grid>
+            <div class="uk-width-auto uk-text-center">
+                <span uk-icon="icon: whatsapp; ratio: 2"></span>
+            </div>
+            <div class="uk-width-expand">
+                <div class="uk-text-bold uk-card-header uk-padding-small">Отправить новость в WhatsApp</div>
+            </div>
+        </div>
+</a>
+</div>
+<div class="uk-card ">
+<a class="uk-link-heading" href="#modal-example" class="" title="Отправить в телеграм" uk-toggle>
+        <div class="uk-grid-small uk-flex-middle" uk-grid>
+            <div class="uk-width-auto uk-text-center">
+                <span uk-icon="icon: telegram; ratio: 2"></span>
+            </div>
+            <div class="uk-width-expand">
+                <div class="uk-text-bold uk-card-header uk-padding-small">Отправить новость в Telegram</div>
+            </div>
+        </div>
+</a>
+</div>
+ 	
+
+	
+<!-- Это модальное окно -->
+<div id="modal-example" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+	<button class="uk-modal-close-default" type="button" uk-close></button>
+         <h2 class="uk-modal-title uk-text-center">Отправить в телеграм</h2>
+<form class="form_1 uk-width-2-3@m uk-margin-auto" id="form-contact" method="POST" class="contact-form" autocomplete="off" enctype="multipart/form-data">
+ 
+ 
+ 
+  <div class="preloader"></div>
+  <p class="contact-form__message"></p>
+ 
+  <!-- Поле с именем -->
+  <div class="uk-margin">
+    <input name="name" type="text" class="uk-input" 
+           placeholder="Введите ваше имя">
+  </div>
+ 
+  <!-- Поле с телефоном -->
+  <div class="uk-margin">
+    <input name="phone" type="tel" class="uk-input" 
+           placeholder="Введите ваш телефон">
+  </div>
+ 
+  <!-- Поле с выбором файла -->
+  <div class="uk-margin">
+    <input type="file" name="files[]" id="contact-form__input_file"
+           class="uk-input" multiple>
+    <label for="contact-form__input_file" class="uk-button">
+      <span class="uk-text-middle">Выберите фото</span>
+    </label>
+  </div>  
+
+ 
+  <!--Поле с темой в письме-->
+  <div class="uk-margin">
+  <textarea class="uk-textarea" name="theme"  placeholder="Сообщение" rows="4"></textarea>
+  
+ </div>
+  <!--Кнопка отправки формы-->
+  <div class="uk-margin uk-text-center">
+  <button type="submit" class="uk-button uk-button-default">Отправить</button>
+ </div>
+</form>
+
+<?php
+ 
+// Токен
+  const TOKEN = '6280587262:AAH81ZGqcS30jAORziNcDqc7BDAQ0zEWCNM';
+ 
+  // ID чата
+  const CHATID = '336031971';
+ 
+  // Массив допустимых значений типа файла.
+  $types = array('image/gif', 'image/png', 'image/jpeg', 'application/msword',  'application/txt', 'application/pdf', 'application/x-zip', 'application/mov', 'application/mp4');
+ 
+  // Максимальный размер файла в килобайтах
+  // 1048576; // 1 МБ
+  $size = 1073741824; // 1 ГБ
+ 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+ 
+  $fileSendStatus = '';
+  $textSendStatus = '';
+  $msgs = [];
+   
+  // Проверяем не пусты ли поля с именем и телефоном
+  if (!empty($_POST['name']) && !empty($_POST['phone'])) {
+     
+    // Если не пустые, то валидируем эти поля и сохраняем и добавляем в тело сообщения. Минимально для теста так:
+    $txt = "";
+     
+    // Имя
+    if (isset($_POST['name']) && !empty($_POST['name'])) {
+        $txt .= "Имя пославшего: " . strip_tags(trim(urlencode($_POST['name']))) . "%0A";
+    }
+     
+    // Номер телефона
+    if (isset($_POST['phone']) && !empty($_POST['phone'])) {
+        $txt .= "Телефон: " . strip_tags(trim(urlencode($_POST['phone']))) . "%0A";
+    }
+     
+    // Не забываем про тему сообщения
+    if (isset($_POST['theme']) && !empty($_POST['theme'])) {
+        $txt .= "Текст сообщения: " . strip_tags(urlencode($_POST['theme']));
+    }
+ 
+    $textSendStatus = @file_get_contents('https://api.telegram.org/bot'. TOKEN .'/sendMessage?chat_id=' . CHATID . '&parse_mode=html&text=' . $txt); 
+ 
+    if( isset(json_decode($textSendStatus)->{'ok'}) && json_decode($textSendStatus)->{'ok'} ) {
+      if (!empty($_FILES['files']['tmp_name'])) {
+     
+          $urlFile =  "https://api.telegram.org/bot" . TOKEN . "/sendMediaGroup";
+           
+          // Путь загрузки файлов
+          $path = $_SERVER['DOCUMENT_ROOT'] . '/tmp/';
+           
+          // Загрузка файла и вывод сообщения
+          $mediaData = [];
+          $postContent = [
+            'chat_id' => CHATID,
+          ];
+       
+          for ($ct = 0; $ct < count($_FILES['files']['tmp_name']); $ct++) {
+            if ($_FILES['files']['name'][$ct] && @copy($_FILES['files']['tmp_name'][$ct], $path . $_FILES['files']['name'][$ct])) {
+              if ($_FILES['files']['size'][$ct] < $size && in_array($_FILES['files']['type'][$ct], $types)) {
+                $filePath = $path . $_FILES['files']['name'][$ct];
+                $postContent[$_FILES['files']['name'][$ct]] = new CURLFile(realpath($filePath));
+                $mediaData[] = ['type' => 'document', 'media' => 'attach://'. $_FILES['files']['name'][$ct]];
+              }
+            }
+          }
+       
+          $postContent['media'] = json_encode($mediaData);
+       
+          $curl = curl_init();
+          curl_setopt($curl, CURLOPT_HTTPHEADER, ["Content-Type:multipart/form-data"]);
+          curl_setopt($curl, CURLOPT_URL, $urlFile);
+          curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+          curl_setopt($curl, CURLOPT_POSTFIELDS, $postContent);
+          $fileSendStatus = curl_exec($curl);
+          curl_close($curl);
+          $files = glob($path.'*');
+          foreach($files as $file){
+            if(is_file($file))
+              unlink($file);
+          }
+      }
+      echo json_encode('SUCCESS');
+    } else {
+      echo json_encode('Error!');
+      // 
+      // echo json_decode($textSendStatus);
+    }
+  } else {
+    echo json_encode('NOTVALID');
+  }
+} else {
+  header("Location: /thanks.html");
+}?>
+
+    </div>
+</div>		
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="templates/wmarka/js/telegramform.js"></script>
+<hr class="uk-divider-icon">
+<p uk-margin=""><a href="javascript: void(0);"
+   data-layout="button"
+   onclick="window.open('https://www.facebook.com/sharer.php?u=<?php echo JURI :: current(); ?>&summary=MySummary&title=<?php echo $this -> escape($this -> item -> title); ?>&description=<?php echo $mmd; ?>&picture=<?php echo $timage; ?>', 'ventanacompartir', 'toolbar=0, status=0, width=650, height=450');" class="uk-button uk-button-default" itemprop="url"><svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M11,10h2.6l0.4-3H11V5.3c0-0.9,0.2-1.5,1.5-1.5H14V1.1c-0.3,0-1-0.1-2.1-0.1C9.6,1,8,2.4,8,5v2H5.5v3H8v8h3V10z"></path></svg></a> <a href="https://vk.com/share.php?url=<?php echo JURI :: current(); ?>" target="_blank" rel="nofollow noopener" class="uk-button uk-button-default" onclick="return Share.me(this);" itemprop="url"><svg xmlns="http://www.w3.org/2000/svg" width="23" height="20" viewBox="0 0 23 20"><path d="M22.109 5.804q.257.714-1.674 3.281l-.725.949q-.446.569-.614.804t-.34.552-.134.469.145.385.363.48.636.592l.056.045q1.574 1.462 2.132 2.467.033.056.073.14t.078.296-.006.379-.279.307-.658.14l-2.857.045q-.268.056-.625-.056t-.58-.246l-.223-.134q-.335-.234-.781-.714t-.765-.865-.681-.647-.631-.173l-.089.039-.19.162-.24.329-.19.58-.073.865q0 .167-.039.307t-.084.206l-.045.056q-.201.212-.592.246h-1.283q-.792.045-1.629-.184t-1.468-.592-1.15-.737-.787-.642l-.279-.268q-.112-.112-.307-.335t-.798-1.016-1.183-1.685-1.367-2.355-1.456-3.036q-.067-.179-.067-.301t.033-.179l.045-.067q.167-.212.636-.212l3.058-.022q.134.022.257.073t.179.095l.056.033q.179.123.268.357.223.558.513 1.155t.458.91l.179.324q.324.67.625 1.161t.541.765.463.43.379.156.301-.056l.056-.056.134-.246.151-.525.106-.904v-1.395q-.022-.446-.1-.815t-.156-.513l-.067-.134q-.279-.379-.949-.48-.145-.022.056-.268.179-.212.424-.335.592-.29 2.667-.268.915.011 1.507.145.223.056.374.151t.229.268.117.357.039.508-.011.614-.028.787-.017.921l-.011.469-.006.536.039.452.128.435.251.273q.089.022.19.045t.29-.123.424-.385.58-.748.759-1.2q.67-1.161 1.194-2.511.045-.112.112-.195t.123-.117l.045-.033.056-.028.145-.033.223-.006 3.214-.022q.435-.056.714.028t.346.184z"></path></svg></a> <a href="//connect.ok.ru/offer?url=<?php echo JURI :: current(); ?>&amp;title=<?php echo $this -> escape($this -> item -> title); ?>&amp;imageUrl=<?php echo $timage; ?>" target="_blank" rel="nofollow" class="uk-button uk-button-default" onclick="return Share.me(this);" itemprop="url" ><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M9.016 14.087c-1.55-.162-2.948-.544-4.145-1.48-.149-.116-.302-.229-.437-.359-.524-.503-.577-1.079-.162-1.673.355-.508.95-.644 1.569-.352.12.057.234.127.343.203 2.231 1.533 5.295 1.575 7.534.069.222-.17.459-.309.734-.38.534-.137 1.033.059 1.319.527.328.534.323 1.055-.08 1.47-.619.636-1.364 1.095-2.191 1.416-.782.303-1.639.456-2.487.557l.268.288c1.152 1.157 2.308 2.309 3.456 3.47.391.395.473.886.257 1.346-.235.503-.762.833-1.279.798-.327-.023-.583-.186-.81-.414-.869-.875-1.754-1.733-2.606-2.624-.248-.259-.367-.21-.586.015-.874.9-1.763 1.786-2.657 2.668-.401.396-.879.467-1.344.241-.495-.24-.81-.745-.785-1.252.017-.343.186-.606.421-.841 1.14-1.138 2.276-2.279 3.413-3.419l.255-.273zm.944-3.964c-2.766-.009-5.034-2.302-5.018-5.073.016-2.801 2.285-5.058 5.079-5.05 2.799.008 5.045 2.297 5.031 5.127-.014 2.765-2.298 5.006-5.092 4.996zm2.514-5.066c-.005-1.376-1.1-2.471-2.473-2.472-1.384-.001-2.49 1.114-2.479 2.502.01 1.37 1.115 2.458 2.492 2.453 1.372-.005 2.465-1.107 2.46-2.482z"></path></svg></a> <a href="https://t.me/share/url?url=<?php echo JURI :: current(); ?>&amp;text=<?php echo $this -> escape($this -> item -> title); ?>&amp;to=<?php echo JText::_('SEO_TEL'); ?>" target="_blank" rel="nofollow noopener" class="uk-button uk-button-default" onclick="return Share.me(this);" itemprop="url" ><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M13.27 14.587l1.641-7.734q.1-.491-.117-.703t-.575-.078l-9.643 3.717q-.324.123-.441.279t-.028.296.357.218l2.467.77 5.725-3.605q.234-.156.357-.067.078.056-.045.167l-4.632 4.185-.179 2.545q.257 0 .502-.246l1.205-1.161 2.5 1.842q.714.402.904-.424zm6.73-4.587q0 2.031-.792 3.884t-2.132 3.192-3.192 2.132-3.884.792-3.884-.792-3.192-2.132-2.132-3.192-.792-3.884.792-3.884 2.132-3.192 3.192-2.132 3.884-.792 3.884.792 3.192 2.132 2.132 3.192.792 3.884z"></path></svg></a> <a href="https://api.whatsapp.com/send?text=<?php echo JURI :: current(); ?>%20<?php echo $this -> escape($this -> item -> title); ?>" target="_blank" rel="nofollow noopener" class="uk-button uk-button-default" onclick="return Share.me(this);" itemprop="url" data-action="share/whatsapp/share" ><svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M16.7,3.3c-1.8-1.8-4.1-2.8-6.7-2.8c-5.2,0-9.4,4.2-9.4,9.4c0,1.7,0.4,3.3,1.3,4.7l-1.3,4.9l5-1.3c1.4,0.8,2.9,1.2,4.5,1.2 l0,0l0,0c5.2,0,9.4-4.2,9.4-9.4C19.5,7.4,18.5,5,16.7,3.3 M10.1,17.7L10.1,17.7c-1.4,0-2.8-0.4-4-1.1l-0.3-0.2l-3,0.8l0.8-2.9 l-0.2-0.3c-0.8-1.2-1.2-2.7-1.2-4.2c0-4.3,3.5-7.8,7.8-7.8c2.1,0,4.1,0.8,5.5,2.3c1.5,1.5,2.3,3.4,2.3,5.5 C17.9,14.2,14.4,17.7,10.1,17.7 M14.4,11.9c-0.2-0.1-1.4-0.7-1.6-0.8c-0.2-0.1-0.4-0.1-0.5,0.1c-0.2,0.2-0.6,0.8-0.8,0.9 c-0.1,0.2-0.3,0.2-0.5,0.1c-0.2-0.1-1-0.4-1.9-1.2c-0.7-0.6-1.2-1.4-1.3-1.6c-0.1-0.2,0-0.4,0.1-0.5C8,8.8,8.1,8.7,8.2,8.5 c0.1-0.1,0.2-0.2,0.2-0.4c0.1-0.2,0-0.3,0-0.4C8.4,7.6,7.9,6.5,7.7,6C7.5,5.5,7.3,5.6,7.2,5.6c-0.1,0-0.3,0-0.4,0 c-0.2,0-0.4,0.1-0.6,0.3c-0.2,0.2-0.8,0.8-0.8,2c0,1.2,0.8,2.3,1,2.4c0.1,0.2,1.7,2.5,4,3.5c0.6,0.2,1,0.4,1.3,0.5 c0.6,0.2,1.1,0.2,1.5,0.1c0.5-0.1,1.4-0.6,1.6-1.1c0.2-0.5,0.2-1,0.1-1.1C14.8,12.1,14.6,12,14.4,11.9"></path></svg></a> <a href="https://twitter.com/share?url=<?php echo JURI :: current(); ?>" target="_blank" rel="nofollow noopener" class="uk-button uk-button-default" onclick="return Share.me(this);" itemprop="url" ><svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M19,4.74 C18.339,5.029 17.626,5.229 16.881,5.32 C17.644,4.86 18.227,4.139 18.503,3.28 C17.79,3.7 17.001,4.009 16.159,4.17 C15.485,3.45 14.526,3 13.464,3 C11.423,3 9.771,4.66 9.771,6.7 C9.771,6.99 9.804,7.269 9.868,7.539 C6.795,7.38 4.076,5.919 2.254,3.679 C1.936,4.219 1.754,4.86 1.754,5.539 C1.754,6.82 2.405,7.95 3.397,8.61 C2.79,8.589 2.22,8.429 1.723,8.149 L1.723,8.189 C1.723,9.978 2.997,11.478 4.686,11.82 C4.376,11.899 4.049,11.939 3.713,11.939 C3.475,11.939 3.245,11.919 3.018,11.88 C3.49,13.349 4.852,14.419 6.469,14.449 C5.205,15.429 3.612,16.019 1.882,16.019 C1.583,16.019 1.29,16.009 1,15.969 C2.635,17.019 4.576,17.629 6.662,17.629 C13.454,17.629 17.17,12 17.17,7.129 C17.17,6.969 17.166,6.809 17.157,6.649 C17.879,6.129 18.504,5.478 19,4.74"></path></svg></a>
+	<script>
+		Share = {
+			me: function(el) {
+				console.log(el.href);
+				Share.popup(el.href);
+				return false;
+			},
+
+			popup: function(url) {
+				window.open(url, '', 'toolbar=0,status=0,width=626,height=436');
+			}
+		};
+	</script>
+</p>
+	</div>
+	
+    </div>
+    <div class="uk-section uk-section-xsmall uk-section-default uk-flex uk-flex-center uk-flex3">
+    <?php
+    if ($info == 1 || $info == 2) {
+        if ($useDefList) {
+            // Todo: for Joomla4 joomla.content.info_block.block can be changed to joomla.content.info_block
+            echo LayoutHelper::render('joomla.content.info_block.block', array('item' => $this->item, 'params' => $params, 'position' => 'below'));
+        }
+        if ($params->get('show_tags', 1) && !empty($this->item->tags->itemTags)) {
+            $this->item->tagLayout = new FileLayout('joomla.content.tags');
+            echo $this->item->tagLayout->render($this->item->tags->itemTags);
+        }
+    }
+
+    if (!empty($this->item->pagination) && $this->item->pagination && $this->item->paginationposition && !$this->item->paginationrelative) {
+        echo $this->item->pagination;
+    }
+
+    if (isset($urls) && ((!empty($urls->urls_position) && ($urls->urls_position == '1')) || ($params->get('urls_position') == '1'))) {
+        echo $this->loadTemplate('links');
+    }
+    // Optional teaser intro text for guests
+    elseif ($params->get('show_noauth') == true && $user->get('guest')) {
+        echo LayoutHelper::render('joomla.content.intro_image', $this->item);
+        echo HTMLHelper::_('content.prepare', $this->item->introtext);
+
+        // Optional link to let them register to see the whole article.
+        if ($params->get('show_readmore') && $this->item->fulltext != null) {
+            $menu = Factory::getApplication()->getMenu();
+            $active = $menu->getActive();
+            $itemId = $active->id;
+            $link = new Uri(Route::_('index.php?option=com_users&view=login&Itemid=' . $itemId, false));
+            $link->setVar('return', base64_encode(ContentHelperRoute::getArticleRoute($this->item->slug, $this->item->catid, $this->item->language)));
+    ?>
+    <p class="readmore">
+        <a href="<?php echo $link; ?>" class="uk-button uk-button-text">
+            <?php
+            $attribs = json_decode($this->item->attribs);
+            if ($attribs->alternative_readmore == null) {
+                echo Text::_('COM_CONTENT_REGISTER_TO_READ_MORE');
+            } elseif ($readmore = $attribs->alternative_readmore) {
+                echo $readmore;
+                if ($params->get('show_readmore_title', 0) != 0) {
+                    echo HTMLHelper::_('string.truncate', $this->item->title, $params->get('readmore_limit'));
+                }
+            } elseif ($params->get('show_readmore_title', 0) == 0) {
+                echo Text::sprintf('COM_CONTENT_READ_MORE_TITLE');
+            } else {
+                echo Text::_('COM_CONTENT_READ_MORE');
+                echo HTMLHelper::_('string.truncate', $this->item->title, $params->get('readmore_limit'));
+            }
+            ?>
+        </a>
+    </p>
+	
+    <?php
+        }
+    }
+
+    if (!empty($this->item->pagination) && $this->item->pagination && $this->item->paginationposition && $this->item->paginationrelative) {
+        echo $this->item->pagination;
+    }
+
+    ?>
+	
+    </div>
+    <?php    echo $this->item->event->afterDisplayContent;    ?>
+	
+
+	<div class="microdata data-hidden" itemscope itemtype="https://schema.org/Article" >
+		<meta itemscope itemprop="mainEntityOfPage" itemType="https://schema.org/WebPage" itemid="<?php echo JURI :: current(); ?>" >
+		<meta itemscope itemprop="mainEntityOfPage" itemType="https://schema.org/WebPage" itemid="<?php echo JURI :: current(); ?>" content="<?php echo $this -> escape($this -> item -> title); ?>"/>
+		<span itemprop="name" ><?php echo $this -> escape($this -> item -> title); ?></span>
+		<span itemprop="headline" ><?php echo $this -> escape($this -> item -> title); ?></span>
+		<link itemprop="url" href="<?php echo JURI :: current(); ?>">
+		<meta itemprop="description" content="<?php echo $mmd; ?>">
+		<meta itemprop="datePublished" content="<?php echo JLayoutHelper::render('joomla.content.info_block.publish_date_seo', array('item' => $this->item, 'params' => $params, 'position' => 'above')); ?>">
+		<meta itemprop="dateModified" content="<?php echo JLayoutHelper::render('joomla.content.info_block.modify_date_seo', array('item' => $this->item, 'params' => $params, 'position' => 'above')); ?>">
+
+
+		<div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+			<link itemprop="url" href="<?php echo LayoutHelper::render('joomla.content.full_image2', $this->item);?>">
+			<meta itemprop="width" content="900">
+			<meta itemprop="height" content="506">
+			<meta itemprop="thumbnail" content="<?php echo JUri::root(); ?><?php echo LayoutHelper::render('joomla.content.intro_image2', $this->item);?>">
+		</div>
+		<div itemprop="author" itemscope itemtype="http://schema.org/Person" >
+			<meta itemprop="name" content="<?php echo $config->get( 'sitename' ); ?>">
+			<meta itemprop="description" content="<?php echo $descauthor; ?>">
+			<meta itemprop="image" content="<?php echo JUri::root(); ?>templates/wmarka/images/logotype.jpg">
+			<link itemprop="url" href="<?php echo JUri::root(); ?>">
+			<meta itemprop="email" content="<?php echo $mailfrom; ?>">
+			<meta itemprop="telephone" content="<?php echo JText::_('SEO_TEL'); ?>">
+			<meta itemprop="address" content="<?php echo JText::_('SEO_LOCALITY'); ?>, <?php echo JText::_('SEO_COUNTRY'); ?>">
+
+		</div>
+		<div itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
+			<div itemprop="logo" itemscope itemtype="https://schema.org/ImageObject">
+				<link itemprop="url" href="<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png">
+				<meta itemprop="image" content="<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png">
+				<meta itemprop="width" content="180">
+				<meta itemprop="height" content="180">
+				<meta itemprop="thumbnail" content="<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png">
+			</div>
+   			<meta itemprop="name" content="<?php echo $config->get( 'sitename' ); ?>" />
+   			<meta itemprop="description" content="<?php echo $descpublisher; ?>">			
+			<link itemprop="url" href="<?php echo JUri::root(); ?>">
+			<div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+				<span itemprop="streetAddress"><?php echo JText::_('SEO_STREET_ADDRESS'); ?></span>
+				<span itemprop="postalCode"><?php echo JText::_('SEO_POSTALCODE'); ?></span>
+				<span itemprop="addressLocality"><?php echo JText::_('SEO_LOCALITY'); ?></span>
+				<span itemprop="addressRegion"><?php echo JText::_('SEO_REGION'); ?></span>
+				<span itemprop="addressCountry"><?php echo JText::_('SEO_COUNTRY'); ?></span>
+			</div>
+			<meta itemprop="telephone" content="<?php echo JText::_('SEO_TEL'); ?>">
+			<meta itemprop="email" content="<?php echo $mailfrom; ?>">
+		</div>	
+	</div>
+</article>
+        <?php echo  
+		'<div class="uk-width-1-1 uk-margin-top">';
+		 echo JHTML::_('content.prepare', '{loadposition related}');		
+		echo '</div>';
+		?>

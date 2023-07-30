@@ -1,0 +1,60 @@
+@font-face {
+	font-family: 'Segoe UI';
+	src: url('../fonts/segoe_ui.eot'); /* IE 9 Compatibility Mode */
+	src: url('../fonts/segoe_ui.eot?#iefix') format('embedded-opentype'), /* IE < 9 */
+		url('../fonts/segoe_ui.woff2') format('woff2'), /* Super Modern Browsers */
+		url('../fonts/segoe_ui.woff') format('woff'), /* Firefox >= 3.6, any other modern browser */
+		url('../fonts/segoe_ui.ttf') format('truetype'), /* Safari, Android, iOS */
+		url('../fonts/segoe_ui.svg#segoe_ui') format('svg'); /* Chrome < 4, Legacy iOS */
+}
+
+@font-face {
+	font-family: 'Segoe UI Gras';
+	src: url('../fonts/segoe_ui_gras.eot'); /* IE 9 Compatibility Mode */
+	src: url('../fonts/segoe_ui_gras.eot?#iefix') format('embedded-opentype'), /* IE < 9 */
+		url('../fonts/segoe_ui_gras.woff2') format('woff2'), /* Super Modern Browsers */
+		url('../fonts/segoe_ui_gras.woff') format('woff'), /* Firefox >= 3.6, any other modern browser */
+		url('../fonts/segoe_ui_gras.ttf') format('truetype'), /* Safari, Android, iOS */
+		url('../fonts/segoe_ui_gras.svg#segoe_ui_gras') format('svg'); /* Chrome < 4, Legacy iOS */
+}
+
+@font-face {
+	font-family: 'Segoe UI Gras Italique';
+	src: url('../fonts/segoe_ui_gras_italique.eot'); /* IE 9 Compatibility Mode */
+	src: url('../fonts/segoe_ui_gras_italique.eot?#iefix') format('embedded-opentype'), /* IE < 9 */
+		url('../fonts/segoe_ui_gras_italique.woff2') format('woff2'), /* Super Modern Browsers */
+		url('../fonts/segoe_ui_gras_italique.woff') format('woff'), /* Firefox >= 3.6, any other modern browser */
+		url('../fonts/segoe_ui_gras_italique.ttf') format('truetype'), /* Safari, Android, iOS */
+		url('../fonts/segoe_ui_gras_italique.svg#segoe_ui_gras_italique') format('svg'); /* Chrome < 4, Legacy iOS */
+}
+
+@font-face {
+	font-family: 'Segoe UI Italique';
+	src: url('../fonts/segoe_ui_italique.eot'); /* IE 9 Compatibility Mode */
+	src: url('../fonts/segoe_ui_italique.eot?#iefix') format('embedded-opentype'), /* IE < 9 */
+		url('../fonts/segoe_ui_italique.woff2') format('woff2'), /* Super Modern Browsers */
+		url('../fonts/segoe_ui_italique.woff') format('woff'), /* Firefox >= 3.6, any other modern browser */
+		url('../fonts/segoe_ui_italique.ttf') format('truetype'), /* Safari, Android, iOS */
+		url('../fonts/segoe_ui_italique.svg#segoe_ui_italique') format('svg'); /* Chrome < 4, Legacy iOS */
+}
+
+@font-face {
+	font-family: 'Segoe UI Light';
+	src: url('../fonts/segoe_ui_light.eot'); /* IE 9 Compatibility Mode */
+	src: url('../fonts/segoe_ui_light.eot?#iefix') format('embedded-opentype'), /* IE < 9 */
+		url('../fonts/segoe_ui_light.woff2') format('woff2'), /* Super Modern Browsers */
+		url('../fonts/segoe_ui_light.woff') format('woff'), /* Firefox >= 3.6, any other modern browser */
+		url('../fonts/segoe_ui_light.ttf') format('truetype'), /* Safari, Android, iOS */
+		url('../fonts/segoe_ui_light.svg#segoe_ui_light') format('svg'); /* Chrome < 4, Legacy iOS */
+}
+
+@font-face {
+	font-family: 'Segoe UI Semibold';
+	src: url('../fonts/segoe_ui_semibold.eot'); /* IE 9 Compatibility Mode */
+	src: url('../fonts/segoe_ui_semibold.eot?#iefix') format('embedded-opentype'), /* IE < 9 */
+		url('../fonts/segoe_ui_semibold.woff2') format('woff2'), /* Super Modern Browsers */
+		url('../fonts/segoe_ui_semibold.woff') format('woff'), /* Firefox >= 3.6, any other modern browser */
+		url('../fonts/segoe_ui_semibold.ttf') format('truetype'), /* Safari, Android, iOS */
+		url('../fonts/segoe_ui_semibold.svg#segoe_ui_semibold') format('svg'); /* Chrome < 4, Legacy iOS */
+}
+
