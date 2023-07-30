@@ -2,7 +2,7 @@
 <extension type="template" client="site">
     <name>wmarka</name>
     <version>1.0.0</version>
-    <creationDate>November 2020</creationDate>
+    <creationDate>July 2023</creationDate>
     <author>Beibit Sakhanov</author>
     <authorEmail>beibit@sakhanov.kz</authorEmail>
     <authorUrl>https://webmarka.kz/</authorUrl>
@@ -22,8 +22,8 @@
             <span style="display:block;">The template changelog is available on the <a href="https://webmarka.kz/wmarka/download" target="_blank"><u>download page</u></a>.</span>
         </span>
     ]]></description>
-    <php_minimum>5.6</php_minimum>
-    <uikit_actual>3.6.11</uikit_actual>
+    <php_minimum>8.0</php_minimum>
+    <uikit_actual>3.16.23</uikit_actual>
     <files>
         <folder>amp</folder>	
         <folder>css</folder>
