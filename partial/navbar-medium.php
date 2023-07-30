@@ -21,7 +21,26 @@ $isOffcanvas = $_this->countModules('offcanvas') > 0;
 
 // ckeck menu in 'navbar-left' position
 
+JLoader::register('JUImage',  JPATH_LIBRARIES . '/juimage/JUImage.php');
 
+$juImg = new JUImage();
+?>
+<?php
+
+$thumb = $juImg->render('templates/'.  $_this->template . '/images/logo.png', [
+	'w'     	=> '200',
+	'h'     	=> '200',
+	'q'         => '95',
+	'zc'        => 'C',
+	'far'        => 'C',	
+	'webp'      => true,
+	'webp_q'    => '90',
+	'webp_maxq' => '95',
+	'error_image' => 'templates/'.  $_this->template . '/images/logo1.png',	
+	'cache'     => 'img' 
+
+	
+]); 
 ?>
 
 <?php if ($_this->countModules('navbar-left + navbar-center + navbar-right + lang')) { ?>

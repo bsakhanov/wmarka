@@ -21,9 +21,7 @@ require dirname(__FILE__) . '/php/init.php';
 <!-- extlinks -->  
 
 <!-- /extlinks -->	
-  <script charset="UTF-8" src="//web.webpushs.com/js/push/83562f2d1e34da4f80053f6dc0dfebe9_1.js" async></script>
-
-          <meta name="yandex-verification" content="d9a2cb517741123b" />
+ 
 </head>
 <body class="<?php echo $tpl->getBodyClasses(); ?>">
 <?php echo $tpl->partial('adver-top.php');?>
@@ -44,38 +42,24 @@ require dirname(__FILE__) . '/php/init.php';
 <?php echo $tpl->partial('block-b.php');?>
 <?php echo $tpl->partial('block-c.php');?>
 <?php echo $tpl->partial('block-d.php');?>
-  <div class="uk-visibles">  
-<?php echo $tpl->partial('block-ee.php');?>
-    </div>
+<?php echo $tpl->partial('block-e.php');?>
+<?php echo $tpl->partial('block-f.php');?>
 <?php echo $tpl->partial('block-g.php');?>
-<?php echo $tpl->partial('block-es.php');?> 
-<?php echo $tpl->partial('block-e-3.php');?>
-<div class="uk-visibles">
+
+<?php echo $tpl->partial('block-h.php');?>
+<div class="uk-visible@m">
 <?php echo $tpl->partial('block-i.php');?>
 </div>
-<?php echo $tpl->partial('block-pr.php');?>
-<?php echo $tpl->partial('block-hokkey.php');?>
-<?php echo $tpl->partial('block-e-4.php');?>
-<div class="uk-visibles">  
-<?php echo $tpl->partial('block-women.php');?>
-  </div>
-<?php echo $tpl->partial('block-f.php');?>
-
-
-<?php echo $tpl->partial('content2.php');?>
-
-
-
 <?php echo $tpl->partial('partners.php');?>
 
 <?php echo $tpl->partial('block-k.php');?>
 
-<?php echo $tpl->partial('footer.php');?> 
- 
+<?php echo $tpl->partial('footer.php');?>
+<a class="uk-padding-small uk-position-bottom-left uk-position-fixed" data-uk-totop data-uk-scroll aria-label="Up" name="Up"></a>
 
 <?php if ($this->countModules('debug')) { ?>
 <jdoc:include type="modules" name="debug" style="none" />
-<?php } ?> 
+<?php } ?>
 <?php echo $tpl->partial('counters1.php');?>
 
 </body>
