@@ -6,46 +6,38 @@
   "license": "GPL-2.0-or-later",
   "assets": [
     {
-      "name": "template.uikit.min",
+      "name": "uikit.min",
       "description": "The css file to be used when the site is left to right (LTR).",
       "type": "style",
-      "uri": "uikit.min.css",
+      "uri": "media/templates/site/wmarka/css/uikit.min.css"
  
     }, 
     {
-      "name": "template.user",
-      "description": "A file where a user can add their own css.",
+      "name": "user",
+      "description": "The css file to be used when the site is left to right (LTR).",
       "type": "style",
-      "uri": "user.css",
-      "weight": 500,
-    },
+      "uri": "media/templates/site/wmarka/css/user.css"
+ 
+    },     
+
     {
-      "name": "template.uikit.min",
+      "name": "uikit.min",
       "description": "The file containing the javascript for this template.",
       "type": "script",
-      "uri": "uikit.min.js",
+      "uri": "media/templates/site/wmarka/js/uikit.min.js",
       "attributes" : {
         "defer": true
-      },
+      } 
+    },
     {
-      "name": "template.uikit-icons.min",
+      "name": "uikit-icons.min",
       "description": "The file containing the javascript for this template.",
       "type": "script",
-      "uri": "uikit-icons.min",
+      "uri": "media/templates/site/wmarka/js/uikit-icons.min.js",
       "attributes" : {
         "defer": true
-      }, 
-    },
-    {
-      "name": "template.user",
-      "description": "The name of a file where a user can add their own javascript",
-      "type": "script",
-      "uri":  "user.js",
-      "dependencies": [
-        "template.active"
-      ]
-    },
- 
- 
+      } 
+    }  
+    
   ]
 }
