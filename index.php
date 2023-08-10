@@ -9,12 +9,22 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 // init $tpl helper
 require dirname(__FILE__) . '/php/init.php';
-
+$wa    = $this->getWebAssetManager();
+// Enable assets
+$wa->usePreset('template.uikit.min')
+    ->useStyle('template.uikit.min')
+    ->useScript('template.uikit.min')	
+    ->useScript('template.uikit-icons.min')
+    ->useStyle('template.user')
+    ->useScript('template.user');
 ?><?php echo $tpl->renderHTML(); 
 
  ?>
 
 <head>
+
+    <jdoc:include type="styles" />
+    <jdoc:include type="scripts" />
 <jdoc:include type="head" />
 	<?php echo $tpl->partial('critical-css.php');?>
 	<?php echo $tpl->partial('critical-js.php');?>
