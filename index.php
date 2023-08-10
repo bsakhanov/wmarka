@@ -10,16 +10,23 @@ use Joomla\CMS\Router\Route;
 // init $tpl helper
 require dirname(__FILE__) . '/php/init.php';
 $wa    = $this->getWebAssetManager();
-// Enable assets
-$wa->usePreset('template.uikit.min')
-    ->useStyle('template.uikit.min')
-    ->useScript('template.uikit.min')	
-    ->useScript('template.uikit-icons.min')
-    ->useStyle('template.user')
-    ->useScript('template.user');
-?><?php echo $tpl->renderHTML(); 
 
- ?>
+// Enable assets
+
+/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+ 
+ 
+// Or multiple
+$wa->useStyle('uikit.min');
+$wa->useStyle('user');
+$wa->useScript('uikit.min');
+$wa->useScript('uikit-icons.min');
+
+?>
+
+
+<?php echo $tpl->renderHTML();  ?>
 
 <head>
     <jdoc:include type="metas" />
