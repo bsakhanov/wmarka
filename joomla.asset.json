@@ -6,7 +6,7 @@
   "license": "GPL-2.0-or-later",
   "assets": [
     {
-      "name": "template.uikit.min.css",
+      "name": "template.uikit.min",
       "description": "The css file to be used when the site is left to right (LTR).",
       "type": "style",
       "uri": "uikit.min.css",
