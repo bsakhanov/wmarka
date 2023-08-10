@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="template" client="site">
     <name>wmarka</name>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <creationDate>July 2023</creationDate>
     <author>Beibit Sakhanov</author>
     <authorEmail>beibit@sakhanov.kz</authorEmail>
@@ -23,7 +23,7 @@
         </span>
     ]]></description>
     <php_minimum>8.0</php_minimum>
-    <uikit_actual>3.16.23</uikit_actual>
+    <uikit_actual>3.16.24</uikit_actual>
     <files>
         <folder>amp</folder>	
         <folder>css</folder>
@@ -32,6 +32,8 @@
         <folder>js</folder>
         <folder>partial</folder>
         <folder>php</folder>
+        <filename>amp.php</filename>	    
+        <filename>ampcomponent.php</filename>		    
        <filename>component.php</filename>
         <filename>error.php</filename>
         <filename>favicon.ico</filename>
@@ -42,10 +44,18 @@
         <filename>template_preview.png</filename>
         <filename>template_thumbnail.png</filename>
         <filename>templateDetails.xml</filename>
-        <filename>amp.php</filename>
-        <filename>ampcomponent.php</filename>		
+        <filename>readme.md</filename>	
     </files>
-
+	<media destination="templates/site/wmarka" folder="media">
+		<folder>js</folder>
+		<folder>css</folder>
+		<folder>images</folder>
+	</media>
+	<languages folder="language">
+		<language tag="kk-KZ">overrides/kk-KZ.override.ini</language>
+		<language tag="ru-RU">overrides/ru-RU.override.ini</language>
+		<language tag="en-GB">overrides/en-GB.override.ini</language>
+	</languages>	
     <positions>
         <position section="toolbar">toolbar-left</position>
         <position section="toolbar">toolbar-right</position>
