@@ -5,7 +5,7 @@
 
 Блоки сайта вынесены в партикли, их можно редактировать в папке partial, подключаются они в index.php шаблона. 
 
-CSS и JavaScript подключаются через joomla.asset.json (в корне сайта) и далее через index.php с помощью WebAssetManager (https://jpath.ru/docs/output/js-css/kak-pravilno-podklyuchat-javascript-i-css-v-joomla-4). 
+CSS и JavaScript подключаются через joomla.asset.json (в корне сайта) и далее через index.php с помощью WebAssetManager (https://jpath.ru/docs/output/js-css/kak-pravilno-podklyuchat-javascript-i-css-v-joomla-4). Вносить правки по стилю можно в файл user.css (находится по пути /media/templates/site/wmarka/css/user.css).
 
 В папке images имеется подпапка favicon, куда можете загрузить свой набор фавиконов, который я обычно генерирую через сервис https://realfavicongenerator.net. Не забудьте прописать пути (строки с 94 по 102) в файле init.php, который находится в папке php шаблона.
 
