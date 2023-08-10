@@ -1,0 +1,51 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "wmarka",
+  "version": "1.0.1",
+  "description": "This file contains details of the assets used by Wmarka, the default Joomla 4 site template.",
+  "license": "GPL-2.0-or-later",
+  "assets": [
+    {
+      "name": "template.uikit.min.css",
+      "description": "The css file to be used when the site is left to right (LTR).",
+      "type": "style",
+      "uri": "uikit.min.css",
+ 
+    }, 
+    {
+      "name": "template.user",
+      "description": "A file where a user can add their own css.",
+      "type": "style",
+      "uri": "user.css",
+      "weight": 500,
+    },
+    {
+      "name": "template.uikit.min",
+      "description": "The file containing the javascript for this template.",
+      "type": "script",
+      "uri": "uikit.min.js",
+      "attributes" : {
+        "defer": true
+      },
+    {
+      "name": "template.uikit-icons.min",
+      "description": "The file containing the javascript for this template.",
+      "type": "script",
+      "uri": "uikit-icons.min",
+      "attributes" : {
+        "defer": true
+      }, 
+    },
+    {
+      "name": "template.user",
+      "description": "The name of a file where a user can add their own javascript",
+      "type": "script",
+      "uri":  "user.js",
+      "dependencies": [
+        "template.active"
+      ]
+    },
+ 
+ 
+  ]
+}
