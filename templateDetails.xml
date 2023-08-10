@@ -41,6 +41,7 @@
         <filename>index.php</filename>
         <filename>offline.php</filename>
         <filename>raw.php</filename>
+		<filename>joomla.asset.json</filename>
         <filename>template_preview.png</filename>
         <filename>template_thumbnail.png</filename>
         <filename>templateDetails.xml</filename>
@@ -86,5 +87,4 @@
 		<position>lang</position>
         <position>search</position>
     </positions>
-
 </extension>
