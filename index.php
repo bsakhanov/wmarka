@@ -22,16 +22,9 @@ $wa->usePreset('template.uikit.min')
  ?>
 
 <head>
-
+    <jdoc:include type="metas" />
     <jdoc:include type="styles" />
     <jdoc:include type="scripts" />
-<jdoc:include type="head" />
-	<?php echo $tpl->partial('critical-css.php');?>
-	<?php echo $tpl->partial('critical-js.php');?>
-<!-- extlinks -->  
-
-<!-- /extlinks -->	
- 
 </head>
 <body class="<?php echo $tpl->getBodyClasses(); ?>">
 <?php echo $tpl->partial('adver-top.php');?>
