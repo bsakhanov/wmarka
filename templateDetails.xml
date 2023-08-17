@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="template" client="site">
     <name>wmarka</name>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <creationDate>July 2023</creationDate>
     <author>Beibit Sakhanov</author>
     <authorEmail>beibit@sakhanov.kz</authorEmail>
@@ -53,9 +53,9 @@
 		<folder>images</folder>
 	</media>
 	<languages folder="language">
-		<language tag="kk-KZ">overrides/kk-KZ.override.ini</language>
-		<language tag="ru-RU">overrides/ru-RU.override.ini</language>
-		<language tag="en-GB">overrides/en-GB.override.ini</language>
+		<language tag="kk-KZ">language/overrides/kk-KZ.override.ini</language>
+		<language tag="ru-RU">language/overrides/ru-RU.override.ini</language>
+		<language tag="en-GB">language/overrides/en-GB.override.ini</language>
 	</languages>	
     <positions>
         <position section="toolbar">toolbar-left</position>
@@ -81,9 +81,15 @@
         <position section="block-h">block-h</position>
         <position section="block-i">block-i</position>
         <position section="block-k">block-k</position>
-        <position section="footer">footer</position>
+        <position section="footer">footer-left</position>
+        <position section="footer">footer-right</position>
+        <position section="footer">footer-center</position>      
+        <position section="footer">amp-footer-left</position>
+        <position section="footer">amp-footer-right</position>
+        <position section="footer">amp-footer-center</position>  		
         <position offcanvas="">offcanvas</position>
         <position offcanvas="">offcanvas-menu</position>
+		<position>logo</position>      
 		<position>lang</position>
         <position>search</position>
     </positions>
