@@ -8,24 +8,24 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
-$modId = 'tm-modid-' . $module->id;
+$modId = 'mod-custom' . $module->id;
 
 if ($params->get('backgroundimage')) {
-	$wa = $app->getDocument()->getWebAssetManager();
-	$wa->addInlineStyle(
-        '#' . $modId . '{background-image: url("' . Uri::root(true) . '/' .
-            HTMLHelper::_('cleanImageURL', $params->get('backgroundimage'))->url . '");}' . "\n",
-        ['name' => $modId]
-    );
+    /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+    $wa->addInlineStyle('
+#' . $modId . '{background-image: url("' . Uri::root(true) . '/' . HTMLHelper::_('cleanImageURL', $params->get('backgroundimage'))->url . '");}
+', ['name' => $modId]);
 }
 
 ?>
 
 <div id="<?php echo $modId; ?>" class="mod-custom custom">
-	<?php echo $module->content; ?>
+    <?php echo $module->content; ?>
 </div>

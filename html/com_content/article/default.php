@@ -1,4 +1,4 @@
-<?php
+​<?php
 /**
  * @package     Joomla.Site
  * @subpackage  com_content
@@ -108,18 +108,18 @@ $document->setMetadata('description', $mmd);
 
 $app    = JFactory::getApplication();
 $mailfrom   = $app->getCfg('mailfrom');
-
+ 
 
 
 $datepubl = $this->item->created;
 if (isset($images -> image_intro) and !empty($images -> image_intro)) {
-   $timage = htmlspecialchars(JURI :: root().$images -> image_intro);
+   $timage = htmlspecialchars(JUri::root().''.LayoutHelper::render('joomla.content.full_image2', $this->item));
    }
 elseif (isset($images -> image_fulltext) and !empty($images -> image_fulltext)) {
-   $timage = htmlspecialchars(JURI :: root().$images -> image_fulltext);
+   $timage = htmlspecialchars(JUri::root().''.LayoutHelper::render('joomla.content.full_image2', $this->item));
    }
 else {
-   $timage = $pathToImage = 'templates/wmarka/images/logotype.jpg';
+   $timage = $pathToImage = htmlspecialchars(JURI::base(true).'/media/templates/site/'.$app->getTemplate().'/images/logotype.jpg');
    }
 
 $lang = JText::_('OG_LANG');
@@ -134,6 +134,10 @@ $latitude = JText::_('SEO_LATITUDE');
 $longitude = JText::_('SEO_LONGITUDE');
 $descauthor = JText::_('SEO_DESCRIPTION_AUTHOR');
 $descpublisher = JText::_('SEO_DESCRIPTION_PUBLISHER');
+$usernamesite = JText::_('SEO_TWITTER_SITE');
+$usernameautor = JText::_('SEO_TWITTER_CREATOR');
+$facebookid = JText::_('SEO_FACEBOOK_ID');
+$yourappid = JText::_('SEO_YOUR_APP_ID');
 
 $document -> addCustomTag( '
 
@@ -141,19 +145,19 @@ $document -> addCustomTag( '
 <!-- Twitter card -->
 <meta name="twitter:title" content="'.$this->escape($this->item->title).'">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@NewsVrk">
-<meta name="twitter:creator" content="@NewsVrk">
+<meta name="twitter:site" content="'.$usernamesite.'">
+<meta name="twitter:creator" content="'.$usernameautor.'">
 <meta name="twitter:url" content="'.str_replace('" ','&quot;',JURI::current()).'">
 <meta name="twitter:description" content="'.$mmd.'">
-<meta name="twitter:image" content="'.JUri::root().''.LayoutHelper::render('joomla.content.full_image2', $this->item).'">
-<meta name="twitter:image:src" content="'.JUri::root().''.LayoutHelper::render('joomla.content.full_image2', $this->item).'">
+<meta name="twitter:image" content="'.$timage.'">
+<meta name="twitter:image:src" content="'.$timage.'">
 <!-- Open Graph data -->
 <meta property="og:title" content="'.$this->escape($this->item->title).'">
 <meta property="og:description" content="'.$mmd.'">
 <meta property="og:type" content="article">
 <meta property="og:url" content="'.JURI :: current().'">
-<meta property="og:image" content="'.JUri::root().''.LayoutHelper::render('joomla.content.full_image2', $this->item).'">
-<meta property="og:image:secure_url" content="'.JUri::root().''.LayoutHelper::render('joomla.content.full_image2', $this->item).'">
+<meta property="og:image" content="'.$timage.'">
+<meta property="og:image:secure_url" content="'.$timage.'">
 <meta property = "og:image:type" content = "image/jpg" />
 <meta property="og:image:width" content="900" />
 <meta property="og:image:height" content="506" />
@@ -166,8 +170,8 @@ $document -> addCustomTag( '
 <meta property="article:section" content="'.$this->escape($this->item->category_title).'" />
 <meta property="article:author" content="'.$this->escape($this->item->author).'">
 <meta property="news_keywords" content="'.$mmk.'">
-<meta property="fb:admins" content="100001722532567">
-<meta property="fb:app_id" content="170575822955644">
+<meta property="fb:admins" content="'.$facebookid.'">
+<meta property="fb:app_id" content="'.$yourappid.'">
 <!-- Open Graph data end-->
 
 <link href="//img.youtube.com" rel="dns-prefetch preconnect" />
@@ -200,18 +204,18 @@ $document -> addCustomTag( '
  "mainEntityOfPage":"True",
 "publisher": {
   "@type": "Organization",
-  "name": "VRK.News",
+  "name": "<?php echo $config->get( 'sitename' ); ?>",
   "url":"<?php echo JUri::root(); ?>",
   "logo": {
     "@type": "ImageObject",
-    "url": "<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png",
+    "url": "<?php echo JURI::base(true).'/media/templates/site/'.$app->getTemplate().'/'; ?>images/favicon/apple-touch-icon.png",
     "width": 180,
     "height": 180
   }
 },
 "image": {
   "@type": "ImageObject",
-  "url": "<?php echo JUri::root(); ?><?php echo LayoutHelper::render('joomla.content.full_image2', $this->item) ?>",
+  "url": "<?php echo $timage; ?>",
   "height": 900,
   "width": 506
 }
@@ -253,11 +257,11 @@ $this->item->tagLayout = new JLayoutFile('joomla.content.tags');
 <meta itemscope itemprop="mainEntityOfPage" itemType="https://schema.org/WebPage" itemid="<?php echo JURI :: current(); ?>" >   
 		<div itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
 			<div itemprop="logo" itemscope itemtype="https://schema.org/ImageObject">
-				<link itemprop="url" href="<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png">
-				<meta itemprop="image" content="<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png">
+				<link itemprop="url" href="<?php echo JURI::base(true).'/media/templates/site/'.$app->getTemplate().'/'; ?>images/favicon/apple-touch-icon.png">
+				<meta itemprop="image" content="<?php echo JURI::base(true).'/media/templates/site/'.$app->getTemplate().'/'; ?>images/favicon/apple-touch-icon.png">
 				<meta itemprop="width" content="180">
 				<meta itemprop="height" content="180">
-				<meta itemprop="thumbnail" content="<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png">
+				<meta itemprop="thumbnail" content="<?php echo JURI::base(true).'/media/templates/site/'.$app->getTemplate().'/'; ?>images/favicon/apple-touch-icon.png">
 			</div>
    			<meta itemprop="name" content="<?php echo $config->get( 'sitename' ); ?>" />
    			<meta itemprop="description" content="<?php echo $descpublisher; ?>">			
@@ -289,14 +293,7 @@ $this->item->tagLayout = new JLayoutFile('joomla.content.tags');
 
 	<?php $useDefList = $params->get('show_modify_date') || $params->get('show_publish_date') || $params->get('show_create_date')
 	|| $params->get('show_hits') || $params->get('show_category') || $params->get('show_parent_category') || $params->get('show_author') || $assocParam; ?>
-<?php
-  $commentsAPI = JPATH_SITE . '/components/com_jcomments/jcomments.php';
-  if (file_exists($commentsAPI)) :
-    require_once($commentsAPI);
-    $total = JComments::getCommentsCount($this->item->id, 'com_content');
-   
-  endif;
-?>
+
 <div class="uk-flex uk-flex-middle uk-flex-wrap "> 
   <div hidden><?php 
 		   $text0 = LayoutHelper::render('joomla.content.tags-exlusive', $this->item->tags->itemTags); ?></div>
@@ -324,7 +321,7 @@ if (strpos($main_str0, 'Эксклюзив') !== false) {
             // Todo: for Joomla4 joomla.content.info_block.block can be changed to joomla.content.info_block
             echo LayoutHelper::render('joomla.content.info_block', array('item' => $this->item, 'params' => $params, 'position' => 'above'));
         }
-        ?>&nbsp;<a class="uk-link-heading uk-article-meta uk-margin-left" href="#comments2"><span uk-icon="icon: comment; ratio: 0.9"></span>&nbsp;<?php echo $total; ?> </a></div>
+        ?></div>
     <?php if ($params->get('show_page_heading') && !$params->get('show_title')) { ?>
     <h1 class="uk-article-title uk-margin-small" itemprop="headline">    		 
       
@@ -336,14 +333,6 @@ if (strpos($main_str0, 'Эксклюзив') !== false) {
     <?php } else { ?>
     <h1 class="uk-hidden" itemprop="headline"><?php echo $this->escape($this->item->title); ?></h1>
     <?php } ?>
-	
-
-
-
-
-
-
-
 		<div class="uk-margin-small-left uk-visibles">
 			   <ul class="as-social uk-grid-small uk-grid-small3 uk-flex-middle uk-width-2-3@m" data-uk-grid>
 	<li><small>Поделиться:</small></li><li><a href="https://www.facebook.com/sharer.php?u=<?php echo JURI :: current(); ?>&summary=MySummary&title=<?php echo $this -> escape($this -> item -> title); ?>&description=<?php echo $mmd; ?>&picture=<?php echo $timage; ?>', 'ventanacompartir', 'toolbar=0, status=0, width=650, height=450'" onclick="return Share.me(this);" target="_blank" rel="nofollow noopener"  class="as-icon-facebook uk-icon-button uk-icon-button2" title="Facebook" data-uk-icon="icon: facebook; ratio: 0.7" itemprop="url"></a></li>
@@ -438,14 +427,6 @@ echo $format;
 </div>
  
 
-	<div uk-margin class="uk-padding uk-text-center uk-text-bold">
-		<div class="">Подписаться на канал новостей Bestnews:</div>
-		
-		<a href="https://news.google.com/publications/CAAqJQgKIh9DQklTRVFnTWFnMEtDMkpsYzNSdVpYZHpMbXQ2S0FBUAE" target="_blank" rel="noopener"> <img src="/templates/wmarka/images/podpiska/google_news.svg"  width="120" height="40" alt="Google News"> 
-		</a>
-		<a href="https://yandex.ru/news/?favid=254072398" target="_blank" rel="noopener"> <img src="/templates/wmarka/images/podpiska/yandex_news.svg" width="120" height="40" alt="Yandex News"> </a>
-		<a href="https://zen.yandex.ru/id/5a1057d8865165a7e788efdc" target="_blank" rel="noopener"> <img src="/templates/wmarka/images/podpiska/yandex_zen.svg" width="120" height="40" alt="Yandex Zen"> </a>
-	</div>
 
  
  
@@ -468,15 +449,15 @@ echo $format;
 
 
 		<div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
-			<link itemprop="url" href="<?php echo LayoutHelper::render('joomla.content.full_image2', $this->item);?>">
+			<link itemprop="url" href="<?php echo $timage; ?>">
 			<meta itemprop="width" content="900">
 			<meta itemprop="height" content="506">
-			<meta itemprop="thumbnail" content="<?php echo JUri::root(); ?><?php echo LayoutHelper::render('joomla.content.intro_image2', $this->item);?>">
+			<meta itemprop="thumbnail" content="<?php echo $timage; ?>">
 		</div>
 		<div itemprop="author" itemscope itemtype="http://schema.org/Person" >
 			<meta itemprop="name" content="<?php echo $config->get( 'sitename' ); ?>">
 			<meta itemprop="description" content="<?php echo $descauthor; ?>">
-			<meta itemprop="image" content="<?php echo JUri::root(); ?>templates/wmarka/images/logotype.jpg">
+			<meta itemprop="image" content="<?php echo JURI::base(true).'/media/templates/site/'.$app->getTemplate().'/'; ?>images/logotype.jpg">
 			<link itemprop="url" href="<?php echo JUri::root(); ?>">
 			<meta itemprop="email" content="<?php echo $mailfrom; ?>">
 			<meta itemprop="telephone" content="<?php echo JText::_('SEO_TEL'); ?>">
@@ -485,11 +466,11 @@ echo $format;
 		</div>
 		<div itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
 			<div itemprop="logo" itemscope itemtype="https://schema.org/ImageObject">
-				<link itemprop="url" href="<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png">
-				<meta itemprop="image" content="<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png">
+				<link itemprop="url" href="<?php echo JURI::base(true).'/media/templates/site/'.$app->getTemplate().'/'; ?>images/favicon/apple-touch-icon.png">
+				<meta itemprop="image" content="<?php echo JURI::base(true).'/media/templates/site/'.$app->getTemplate().'/'; ?>images/favicon/apple-touch-icon.png">
 				<meta itemprop="width" content="180">
 				<meta itemprop="height" content="180">
-				<meta itemprop="thumbnail" content="<?php echo JUri::root(); ?>templates/wmarka/images/apple-touch-icon.png">
+				<meta itemprop="thumbnail" content="<?php echo JURI::base(true).'/media/templates/site/'.$app->getTemplate().'/'; ?>images/favicon/apple-touch-icon.png">
 			</div>
    			<meta itemprop="name" content="<?php echo $config->get( 'sitename' ); ?>" />
    			<meta itemprop="description" content="<?php echo $descpublisher; ?>">			

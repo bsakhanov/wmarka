@@ -9,7 +9,7 @@ $blocki = $blocki > 6 ? 6 : $blocki;
 if ($blocki) {
 ?>
 <section id="block-i" class="uk-section uk-section-large uk-section-default uk-padding-remove-vertical uk-section-primary">
-    <div class="uk-container uk-container-small uk-flex uk-flex-center">
+    <div class="uk-container uk-container-small">
          
             <jdoc:include type="modules" name="block-i" style="master3lite" />
  

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "wmarka",
+  "version": "1.0.1",
+  "description": "This file contains details of the assets used by Wmarka, the default Joomla 4 site template.",
+  "license": "GPL-2.0-or-later",
+  "assets": [
+    {
+      "name": "uikit.min",
+      "description": "The css file to be used when the site is left to right (LTR).",
+      "type": "style",
+      "uri": "media/templates/site/wmarka/css/uikit.min.css"
+ 
+    }, 
+    {
+      "name": "user",
+      "description": "The css file to be used when the site is left to right (LTR).",
+      "type": "style",
+      "uri": "media/templates/site/wmarka/css/user.css"
+ 
+    },     
+
+    {
+      "name": "uikit.min",
+      "description": "The file containing the javascript for this template.",
+      "type": "script",
+      "uri": "media/templates/site/wmarka/js/uikit.min.js",
+      "attributes" : {
+        "defer": true
+      } 
+    },
+    {
+      "name": "uikit-icons.min",
+      "description": "The file containing the javascript for this template.",
+      "type": "script",
+      "uri": "media/templates/site/wmarka/js/uikit-icons.min.js",
+      "attributes" : {
+        "defer": true
+      } 
+    },
+    {
+      "name": "wmarka-icons-min",
+      "description": "The file containing the javascript for this template.",
+      "type": "script",
+      "uri": "media/templates/site/wmarka/js/wmarka-icons-min.js",
+      "attributes" : {
+        "defer": true
+      } 
+    } 	
+    
+  ]
+}

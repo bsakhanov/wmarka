@@ -1,125 +1,112 @@
 <?php
-/**
- * @package     Joomla.Site
- * @subpackage  Templates.master3lite
- * @copyright   Copyright (C) Aleksey A. Morozov. All rights reserved.
- * @license     GNU General Public License version 3 or later; see http://www.gnu.org/licenses/gpl-3.0.txt
- */
-
-
-
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Language\Text;
-/* === Menu options === */
+use Joomla\Module\Finder\Site\Helper\FinderHelper;
 
-// menu toggle breakpoint
-$omb = $_this->params->get('omb', '@m');
+/*
+ * navbar-left
+ * navbar-center
+ * navbar-right
+ */
 
-// check offcanvas
-$isOffcanvas = $_this->countModules('offcanvas') > 0;
-
-// ckeck menu in 'navbar-left' position
-$isNavbarMenu = false;
-foreach (ModuleHelper::getModules('navbar-left') as $module) {
-    if ($module->module === 'mod_menu') {
-        $isNavbarMenu = true;
-        break;
-    }
-}
-$isNavbarMenuLeft = $isNavbarMenu && $isOffcanvas;
-
-// ckeck menu in 'navbar-center' position
-if (!$isNavbarMenu) {
-    foreach (ModuleHelper::getModules('navbar-center') as $module) {
-        if ($module->module === 'mod_menu') {
-            $isNavbarMenu = true;
-            break;
-        }
-    }
-    $isNavbarMenuCenter = $isNavbarMenu && $isOffcanvas;
-} else {
-    $isNavbarMenuCenter = false;
-}
-
-// ckeck menu in 'navbar-right' position
-if (!$isNavbarMenu) {
-    foreach (ModuleHelper::getModules('navbar-right') as $module) {
-        if ($module->module === 'mod_menu') {
-            $isNavbarMenu = true;
-            break;
-        }
-    }
-    $isNavbarMenuRight = $isNavbarMenu && $isOffcanvas;
-} else {
-    $isNavbarMenuRight = false;
-}
-
-?>
-
-<?php { ?>
-<div role="navigation" id="navbar" class="uk-padding  uk-background-primary uk-preserve-color"  itemscope itemtype="http://www.schema.org/SiteNavigationElement" uk-sticky="animation: uk-animation-slide-top; sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; cls-inactive: uk-navbar-transparent uk-light; top: 200; bottom: #component-options">
-        <nav class="uk-navbar-container">
-            <div class="uk-container uk-container-expand">
-                <div data-uk-navbar="align: center">
-            <?php
-            if ($_this->countModules('navbar-left')) {
-                if ($isNavbarMenuLeft) {
-            ?>
-            <div class="uk-navbar-left uk-hidden<?php echo $omb; ?>">
-                <a href="#offcanvas" class="uk-navbar-toggle" data-uk-navbar-toggle-icon data-uk-toggle aria-label="Menu"></a>
+if (
+    $_this->countModules('navbar-left')
+    || $_this->countModules('navbar-center')
+    || $_this->countModules('navbar-right')
+    || $_this->countModules('lang')	
+) {
+    ?>
+<div role="navigation" id="navbar" class="uk-section uk-padding-remove-vertical uk-margin-remove-vertical uk-navbar-container"  itemscope itemtype="http://www.schema.org/SiteNavigationElement" uk-sticky>	
+    <div class="uk-container">
+        <div data-uk-navbar>
+            <?php if ($_this->countModules('navbar-left')) { ?>
+            <div class="uk-navbar-left uk-hidden@m">
+                <a href="#offcanvas-menu" class="uk-navbar-toggle"
+                    data-uk-navbar-toggle-icon data-uk-toggle aria-label="Menu"></a>
             </div>
-            <?php } ?>
-            <div class="uk-navbar-left<?php echo ($isNavbarMenuLeft ? ' uk-visible' . $omb : ''); ?>">
-                <jdoc:include type="modules" name="navbar-left" style="master3lite" />
+            <div class="uk-navbar-left uk-visible@m">
+                <jdoc:include type="modules" name="navbar-left" style="master3" />
             </div>
             <?php } ?>
 
-            <?php
-            if ($_this->countModules('navbar-center')) {
-                if ($isNavbarMenuCenter) {
-            ?>
-            <div class="uk-navbar-center uk-hidden<?php echo $omb; ?>">
-                <a href="#offcanvas" class="uk-navbar-toggle uk-light" data-uk-navbar-toggle-icon data-uk-toggle aria-label="Menu"></a>
+            <?php if ($_this->countModules('navbar-center')) { ?>
+            <div class="uk-navbar-center uk-hidden@m">
+                <a href="#offcanvas-menu" class="uk-navbar-toggle"
+                    data-uk-navbar-toggle-icon data-uk-toggle aria-label="Menu"></a>
             </div>
-            <?php } ?>
-            <div class="uk-navbar-center<?php echo ($isNavbarMenuCenter ? ' uk-visible' . $omb : ''); ?>">
-                <jdoc:include type="modules" name="navbar-center" style="master3lite" />
+            <div class="uk-navbar-center uk-visible@m">
+                <jdoc:include type="modules" name="navbar-center" style="master3" />
             </div>
             <?php } ?>
 
-            <?php
-            if ($_this->countModules('navbar-right')) {
-                if ($isNavbarMenuRight) {
-            ?>
-            <div class="uk-navbar-right uk-hidden<?php echo $omb; ?>">
-                <a href="#offcanvas" class="uk-navbar-toggle" data-uk-navbar-toggle-icon data-uk-toggle aria-label="Menu"></a>
+            <?php if ($_this->countModules('navbar-right')) { ?>
+            <div class="uk-navbar-right uk-hidden@m">
+                <a href="#offcanvas-menu" class="uk-navbar-toggle"
+                    data-uk-navbar-toggle-icon data-uk-toggle aria-label="Menu"></a>
             </div>
+            <div class="uk-navbar-right uk-visible@m">
+                <jdoc:include type="modules" name="navbar-right" style="master3" />
+            </div>		
             <?php } ?>
-            <div class="uk-navbar-right<?php echo ($isNavbarMenuRight ? ' uk-visible' . $omb : ''); ?>">
-                <jdoc:include type="modules" name="navbar-right" style="master3lite" />
-            </div>
-            <?php } ?>
-
+			<?php if ($_this->countModules('lang')) { ?>
+            <div class="uk-navbar-right uk-inline">
+                <jdoc:include type="modules" name="lang" style="master3" />
+			</div>	
+            <?php } ?>	
+			<div class="nav-overlay uk-navbar-right">
+			        <a class="uk-navbar-toggle" href="#modal-full" uk-search-icon uk-toggle></a>
+			</div>
+			<div class="nav-overlay uk-navbar-left" hidden>
+				<div class="uk-navbar-item uk-width-expand">
+					<div id="modal-full" class="uk-modal-full uk-modal" uk-modal>
+						<div class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle" uk-height-viewport>
+							<button class="uk-modal-close-full" type="button" uk-close></button>
+                    <form action="/search" method="post" class="uk-search uk-search-navbar uk-width-1-1">
+                        <?php
+                        $output = '<input class="uk-search-input uk-text-center" type="search" 
+			       placeholder="Найти..." aria-label="Найти"   autofocus>';
+                        $btn_output = '';
+                		$btn_output = '<a href="#" data-uk-search-icon></a>';
+                        echo $btn_output . $output;
+                        ?>                    
+                        
+                    </form>
+						</div>
+					</div>
+				</div>						
+			</div>				
         </div>
     </div>
-	</nav>
 </div>
 <?php } ?>
+<?php
+/*
+ * offcanvas
+ */
+if ($_this->countModules('offcanvas')) { ?>
+<aside id="offcanvas" data-uk-offcanvas="mode:slide;overlay:true">
+    <div class="uk-offcanvas-bar">
+        <a class="uk-offcanvas-close" data-uk-close aria-label="<?php echo Text::_('JLIB_HTML_BEHAVIOR_CLOSE'); ?>"></a>
+        <jdoc:include type="modules" name="offcanvas" style="master3" />
+    </div>
+</aside>
+<?php } ?>
 
-<?php if ($isOffcanvas) { ?>
-<aside id="offcanvas" data-uk-offcanvas="mode:slide;overlay:true;">
-    <div class="uk-offcanvas-bar uk-hidden-hover uk-background-primary">
-        <a class="uk-offcanvas-close" data-uk-close aria-label="<?php echo Text::_('JLIB_HTML_BEHAVIOR_CLOSE'); ?>" name="<?php echo Text::_('JLIB_HTML_BEHAVIOR_CLOSE'); ?>"></a>
-		<div class="uk-margin-top">
-		<?php if ($_this->countModules('search')) : ?><jdoc:include type="modules" name="search" style="no" />
-		<?php endif; ?>
-        <jdoc:include type="modules" name="offcanvas" style="master3lite" />
-		</div>
+
+<?php
+/*
+ * offcanvas-menu
+ */
+if ($_this->countModules('offcanvas-menu')) { ?>
+<aside id="offcanvas-menu" data-uk-offcanvas="mode:slide;overlay:true">
+    <div class="uk-offcanvas-bar">
+        <a class="uk-offcanvas-close" data-uk-close aria-label="<?php echo Text::_('JLIB_HTML_BEHAVIOR_CLOSE'); ?>"></a>
+        <jdoc:include type="modules" name="offcanvas-menu" style="master3" />
     </div>
 </aside>
 <?php } ?>

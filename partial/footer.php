@@ -1,26 +1,43 @@
 <?php
+/*
+ * footer-left
+ * footer-center
+ * footer-right
+ */
+if (
+    $_this->countModules('footer-left')
+    || $_this->countModules('footer-center')
+    || $_this->countModules('footer-right')
+) {
+    $sectionPosCount =
+        ($_this->countModules('footer-left') ? 1 : 0)
+        + ($_this->countModules('footer-center') ? 1 : 0)
+        + ($_this->countModules('footer-right') ? 1 : 0);
+    $sectionGridClass = 'uk-child-width-1-' . $sectionPosCount . '@m';
+    ?>
+<footer id="section-footer" class="uk-section uk-section-secondary uk-section-small">
+    <div class="uk-container uk-container-small">
+        <div class="<?php echo $sectionGridClass; ?>" data-uk-grid>
 
-defined('_JEXEC') or die;
+            <?php if ($_this->countModules('footer-left')) { ?>
+            <div>
+                <jdoc:include type="modules" name="footer-left" style="master3" />
+            </div>
+            <?php } ?>
 
-?>
-<?php
-$footer = $_this->countModules('block-a');
-$footer = $footer > 6 ? 6 : $footer;
-if ($footer) {
-?>
-<section id="footer" class="uk-section   uk-section-primary  uk-text-small">
-    <div class="uk-container uk-container-small  ">
-        <div class="uk-child-width-1-3@m uk-child-width-1-1@s uk-text-center " uk-grid>
-            <jdoc:include type="modules" name="footer" style="master3lite" />
-			<div>
-			<div class="uk-light "><div>
-    <a href="https://api.whatsapp.com/send?phone=77075330228&text=Здравствуйте%2C+у+меня+есть+вопрос" class="uk-button uk-button-text">Прямая связь <br><span class="uk-margin-small-left" uk-icon-link; ratio: 3.5" uk-icon="whatsapp"></span> по WhatsApp</a>
- </div>
-<div>
-<div class="uk-margin-top"><hr>
-  <a href="tel:+77084251394" class="uk-button uk-button-text">Просто позвонить <br><span class="uk-margin-small-left" uk-icon-link; ratio: 3.5" uk-icon="receiver"></span> +7 (701) 233-00-79</a>
-</div>
+            <?php if ($_this->countModules('footer-center')) { ?>
+            <div>
+                <jdoc:include type="modules" name="footer-center" style="master3" />
+            </div>
+            <?php } ?>
+
+            <?php if ($_this->countModules('footer-right')) { ?>
+            <div>
+                <jdoc:include type="modules" name="footer-right" style="master3" />
+            </div>
+            <?php } ?>
+
         </div>
-    </div></div>
-</section>
+    </div>
+</footer>
 <?php } ?>

@@ -336,19 +336,8 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers');
                 </div>
 		
      </div><hr><?php echo $tpl->partial('breadcrumb.php');?>     
-        </div>
-		<div class="amp-share amp-share-bottom"><?php echo $tpl->partial('share.php');?>	</div>	
-
-            
-
-           
-      
-
-			<?php echo $tpl->partial('footer1.php');?>
- 
-		
+        </div> 
+			<?php echo $tpl->partial('amp-footer.php');?>
     </div>
-
-
   </body>
   </html>

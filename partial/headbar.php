@@ -1,40 +1,39 @@
 <?php
 
-
-
 defined('_JEXEC') or die;
-
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Filesystem\Path;
+use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Language\Text;
 
-$sectionClass = 'uk-section uk-section-default';
-$containerClass = 'uk-container';
-
-?>
-<?php
 /*
  * logo
  * headbar
  */
-{ ?> 
-<header id="header" class="uk-section uk-section-default uk-section-small uk-background-cover uk-background-blend-multiply uk-background-primary uk-flex uk-flex-center uk-flex-middle" style="background-image: url(/templates/wmarka/images/header.webp);"> 
- 
+
+if ($_this->countModules('headbar')) {
+    ?>
+<header id="section-headbar" class="uk-section uk-section-small">
     <div class="uk-container">
-        <div data-uk-grid>   
-            <div class="uk-width-auto@m uk-flex uk-flex-middle">
+        <div data-uk-grid>
+
             
-            <div class="uk-navbar-item uk-logo "><img src="/templates/wmarka/images/logo-white.svg" width="200" height="90" uk-svg>
-			</div>
-           
+             <div class="uk-width-auto uk-flex uk-flex-middle">
+            <?php if (JURI::current()!= JURI::base()) { echo '<a href="'.JURI::base(true).'" itemprop="url">'; } ?>
+				<div class="uk-logo uk-display-inline-block uk-margin-small-left"><img src="media/templates/site/wmarka/images/logo.svg" width="200" height="50" uk-svg>
+				</div>
+			<?php if (JURI::current()!= JURI::base()) { echo '</a>'; } ?>
             </div>
-            <div class="uk-width-expand@m uk-flex uk-flex-middle uk-flex-right@m">
+            
+
+            <?php if ($_this->countModules('headbar')) { ?>
+            <div class="uk-width-expand uk-flex uk-flex-middle uk-flex-right">
                 <jdoc:include type="modules" name="headbar" style="master3" />
             </div>
-
+            <?php } ?>
 
         </div>
     </div>
 </header>
- 
 <?php } ?>
-
-
