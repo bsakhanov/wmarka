@@ -22,7 +22,7 @@ $wa->useStyle('uikit.min');
 $wa->useStyle('user');
 $wa->useScript('uikit.min');
 $wa->useScript('uikit-icons.min');
-$wa->useScript('wmarka-icons-min');
+
 ?>
 
 
@@ -34,7 +34,7 @@ $wa->useScript('wmarka-icons-min');
     <jdoc:include type="scripts" />
 </head>
 <body class="<?php echo $tpl->getBodyClasses(); ?>">
- 
+<?php echo $tpl->partial('adver-top.php');?>
 <?php echo $tpl->partial('toolbar.php');?>
 <?php echo $tpl->partial('headbar.php');?> 
 <?php echo $tpl->partial('navbar.php');?> 
@@ -55,20 +55,22 @@ $wa->useScript('wmarka-icons-min');
 <?php echo $tpl->partial('block-e.php');?>
 <?php echo $tpl->partial('block-f.php');?>
 <?php echo $tpl->partial('block-g.php');?>
+
 <?php echo $tpl->partial('block-h.php');?>
+<div class="uk-visible@m">
 <?php echo $tpl->partial('block-i.php');?>
+</div>
 <?php echo $tpl->partial('partners.php');?>
+
 <?php echo $tpl->partial('block-k.php');?>
+
 <?php echo $tpl->partial('footer.php');?>
- 
-<a class="uk-padding-small uk-position-bottom-left uk-position-fixed uk-icon uk-totop" data-uk-totop data-uk-scroll aria-label="Up" href="#section-toolbar">
-  </a>
- 
+<a class="uk-padding-small uk-position-bottom-left uk-position-fixed" data-uk-totop data-uk-scroll aria-label="Up" name="Up"></a>
 
 <?php if ($this->countModules('debug')) { ?>
 <jdoc:include type="modules" name="debug" style="none" />
 <?php } ?>
-<?php echo $tpl->partial('counters.php');?>
+<?php echo $tpl->partial('counters1.php');?>
 
 </body>
  

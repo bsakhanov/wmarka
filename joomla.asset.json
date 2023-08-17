@@ -37,16 +37,7 @@
       "attributes" : {
         "defer": true
       } 
-    },
-    {
-      "name": "wmarka-icons-min",
-      "description": "The file containing the javascript for this template.",
-      "type": "script",
-      "uri": "media/templates/site/wmarka/js/wmarka-icons-min.js",
-      "attributes" : {
-        "defer": true
-      } 
-    } 	
+    }  
     
   ]
 }
