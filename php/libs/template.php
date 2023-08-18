@@ -286,19 +286,10 @@ class JBlankTemplate
     public function getBodyClasses()
     {
         return implode(' ', array(
-            'tmpl-' . $this->request->get('tmpl', 'index'),
             'itemid-' . $this->request->get('Itemid', 0),
             'lang-' . $this->lang,
             'com-' . str_replace('com_', '', $this->request->get('option')),
-            'view-' . $this->request->get('view', 'none'),
-            'layout-' . $this->request->get('layout', 'none'),
-            'task-' . $this->request->get('task', 'none'),
-            'zoo-itemid-' . $this->request->get('item_id', 0),
-            'zoo-categoryid-' . $this->request->get('category_id', 0),
-            'device-ios-' . ($this->isiOS() ? 'yes' : 'no'),
-            'device-android-' . ($this->isAndroidOS() ? 'yes' : 'no'),
-            'device-mobile-' . ($this->isMobile() ? 'yes' : 'no'),
-            'device-table-' . ($this->isTablet() ? 'yes' : 'no'),
+
         ));
     }
 
