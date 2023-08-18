@@ -13,7 +13,7 @@
 use Joomla\CMS\Language\Text;
 
 ?>
-<dl class="uk-flex uk-flex-middle uk-flex-wrap uk-article-meta uk-margin-remove">
+<dl class="uk-flex uk-flex-middle uk-flex-wrap uk-article-meta">
 
     <?php if ($displayData['params']->get('info_block_show_title', 1)) { ?>
         <dt class="margin-mini article-info-term"><?php echo Text::_('COM_CONTENT_ARTICLE_INFO'); ?> </dt>
