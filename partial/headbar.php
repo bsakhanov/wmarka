@@ -14,14 +14,14 @@ use Joomla\CMS\Language\Text;
 
 if ($_this->countModules('headbar')) {
     ?>
-<header id="section-headbar" class="uk-section uk-section-small">
+<header id="section-headbar" class="uk-section uk-section-xsmall">
     <div class="uk-container">
         <div data-uk-grid>
 
             
              <div class="uk-width-auto uk-flex uk-flex-middle">
             <?php if (JURI::current()!= JURI::base()) { echo '<a href="'.JURI::base(true).'" itemprop="url">'; } ?>
-				<div class="uk-logo uk-display-inline-block uk-margin-small-left"><img src="media/templates/site/wmarka/images/logo.svg" width="200" height="50" uk-svg>
+				<div class="uk-logo uk-display-inline-block uk-margin-small-left"><img src="media/templates/site/wmarka/images/logo.svg" width="100" height="62" uk-svg>
 				</div>
 			<?php if (JURI::current()!= JURI::base()) { echo '</a>'; } ?>
             </div>
