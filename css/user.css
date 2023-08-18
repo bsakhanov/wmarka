@@ -1,1 +1,626 @@
+/* Wmarka custom CSS */
+.data-hidden {
+    display: block;
+    width: 0;
+    height: 0;
+    font-size: 0;
+    line-height: 0;
+    overflow: hidden;
+	padding: 0;
+	margin: 0; 
+}
+/* list */
+.push {
+  list-style: none;
+}
+.push li {
+  position: relative;
+  padding: 5px 0 15px 25px;
+  color: #121a3d;
+  cursor: pointer;
+}
+.push li:before {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #4F5151;
+    content: "";
+    left: 0px;
+    transition: .3s ease-in-out;
+    top: 16px;
+}
+.push li:after {
+  position: absolute;
+  border-left: 1px dotted #4F5151;
+  width: 1px;
+    bottom: -11px;
+    content: "";
+    left: 2px;
+    top: 36px;
+}
+.push2 li:before {
+    top: 16px;
+}
+.push2 li:after {
+    bottom: -4px;
+    left: 3px;
+    top: 35px;
+}
+.push li:hover:before{
+    box-shadow: 0 0 0 10px rgba(0,0,0,.2)
+}
+.push li:last-child:after {
+content: none;
+}
+.push li:a{
+    color: #121a3d;
+}
 
+/* скобка левая */
+.braces {
+    position: relative;
+    padding-left: 40px;
+    margin-left: 1em;
+    color: #6B8E23;
+}
+.braces::before,
+.braces::after,
+.curly::before,
+.curly::after {
+  content: "";
+  position:absolute;
+  width: .8em;
+  height: 25%;
+}
+.braces::before,
+.braces::after {
+  left: 0;
+  border-left: 12px solid;
+}
+.braces::before {
+  top: 0;
+  border-top-left-radius: .8em;
+}
+.braces::after {
+  bottom: 0;
+  border-bottom-left-radius: .8em;
+}
+.curly::before,
+.curly::after {
+  left: -.8em;
+  border-right: 12px solid;
+}
+.curly::before {
+  top: 25%;
+  border-bottom-right-radius: .8em;
+}
+.curly::after {
+  bottom: 25%;
+  border-top-right-radius: .8em;
+}
+/* бордюр вертикальный левый */
+.border-left {
+    border-left: solid 10px #ddd;
+}
+/* цитата */
+* + blockquote {
+	/*background: #03406A21;*/
+    /*border-left: 5px solid #3968a3;*/
+    font-size: 1.15rem;
+    font-style: italic;
+    line-height: 1.7;
+    padding: 0.5em 1.5em;
+    position: relative;
+    transition: 0.2s border ease-in-out;
+    z-index: 0;
+	color: #000000;
+    font-weight: 700;
+}
+* + blockquote:before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -4px;
+    height: 2em;
+    /* background-color: #ccc; */
+    width: 5px;
+    margin-top: -1em;
+    /* color: #ccc; */
+}
+* + blockquote:after {
+    content: "";
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg' data-svg='quote-right'%3E%3Cpath fill='%23f3f0f0' d='M17.27,7.79 C17.27,9.45 16.97,10.43 15.99,12.02 C14.98,13.64 13,15.23 11.56,15.97 L11.1,15.08 C12.34,14.2 13.14,13.51 14.02,11.82 C14.27,11.34 14.41,10.92 14.49,10.54 C14.3,10.58 14.09,10.6 13.88,10.6 C12.06,10.6 10.59,9.12 10.59,7.3 C10.59,5.48 12.06,4 13.88,4 C15.39,4 16.67,5.02 17.05,6.42 C17.19,6.82 17.27,7.27 17.27,7.79 L17.27,7.79 Z'%3E%3C/path%3E%3Cpath fill='%23f3f0f0' d='M8.68,7.79 C8.68,9.45 8.38,10.43 7.4,12.02 C6.39,13.64 4.41,15.23 2.97,15.97 L2.51,15.08 C3.75,14.2 4.55,13.51 5.43,11.82 C5.68,11.34 5.82,10.92 5.9,10.54 C5.71,10.58 5.5,10.6 5.29,10.6 C3.47,10.6 2,9.12 2,7.3 C2,5.48 3.47,4 5.29,4 C6.8,4 8.08,5.02 8.46,6.42 C8.6,6.82 8.68,7.27 8.68,7.79 L8.68,7.79 Z'%3E%3C/path%3E%3C/svg%3E");
+    background-size: 120px 120px;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* background-color: #fff; */
+    height: 126px;
+    position: absolute;
+    top: calc(25% - 42px);
+    left: 25.5px;
+    width: 126px;
+    /* border-radius: 50%; */
+    transition: 0.2s all ease-in-out, 0.4s transform ease-in-out;
+    z-index: -1;
+}
+blockquote footer::before {
+    content: "";
+}
+.fiolet {
+    background: #d2d2fa !important;
+}
+.width-mini {
+    width: 30px;
+}
+.width-mini2 {
+    width: 90px;
+}
+.uk-button-small {
+    padding: 0 7px;
+    font-size: 0.675rem;
+	line-height: 28px;
+	text-transform: none;
+}
+.uk-overlay-primary-news {
+    background: #04547cb3;
+}
+
+.uk-article-title {
+    font-size: 1.8rem;
+    font-weight: 900;
+}
+.margin-mini {
+    margin: 3px 7px 3px 0 !important;
+}
+.margin-mini2 {
+    margin: 3px !important;
+}
+  .margin-mini3 {
+    margin: 3px 0 !important;
+}
+.margin-mini4 {
+    margin: 3px 5px 3px 0 !important;
+}
+.margin-mini5 {
+    margin: 0px 3px !important;
+}
+.uk-label-success {
+    background-color: #f1f1f8;
+    color: #03406A;
+}
+  @media (min-width: 960px)
+.uk-navbar-nav {
+    gap: 20px !important;
+}
+@media (max-width: 767px)
+.h1 {
+    font-size: 1.4rem !important;
+}
+.uk-navbar-nav > li > a {
+    /* min-height: 50px; */
+    text-transform: none;
+    font-weight: 600;
+}
+.uk-navbar-nav > li > a {
+    padding: 0 0;
+    color: #999;
+    text-transform: uppercase;
+    transition: 0.1s ease-in-out;
+    transition-property: color, background-color;
+}
+.uk-navbar-nav  {
+    font-weight: 700   !important;
+	font-size: 0.775rem  !important;
+}
+.uk-navbar-nav > li > a, .uk-navbar-toggle {
+    min-height: 50px;
+	text-transform: none;
+    font-weight: 700   !important;
+	font-size: 0.775rem  !important;
+}
+
+.uk-background-secondary {
+    background-color: #ec3434;
+}
+.uk-breadcrumb > * > * {
+    font-size: 0.775rem;
+}
+.uk-card-small.uk-card-body, .uk-card-small {
+    padding: 0px 20px;
+}
+.uk-lightbox-toolbar {
+    background: rgb(0 0 0 / 63%);
+}
+.home_news_title a {
+    color: #000000;
+    text-decoration: none;
+    color: #f44336;
+}	
+.home-active a {
+    color: #ed3237;
+    font-weight: bold;
+}
+.home_right-active .right-item-title a {
+    color: #ed3237;
+    font-weight: bold;
+}
+img { max-width: 100%; position: relative; }
+.video-block { position: relative; z-index: 1; width: 100%; height: 0; padding-bottom: 56.5%; margin: 0; cursor: pointer; }
+.video-thumb { position: absolute; z-index: 1; top:0; left: 0;}
+.video-thumb .video-play-btn { position: absolute; z-index:2; top: 0; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; align-items: center; }
+.video-thumb svg {  height: 48px; width: 68px;}
+.video-block iframe { width: 100%; height: 100%; position: absolute; 
+z-index: 9; left: 0; right: 0; border: 0; }
+
+/*для кастомизации ютуба*/
+iframe { width: 100%; height: auto; aspect-ratio: 16/9; }
+h6, .uk-h6 {
+    font-size: 0.875rem;
+    line-height: 1.3;
+
+}
+h5, .uk-h5 {
+	/* font-weight: 700; */
+}
+.uk-button-text {
+     text-transform: none;
+}
+
+.label-lenta {
+    color: #ec3434 !important;
+    background-color: white;
+    padding: 0px 5px 0px 0px;
+    line-height: 1.3;
+}
+.label-exl {
+    color: #ec3434 !important;
+    background-color: #f5deb300;
+    padding: 0px 5px 0px 0px;
+    line-height: 1.5;
+}
+.no-bakgr {
+    background: none;
+    color: #999 !important;
+}
+
+.sery {
+    background-color: #dfdfdf21;
+}
+.card{
+    border: 1px solid #e8eaf0;
+    border-radius: 1px;
+	
+}
+.card:hover{
+      border-color: #315efb !important;
+
+}
+.news-h6 {
+    line-height: 1.2;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+ * Secondary
+ */
+.uk-button-secondary {
+  background-color: #222 !important;
+  color: #fff !important;
+  border: 1px solid transparent;
+}
+/* Hover */
+.uk-button-secondary:hover {
+  background-color: #151515 !important;
+  color: #fff !important;
+}
+/* OnClick + Active */
+.uk-button-secondary:active,
+.uk-button-secondary.uk-active {
+  background-color: #080808 !important;
+  color: #fff !important;
+}
+.uk-slidenav-large:hover {
+  color: rgb(255 255 255);
+}
+.overla {
+    padding: 3px 5px;
+    z-index: 1;
+    margin: 0px;
+}
+.uk-card-small2 {
+    padding: 10px 0px;
+}
+.uk-card-small3 {
+    padding: 0px 0 0 10px;
+}
+.uk-border-rounded2 {
+     border-bottom-left-radius: 5px;
+}
+.uk-border-rounded3 {
+    border-top-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.uk-border-rounded4 {
+    border-top-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.back {
+	background-color: #ec34340d;
+}
+.back-women {
+	background-color: #ff14930d;
+}
+.uk-small-women {
+    margin-left: 10px !important;
+	margin-bottom: 10px !important;
+	padding: 5px 15px !important;
+	background: #e91e63c4 !important;
+} 
+.uk-big-women {
+    margin-left: 10px !important;
+    margin-top: 15px !important;
+    padding: 15px 25px !important;
+	background: #e91e63c4 !important;
+}
+
+.uk-button-danger2{
+    background-color: #ff1493;
+    color: #fff;
+}
+.uk-button-danger2:hover {
+    background-color: #ec3434;
+    color: #fff;
+}
+.overla-women {
+    background-color: #e91e63c4;
+}
+.uk-heading-bullet::before {
+    border-radius: 50%;
+    border-left: 15px solid #e5e5e5;
+}
+small {
+    font-size: 0.755rem;
+    font-style: italic;
+}
+.uk-height-max-large2 {
+  max-height: 700px;
+}
+.uk-button {
+     text-transform: none;
+}
+.uk-text-small {
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+.uk-height-small {
+    height: 80px;
+}	
+.uk-position-small {
+    --uk-position-margin-offset: 0px;
+}
+.home-right-active .right-item-title a {
+    color: #ed3237;
+    font-weight: bold;
+}
+ .uk-section-secondary2 {
+    background-color: #E8F6FC;
+}
+    .as-social [class*=as-icon-]{color:#fff;border-radius:50%;transition-property:border-radius,background-color;}
+    .as-icon-facebook{background-color:#3B5999}
+    .as-icon-youtube{background-color:#FF0000}
+    .as-icon-instagram{background-color:#DB307F}
+    .as-icon-twitter{background-color:#3FACE2}
+    .as-icon-vk{background-color:#5181B8}
+    .as-icon-odnoklassniki{background-color:#F58220}
+    .as-icon-whatsapp{background-color:#3EE25B}
+    .as-icon-viber{background-color:#7B519D}
+    .as-icon-telegram{background-color:#24A1DE}
+    .as-icon-tiktok{background-color:#0078CA}
+    [class*=as-icon-]:hover{color:#fff;border-radius:6px;background-color:#00a0e3;}
+
+.uk-grid-small2 > *, .uk-grid-column-small2 > *{
+    padding-left: 5px;
+}
+  .uk-icon-button2 {
+    width: 26px;
+    height: 26px;
+}
+  .uk-grid-small3 > *, .uk-grid-column-small3 > * {
+    padding-left: 3px;
+}
+  #comments .comments-buttons {
+    float: right;
+    margin: -3px !important;
+}
+.uk-navbar-navus > li > a {
+    font-weight: 700 !important;
+    font-size: 0.775rem !important;
+}
+.excl {
+    background-color: #ec3434;
+    color: #fff !important;
+    padding: 0px 5px;
+}
+.excl:hover, .excl a {
+    background-color: #e7e7e7 !important;
+    color: #ec3434 !important;
+}
+  
+.poisk {
+    color: #fff !important;
+    font-size: 15px !important;
+    text-transform: none;
+}
+.uk-button-secondary1  {
+    background-color: #6D87D6 !important;
+    color: #fff !important;
+}
+.uk-button-secondary1:hover {
+    background-color: #2B4181 !important
+    color: #fff !important;
+}
+  .uk-button-secondary2  {
+    background-color: #9AA400 !important;
+    color: #fff !important;
+}
+.uk-button-secondary2:hover {
+    background-color: #5c6202 !important
+    color: #fff !important;
+}
+.uk-button-secondary3  {
+    background-color: #248F40 !important;
+    color: #fff !important;
+}
+.uk-button-secondary3:hover {
+    background-color: #007C21 !important
+    color: #fff !important;
+}
+.uk-button-secondary4  {
+    background-color: #A02860 !important;
+    color: #fff !important;
+}
+.uk-button-secondary4:hover {
+    background-color: #8A0041 !important
+    color: #fff !important;
+}
+.uk-button-secondary5  {
+    background-color: #572781 !important;
+    color: #fff !important;
+}
+.uk-button-secondary5:hover {
+    background-color: #3E0470 !important
+    color: #fff !important;
+}
+  .uk-button-secondary6  {
+    background-color: #052F6D !important;
+    color: #fff !important;
+}
+.uk-button-secondary6:hover {
+    background-color: #284B7E !important
+    color: #fff !important;
+}
+.uk-text-primary2 {
+    color: #00a0e3 !important;
+}
+  .uk-subnav > * > :first-child {
+
+    font-size: 0.675rem;
+
+}
+/*Кастомные стили для гуглопоиска*/
+  /*основной блок*/
+#search-row {
+    margin: 0;
+    min-height: 26px;
+}
+/*обнуляем все что только можно*/
+form.gsc-search-box * {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    outline: 0;
+    box-sizing: content-box;
+}
+form.gsc-search-box {
+    border-style: none;
+    border-width: 0;
+    border-spacing: 0 0;
+    width: 100%;
+    margin-bottom: 2px;
+}
+.gsc-input-box {
+    border: 0px solid #D9D9D9 !important;
+}
+div.gsc-control-cse,
+form.gsc-search-box,
+table.gsc-search-box {
+    position: relative;
+}
+
+/*стили для поля запроса*/
+td.gsc-input > .gsc-input-box input {
+    position: relative;
+ 
+    padding: 0 5px !important;
+    border: none;
+    border-bottom: 5px solid transparent;
+    color: #000;
+    cursor: pointer;
+    font-size: 18px;
+        height: 26px !important;
+    width: 100% !important;
+}
+td.gsc-input:hover > .gsc-input-box input {
+    border-bottom: 0px solid #BBBABA;
+    color: #000;
+    cursor: text;
+    margin-left: 0;
+}
+/*инпут в фокусе при введении запроса*/
+td.gsc-input > .gsc-input-box input  {
+	content: 'Найти!';
+    border-bottom:0px solid #BBBABA;
+background-color: #fff !important;
+    color: #000;
+    cursor: text;
+        width: 100% !important;
+    margin-left: 0;
+	border-radius: 3px  !important;
+}
+
+/*кнопка с лупой для отправки запроса*/
+ td.gsc-search-button > .gsc-search-button-v2,
+ td.gsc-search-button > .gsc-search-button-v2:focus {
+    background-color: transparent !important;
+    display: block;
+outline: none !important;
+    background-position: 50% 50%;
+    background-color: transparent !important;
+    font: normal normal 0 sans-serif;
+    color: transparent;
+    border: 8px solid transparent;
+padding: 0 !important;
+    height: 12px;
+    min-width: 10px;
+    width: 10px;
+    position: absolute;
+    right: 30px;
+    top: 0px;
+    z-index: 10;	
+}
+td.gsc-search-button > .gsc-search-button-v2:hover {
+    background-color: transparent !important;
+}
+.gsc-search-button {
+    visibility: visible !important;
+}
+.gsc-search-button-v2 svg {
+    fill: #000000 !important;
+    padding: 0px 0 0 10px !important; 
+}
+.gsc-search-button-v2 > svg {
+    -ms-zoom: 2.5;
+    transform: scale(2.5);
+}
+td.gsc-search-button > .gsc-search-button-v2, td.gsc-search-button > .gsc-search-button-v2:focus {
+    background-color: transparent !important;
+
+}
+.gsc-search-button-v2 {
+
+    background-color: transparent !important;
+
+}
+.gsib_a {
+    width: 200px !important; 
+ 
+}
+/*скрываем все лишнее*/
+.gsc-branding, 
+.gcsc-branding,
+td.gsib_b {
+    display: none;
+}
+</style>

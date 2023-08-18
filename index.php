@@ -57,7 +57,6 @@ $wa->useScript('wmarka-icons-min');
 <?php echo $tpl->partial('block-g.php');?>
 <?php echo $tpl->partial('block-h.php');?>
 <?php echo $tpl->partial('block-i.php');?>
-<?php echo $tpl->partial('partners.php');?>
 <?php echo $tpl->partial('block-k.php');?>
 <?php echo $tpl->partial('footer.php');?>
  
