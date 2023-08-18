@@ -63,11 +63,19 @@ if ($item->parent && $item->level === 1 && strpos($moduleParams->get('layout'), 
     $linktype .= '<span data-uk-icon="icon:triangle-down"></span>';
 }
 
-if ($item->browserNav == 1) {
-    $attributes['target'] = '_blank';
-} elseif ($item->browserNav == 2) {
-    $options = 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes';
-    $attributes['onclick'] = "window.open(this.href, 'targetWindow', '" . $options . "'); return false;";
+switch ($item->browserNav)
+{
+	default:
+	case 0:
+?><a itemprop="url" <?php echo $class; ?>href="<?php echo $item->flink; ?>" <?php echo $title; ?>><span itemprop="name"><?php echo $linktype; ?></span></a><?php
+		break;
+	case 1:
+		// _blank
+?><a itemprop="url" <?php echo $class; ?>href="<?php echo $item->flink; ?>" target="_blank" <?php echo $title; ?>><span itemprop="name"><?php echo $linktype; ?></span></a><?php
+		break;
+	case 2:
+	// window.open
+?><a itemprop="url" <?php echo $class; ?>href="<?php echo $item->flink; ?>" onclick="window.open(this.href,'targetWindow','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');return false;" <?php echo $title; ?>><span itemprop="name"><?php echo $linktype; ?></span></a>
+<?php
+		break;
 }
-
-echo HTMLHelper::_('link', OutputFilter::ampReplace(htmlspecialchars($item->flink, ENT_COMPAT, 'UTF-8', false)), $linktype, $attributes);

@@ -35,9 +35,9 @@ $linktype = $item->title;
 
 if ($item->menu_icon) {
     if ($itemParams->get('menu_text', 1)) {
-        $linktype = '<span data-uk-icon="icon:' . $item->menu_icon . '" aria-hidden="true"></span><span>' . $item->title . '</span>';
+        $linktype = '<span data-uk-icon="icon:' . $item->menu_icon . '" aria-hidden="true"></span><span itemprop="name">' . $item->title . '</span>';
     } else {
-        $linktype = '<span data-uk-icon="icon:' . $item->menu_icon . '" aria-hidden="true"></span><span class="uk-hidden">' . $item->title . '</span>';
+        $linktype = '<span data-uk-icon="icon:' . $item->menu_icon . '" aria-hidden="true"></span><span class="uk-hidden" itemprop="name">' . $item->title . '</span>';
     }
 } elseif ($item->menu_image) {
     $image_attributes = [];

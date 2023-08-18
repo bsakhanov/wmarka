@@ -38,11 +38,7 @@ $wa->useScript('wmarka-icons-min');
 <?php echo $tpl->partial('toolbar.php');?>
 <?php echo $tpl->partial('headbar.php');?> 
 <?php echo $tpl->partial('navbar.php');?> 
-
-<div hidden>
- <?php echo $tpl->partial('breadcrumb.php');?>  
-  </div>
-
+<?php echo $tpl->partial('breadcrumb.php');?>  
 <?php echo $tpl->partial('block-a.php');?> 
 <?php echo $tpl->partial('content.php');?>
 <?php if ($tpl->isError()) : ?>

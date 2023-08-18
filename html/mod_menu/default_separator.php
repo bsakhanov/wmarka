@@ -50,4 +50,4 @@ if ($item->parent && strpos($moduleParams->get('layout'), ':subnav') !== false) 
 }
 
 ?>
-<a <?php echo $anchor_css; ?> <?php echo $title; ?>><?php echo $linktype; ?></a>
+<a itemprop="url" <?php echo $anchor_css; ?> <?php echo $title; ?>><span itemprop="name"><?php echo $linktype; ?></span></a>

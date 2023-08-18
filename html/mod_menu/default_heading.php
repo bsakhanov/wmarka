@@ -21,9 +21,9 @@ $linktype   = $item->title;
 
 if ($item->menu_icon) {
     if ($itemParams->get('menu_text', 1)) {
-        $linktype = '<span data-uk-icon="icon:' . $item->menu_icon . '" aria-hidden="true"></span><span>' . $item->title . '</span>';
+        $linktype = '<span data-uk-icon="icon:' . $item->menu_icon . '" aria-hidden="true"></span><span itemprop="name">' . $item->title . '</span>';
     } else {
-        $linktype = '<span data-uk-icon="icon:' . $item->menu_icon . '" aria-hidden="true"></span><span class="uk-hidden">' . $item->title . '</span>';
+        $linktype = '<span data-uk-icon="icon:' . $item->menu_icon . '" aria-hidden="true"></span><span class="uk-hidden" itemprop="name">' . $item->title . '</span>';
     }
 } elseif ($item->menu_image) {
     $image_attributes = [];
@@ -43,4 +43,4 @@ if ($item->parent && $item->level === 1 && strpos($moduleParams->get('layout'), 
 }
 
 ?>
-<a <?php echo $anchor_css; ?> <?php echo $title; ?>><?php echo $linktype; ?></a>
+<a itemprop="url" <?php echo $anchor_css; ?> <?php echo $title; ?>><span itemprop="name"><?php echo $linktype; ?></span></a>
