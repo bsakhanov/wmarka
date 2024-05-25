@@ -211,13 +211,11 @@ blockquote footer::before {
 }
 .uk-navbar-nav  {
     font-weight: 700   !important;
-	font-size: 0.775rem  !important;
 }
 .uk-navbar-nav > li > a, .uk-navbar-toggle {
     min-height: 50px;
 	text-transform: none;
     font-weight: 700   !important;
-	font-size: 0.775rem  !important;
 }
 
 .uk-background-secondary {

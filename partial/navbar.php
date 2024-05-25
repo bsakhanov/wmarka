@@ -71,7 +71,7 @@ if (
                         $output = '<input class="uk-search-input uk-text-center" type="search" 
 			       placeholder="Найти..." aria-label="Найти"   autofocus>';
                         $btn_output = '';
-                		$btn_output = '<a href="#" data-uk-search-icon></a>';
+                		$btn_output = '<a href="#" ></a>';
                         echo $btn_output . $output;
                         ?>                    
                         

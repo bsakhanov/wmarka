@@ -8,26 +8,21 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-\defined('_JEXEC') or die;
-$document = JFactory::getDocument();
+defined('_JEXEC') or die;
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
 use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Event\GenericEvent;
-$params = $this->item->params;
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
-
-$app = Factory::getContainer()->get(Joomla\CMS\Application\SiteApplication::class);
+$app = Factory::getApplication();
+$document = JFactory::getDocument();
 
 $docTitle = $document->title;
 $config = JFactory::getConfig();
-
-
+ 
 $document->setTitle(strip_tags(trim($docTitle)));
 
 if($this->category->metakey == "") {$mmk = $str = html_entity_decode(strip_tags(trim($docTitle.',  ' . $config->get( 'sitename' )))); $fixed_str = preg_replace('/[\s]{2,}/', ' ', $str);} else {$mmk = $this->category->metakey;}
@@ -37,22 +32,22 @@ if($this->category->metadesc == "") {$mmd = $str = html_entity_decode(strip_tags
 $document->setMetadata('description', $mmd);
 
 $this->category->text = $this->category->description;
-$app->getDispatcher()->dispatch('onContentPrepare', new GenericEvent('onContentPrepare', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]));
+$app->triggerEvent('onContentPrepare', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]);
 $this->category->description = $this->category->text;
 
-$results = $app->getDispatcher()->dispatch('onContentAfterTitle', new GenericEvent('onContentAfterTitle', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]));
-$afterDisplayTitle = trim(implode("\n", $results->getArgument('result') ?? []));
+$results = $app->triggerEvent('onContentAfterTitle', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]);
+$afterDisplayTitle = trim(implode("\n", $results));
 
-$results = $app->getDispatcher()->dispatch('onContentBeforeDisplay', new GenericEvent('onContentBeforeDisplay', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]));
-$beforeDisplayContent = trim(implode("\n", $results->getArgument('result') ?? []));
+$results = $app->triggerEvent('onContentBeforeDisplay', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]);
+$beforeDisplayContent = trim(implode("\n", $results));
 
-$results = $app->getDispatcher()->dispatch('onContentAfterDisplay', new GenericEvent('onContentAfterDisplay', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]));
-$afterDisplayContent = trim(implode("\n", $results->getArgument('result') ?? []));
+$results = $app->triggerEvent('onContentAfterDisplay', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]);
+$afterDisplayContent = trim(implode("\n", $results));
 
 $htag    = $this->params->get('show_page_heading') ? 'h2' : 'h1';
 
 //OpenGraph start
-$datepubl = $this->category->created;
+ 
 if ($this->params->get('show_description_image') && $this->category->getParams()->get('image')) {
    $timage = htmlspecialchars(JURI :: root().$this->category->getParams()->get('image')); 
    }
@@ -83,7 +78,7 @@ $document -> addCustomTag( '
 
 
 <!-- Twitter card --> 
-<meta name="twitter:title" content="'.$this -> escape($this->category->title).'">
+<meta name="twitter:title" content="'.$docTitle.'">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="'.$usernamesite.'">
 <meta name="twitter:creator" content="'.$usernameautor.'">
@@ -92,7 +87,7 @@ $document -> addCustomTag( '
 <meta name="twitter:image" content="'.$timage.'">
 <meta name="twitter:image:src" content="'.$timage.'">
 <!-- Open Graph data --> 
-<meta property="og:title" content="'.$this -> escape($this->category->title).'"> 
+<meta property="og:title" content="'.$docTitle.'"> 
 <meta property="og:description" content="'.$mmd.'">
 <meta property="og:type" content="website"> 
 <meta property="og:url" content="'.JURI :: current().'"> 
@@ -101,7 +96,7 @@ $document -> addCustomTag( '
 <meta property="og:image:secure_url" content="'.$timage.'"> 
 <meta property="og:locale" content="'.$lang.'">
 <meta property="og:site_name" content="'.$config->get( 'sitename' ).'"> 
-<meta property="article:author" content="'.$this->escape($this->category->author).'"> 
+<meta property="article:author" content="'.$descauthor.'"> 
 <meta property="fb:admins" content="'.$facebookid.'">
 <meta property="fb:app_id" content="'.$yourappid.'">
 <!-- Open Graph data end--> 
@@ -122,26 +117,28 @@ $document -> addCustomTag( '
 //OpenGraph end
 
 ?>
-<div class="com-content-category-blog blog" itemscope itemtype="https://schema.org/Blog">
-    <?php if ($this->params->get('show_page_heading')) { ?>
+<div class="com-content-category-blog blog">
+    <?php if ($this->params->get('show_page_heading')) : ?>
         <div class="page-header">
-            <h1><?php echo $this->escape($this->params->get('page_heading')); ?></h1>
+            <h1> <?php echo $this->escape($this->params->get('page_heading')); ?> </h1>
         </div>
-    <?php } ?>
+    <?php endif; ?>
 
-    <?php if ($this->params->get('show_category_title', 1)) { ?>
-        <<?php echo $htag; ?>><?php echo $this->category->title; ?></<?php echo $htag; ?>>
-    <?php } ?>
+    <?php if ($this->params->get('show_category_title', 1)) : ?>
+    <<?php echo $htag; ?>>
+        <?php echo $this->category->title; ?>
+    </<?php echo $htag; ?>>
+    <?php endif; ?>
     <?php echo $afterDisplayTitle; ?>
 
-    <?php if ($this->params->get('show_cat_tags', 1) && !empty($this->category->tags->itemTags)) { ?>
+    <?php if ($this->params->get('show_cat_tags', 1) && !empty($this->category->tags->itemTags)) : ?>
         <?php $this->category->tagLayout = new FileLayout('joomla.content.tags'); ?>
         <?php echo $this->category->tagLayout->render($this->category->tags->itemTags); ?>
-    <?php } ?>
+    <?php endif; ?>
 
-    <?php if ($beforeDisplayContent || $afterDisplayContent || $this->params->get('show_description', 1) || $this->params->def('show_description_image', 1)) { ?>
+    <?php if ($beforeDisplayContent || $afterDisplayContent || $this->params->get('show_description', 1) || $this->params->def('show_description_image', 1)) : ?>
         <div class="category-desc clearfix">
-            <?php if ($this->params->get('show_description_image') && $this->category->getParams()->get('image')) { ?>
+            <?php if ($this->params->get('show_description_image') && $this->category->getParams()->get('image')) : ?>
                 <?php echo LayoutHelper::render(
                     'joomla.html.image',
                     [
@@ -149,14 +146,14 @@ $document -> addCustomTag( '
                         'alt' => empty($this->category->getParams()->get('image_alt')) && empty($this->category->getParams()->get('image_alt_empty')) ? false : $this->category->getParams()->get('image_alt'),
                     ]
                 ); ?>
-            <?php } ?>
+            <?php endif; ?>
             <?php echo $beforeDisplayContent; ?>
-            <?php if ($this->params->get('show_description') && $this->category->description) { ?>
+            <?php if ($this->params->get('show_description') && $this->category->description) : ?>
                 <?php echo HTMLHelper::_('content.prepare', $this->category->description, '', 'com_content.category'); ?>
-            <?php } ?>
+            <?php endif; ?>
             <?php echo $afterDisplayContent; ?>
         </div>
-    <?php } ?>
+    <?php endif; ?>
 
     <?php if (empty($this->lead_items) && empty($this->link_items) && empty($this->intro_items)) { ?>
         <?php if ($this->params->get('show_no_articles', 1)) { ?>
@@ -238,5 +235,4 @@ $document -> addCustomTag( '
 
     <?php } ?>
         </div>
-
 </div>

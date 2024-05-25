@@ -16,7 +16,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Event\GenericEvent;
-$params = $this->item->params;
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
 

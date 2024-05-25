@@ -1,6 +1,9 @@
 <?php
 defined('_JEXEC') or die;
-
+$app             = JFactory::getApplication();
+$doc             = JFactory::getDocument();
+$this->language  = $doc->language;
+$this->direction = $doc->direction;
 
 // init $tpl helper
 require dirname(__FILE__) . '/php/init.php';

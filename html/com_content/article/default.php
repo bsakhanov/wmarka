@@ -79,7 +79,7 @@ $config = JFactory::getConfig();
 
 $document->setTitle(strip_tags(trim($docTitle_new.'... | '.$this->escape($this->item->metakey).''. $fixed_str.' ' . $config->get( 'sitename' ))));
 
-if($this->item->metakey == "") {$mmk = $str = html_entity_decode(strip_tags(trim($docTitle.', '.$this->escape($this->item->metakey).' '.$this->escape($this->item->category_title).', ' . $fixed_str.'' . $config->get( 'sitename' ))));
+if($this->item->metakey == "") {$mmk = $str = html_entity_decode(strip_tags(trim($docTitle_new.', '.$this->escape($this->item->metakey).' '.$this->escape($this->item->category_title).', ' . $fixed_str.'' . $config->get( 'sitename' ))));
 $fixed_str = preg_replace(array('<br />','<br/>', '<br>'), ' ', $str);}
 else {$mmk = $this->item->metakey;}
 

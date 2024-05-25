@@ -41,9 +41,6 @@ $wa->useScript('wmarka-icons-min');
 <?php echo $tpl->partial('breadcrumb.php');?>  
 <?php echo $tpl->partial('block-a.php');?> 
 <?php echo $tpl->partial('content.php');?>
-<?php if ($tpl->isError()) : ?>
-<jdoc:include type="message" />
-<?php endif; ?>
 <?php echo $tpl->partial('slider.php');?>
 <?php echo $tpl->partial('block-b.php');?>
 <?php echo $tpl->partial('block-c.php');?>

@@ -10,7 +10,18 @@
  */
 
 defined('_JEXEC') or die;
+JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+
+
+JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
+
+
+    require_once JPATH_BASE . '/includes/defines.php';
+    require_once JPATH_BASE . '/includes/framework.php';  
+	
+ 
 use Joomla\String\StringHelper;
+ 
 
 // load joomla libs
 jimport('joomla.filesystem.folder');
@@ -146,7 +157,8 @@ class JBlankTemplate
         $this->lessFull  = JPath::clean($this->pathFull . '/less');
         $this->scssFull  = JPath::clean($this->pathFull . '/scss');
         $this->jsFull    = JPath::clean($this->pathFull . '/js');
-        $this->partial   = JPath::clean($this->pathFull . '/partial');
+		$this->partial    = JPath::clean($this->pathFull . '/partial');
+ 
 
         // init template vars
         $this->lang    = $this->_getLangCurrent();
