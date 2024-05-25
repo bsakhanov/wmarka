@@ -47,12 +47,7 @@ $option = $input->getWord('option'); // JRequest::getWord
 
 
 $document = JFactory::getDocument();
-if(!empty($this->item->jcfields[36]->value)):
-$canoniclink = $this->item->jcfields[36]->value;
-else:
-$canoniclink = Uri::getInstance()->toString(['scheme', 'host', 'path']);
-endif;
-$document->addHeadLink(htmlspecialchars($canoniclink), 'canonical');
+
 $view   = $input->getCmd('view', null); // JRequest::getCmd
 if ($view == 'article') {
 $document->addCustomTag( '<link rel="amphtml" href="'.JURI::current().'?tmpl=amp" />' );
