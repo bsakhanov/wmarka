@@ -9,24 +9,22 @@
  */
 
 defined('_JEXEC') or die;
-$document = JFactory::getDocument();
-$params = $this->item->params;
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
-
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
-
-$docTitle = $document->title;
-$config = JFactory::getConfig();  
-$document = JFactory::getDocument();
 use Joomla\CMS\HTML\HTMLHelper;
 
+// Note that there are certain parts of this layout used only when there is exactly one tag.
+$isSingleTag = count($this->item) === 1;
+$htag        = $this->params->get('show_page_heading') ? 'h2' : 'h1';
+
+  
+$document = JFactory::getDocument();
 $docTitle = $document->title;
+$config = JFactory::getConfig();
 $docTitle_new = preg_replace("/^(\s*(\S+\s+){0,7}\S+).*/s", '$1', $this->tags_title);
 
 $config = JFactory::getConfig();
 
-$document->setTitle(strip_tags(trim($docTitle_new.' | '.$this->escape($this->item->metakey).''. $fixed_str.' ' . $config->get( 'sitename' ))).' | '.$this->pagination->getPagesCounter());
+$document->setTitle(strip_tags(trim($docTitle_new.' | ' . $config->get( 'sitename' ))).' | '.$this->pagination->getPagesCounter());
 
 // Note that there are certain parts of this layout used only when there is exactly one tag.
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers');

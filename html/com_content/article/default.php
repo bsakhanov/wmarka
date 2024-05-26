@@ -47,7 +47,6 @@ $option = $input->getWord('option'); // JRequest::getWord
 
 
 $document = JFactory::getDocument();
-
 $view   = $input->getCmd('view', null); // JRequest::getCmd
 if ($view == 'article') {
 $document->addCustomTag( '<link rel="amphtml" href="'.JURI::current().'?tmpl=amp" />' );
