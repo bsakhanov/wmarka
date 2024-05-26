@@ -66,14 +66,14 @@ if (
 					<div id="modal-full-search" class="uk-modal-full uk-modal" uk-modal>
 						<div class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle" uk-height-viewport>
 							<button class="uk-modal-close-full" type="button" uk-close></button>
-                    <form action="/search" method="get" role="search" class="uk-search uk-search-navbar uk-width-1-1">
-                        <input type="text" name="q" class="uk-search-input  uk-text-center" value="" placeholder="Поиск..." autofocus>                 
-                        
-                    </form>
+                    <form class="uk-search uk-search-large" action="/search" method="get" role="search" >
+                    			<input  name="q" class="uk-search-input uk-text-center" type="text" 
+                    			       placeholder="Найти..." aria-label="Найти" autofocus>
+                    </form>					
 						</div>
 					</div>
 				</div>						
-			</div>				
+			</div>			
         </div>
     </div>
 </div>
