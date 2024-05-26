@@ -24,6 +24,7 @@
     ]]></description>
     <php_minimum>8.0</php_minimum>
     <uikit_actual>3.16.24</uikit_actual>
+	<inheritable>1</inheritable>
     <files>
         <folder>amp</folder>	
         <folder>css</folder>
@@ -51,11 +52,8 @@
 		<folder>css</folder>
 		<folder>images</folder>
 	</media>
-	<languages folder="language">
-		<language tag="overrides">overrides/kk-KZ.override.ini</language>
-		<language tag="overrides">overrides/ru-RU.override.ini</language>
-		<language tag="overrides">overrides/en-GB.override.ini</language>
-	</languages>	
+	<languages destination="overrides" folder="language">
+		<folder>language</folder>		
     <positions>
         <position section="toolbar">toolbar-left</position>
         <position section="toolbar">toolbar-right</position>

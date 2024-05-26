@@ -67,15 +67,15 @@ switch ($item->browserNav)
 {
 	default:
 	case 0:
-?><a itemprop="url" <?php echo $class; ?> href="<?php echo $item->flink; ?>" <?php echo $title; ?>><span itemprop="name"><?php echo $linktype; ?></span></a><?php
+?><a itemprop="url" <?php echo $class; ?> href="<?php echo $item->flink; ?>" ><span itemprop="name"><?php echo $linktype; ?></span></a><?php
 		break;
 	case 1:
 		// _blank
-?><a itemprop="url" <?php echo $class; ?> href="<?php echo $item->flink; ?>" target="_blank" <?php echo $title; ?>><span itemprop="name"><?php echo $linktype; ?></span></a><?php
+?><a itemprop="url" <?php echo $class; ?> href="<?php echo $item->flink; ?>" target="_blank" ><span itemprop="name"><?php echo $linktype; ?></span></a><?php
 		break;
 	case 2:
 	// window.open
-?><a itemprop="url" <?php echo $class; ?> href="<?php echo $item->flink; ?>" onclick="window.open(this.href,'targetWindow','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');return false;" <?php echo $title; ?>><span itemprop="name"><?php echo $linktype; ?></span></a>
+?><a itemprop="url" <?php echo $class; ?> href="<?php echo $item->flink; ?>" onclick="window.open(this.href,'targetWindow','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');return false;" ><span itemprop="name"><?php echo $linktype; ?></span></a>
 <?php
 		break;
 }
