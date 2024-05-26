@@ -59,21 +59,15 @@ if (
 			</div>	
             <?php } ?>	
 			<div class="nav-overlay uk-navbar-right">
-			        <a class="uk-navbar-toggle" href="#modal-full" uk-search-icon uk-toggle></a>
+			        <a class="uk-navbar-toggle" href="#modal-full-search" uk-search-icon uk-toggle></a>
 			</div>
 			<div class="nav-overlay uk-navbar-left" hidden>
 				<div class="uk-navbar-item uk-width-expand">
-					<div id="modal-full" class="uk-modal-full uk-modal" uk-modal>
+					<div id="modal-full-search" class="uk-modal-full uk-modal" uk-modal>
 						<div class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle" uk-height-viewport>
 							<button class="uk-modal-close-full" type="button" uk-close></button>
-                    <form action="/search" method="post" class="uk-search uk-search-navbar uk-width-1-1">
-                        <?php
-                        $output = '<input class="uk-search-input uk-text-center" type="search" 
-			       placeholder="Найти..." aria-label="Найти"   autofocus>';
-                        $btn_output = '';
-                		$btn_output = '<a href="#" ></a>';
-                        echo $btn_output . $output;
-                        ?>                    
+                    <form action="/search" method="get" role="search" class="uk-search uk-search-navbar uk-width-1-1">
+                        <input type="text" name="q" class="uk-search-input  uk-text-center" value="" placeholder="Поиск..." autofocus>                 
                         
                     </form>
 						</div>
