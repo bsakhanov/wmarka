@@ -53,7 +53,8 @@
 		<folder>images</folder>
 	</media>
 	<languages destination="overrides" folder="language">
-		<folder>language</folder>		
+		<folder>language</folder>	
+	</languages>		
     <positions>
         <position section="toolbar">toolbar-left</position>
         <position section="toolbar">toolbar-right</position>
