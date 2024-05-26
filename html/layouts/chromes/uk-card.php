@@ -29,8 +29,8 @@ $headerAttribs          = [];
 $headerAttribs['class'] = $headerClass;
 
 // Only output a header class if it is not card-title
-if ($headerClass !== 'card-title') :
-    $headerAttribs['class'] = 'card-header ' . $headerClass;
+if ($headerClass !== 'uk-card-title') :
+    $headerAttribs['class'] = 'uk-card-header ' . $headerClass;
 endif;
 
 // Only add aria if the moduleTag is not a div
@@ -46,11 +46,11 @@ if ($moduleTag !== 'div') {
 $header = '<' . $headerTag . ' ' . ArrayHelper::toString($headerAttribs) . '>' . $module->title . '</' . $headerTag . '>';
 ?>
 <<?php echo $moduleTag; ?> <?php echo ArrayHelper::toString($moduleAttribs); ?>>
-    <?php if ($module->showtitle && $headerClass !== 'card-title') : ?>
+    <?php if ($module->showtitle && $headerClass !== 'uk-card-title') : ?>
         <?php echo $header; ?>
     <?php endif; ?>
-    <div class="card-body">
-        <?php if ($module->showtitle && $headerClass === 'card-title') : ?>
+    <div class="uk-card-body">
+        <?php if ($module->showtitle && $headerClass === 'uk-card-title') : ?>
             <?php echo $header; ?>
         <?php endif; ?>
         <?php echo $module->content; ?>
