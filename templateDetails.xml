@@ -49,9 +49,9 @@
 		<folder>images</folder>
 	</media>
 	<languages>
-        <language tag="ru-RU">site/language/overrides/ru-RU.override.ini</language>
-        <language tag="en-GB">site/language/overrides/en-GB.override.ini</language>	
-        <language tag="kk-KZ">site/language/overrides/kk-KZ.override.ini</language>		
+        <language tag="ru-RU">language/overrides/ru-RU.override.ini</language>
+        <language tag="en-GB">language/overrides/en-GB.override.ini</language>	
+        <language tag="kk-KZ">language/overrides/kk-KZ.override.ini</language>		
     </languages>
     <positions>
         <position section="toolbar">toolbar-left</position>
