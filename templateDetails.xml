@@ -27,7 +27,6 @@
 	<inheritable>1</inheritable>
     <files>
         <folder>amp</folder>
-		<folder>language</folder>
         <folder>html</folder>
         <folder>partial</folder>
         <folder>php</folder>
@@ -48,7 +47,7 @@
 		<folder>css</folder>
 		<folder>images</folder>
 	</media>
-	<languages>
+	<languages folder="\language\overrides\zip">
         <language tag="ru-RU">language/overrides/ru-RU.override.ini</language>
         <language tag="en-GB">language/overrides/en-GB.override.ini</language>	
         <language tag="kk-KZ">language/overrides/kk-KZ.override.ini</language>		
