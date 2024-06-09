@@ -47,7 +47,7 @@
 		<folder>css</folder>
 		<folder>images</folder>
 	</media>
-	<languages folder="\location\in\zip">
+	<languages folder="\zip">
         <language tag="ru-RU">language/overrides/ru-RU.override.ini</language>
         <language tag="en-GB">language/overrides/en-GB.override.ini</language>	
         <language tag="kk-KZ">language/overrides/kk-KZ.override.ini</language>		
