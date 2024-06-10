@@ -47,10 +47,10 @@
 		<folder>css</folder>
 		<folder>images</folder>
 	</media>
-    <languages folder="language\overrides">
-        <language tag="ru-RU">overrides/ru-RU.override.ini</language>
-        <language tag="kk-KZ">overrides/kk-KZ.override.ini</language>
-        <language tag="en-GB">overrides/en-GB.override.ini</language>
+    <languages folder="language">
+        <language>overrides/ru-RU.override.ini</language>
+        <language>overrides/kk-KZ.override.ini</language>
+        <language>overrides/en-GB.override.ini</language>
     </languages>	
     <positions>
         <position section="toolbar">toolbar-left</position>
