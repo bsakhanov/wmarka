@@ -27,7 +27,6 @@
 	<inheritable>1</inheritable>
     <files>
         <folder>amp</folder>
-		<folder>language</folder>
         <folder>html</folder>
         <folder>partial</folder>
         <folder>php</folder>
@@ -48,9 +47,9 @@
 		<folder>css</folder>
 		<folder>images</folder>
 	</media>
-	<language destination="language" folder="language">
-		<folder>overrides</folder>
-    </language>
+    <language destination="/" folder="language">
+        <folder>overrides</folder>
+    </language>	
     <positions>
         <position section="toolbar">toolbar-left</position>
         <position section="toolbar">toolbar-right</position>
