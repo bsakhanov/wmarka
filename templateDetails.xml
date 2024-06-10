@@ -27,6 +27,7 @@
 	<inheritable>1</inheritable>
     <files>
         <folder>amp</folder>
+		<folder>language</folder>
         <folder>html</folder>
         <folder>partial</folder>
         <folder>php</folder>
@@ -47,11 +48,9 @@
 		<folder>css</folder>
 		<folder>images</folder>
 	</media>
-	<languages folder="\">
-        <language tag="ru-RU">language/overrides/ru-RU.override.ini</language>
-        <language tag="en-GB">language/overrides/en-GB.override.ini</language>	
-        <language tag="kk-KZ">language/overrides/kk-KZ.override.ini</language>		
-    </languages>
+	<language destination="language" folder="language">
+		<folder>overrides</folder>
+    </language>
     <positions>
         <position section="toolbar">toolbar-left</position>
         <position section="toolbar">toolbar-right</position>
