@@ -17,11 +17,22 @@ $errorFile = str_replace(JPATH_ROOT, 'JROOT', $this->error->getFile());
 <head>
     <meta charset="utf-8" />
     <base href="<?php echo Uri::base(); ?>" />
-    <title><?php echo $this->title; ?> – <?php echo htmlspecialchars($this->error->getMessage(), ENT_QUOTES, 'UTF-8'); ?></title>
+    <title><?php echo $this->title; ?> — <?php echo htmlspecialchars($this->error->getMessage(), ENT_QUOTES, 'UTF-8'); ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <link href="<?php echo Uri::base(true); ?>/templates/<?php echo $this->template; ?>/favicon.png" rel="shortcut icon" type="image/png" />
-    <link href="<?php echo Uri::base(true); ?>/templates/<?php echo $this->template; ?>/css/uikit.min.css" rel="stylesheet" />
+	<link rel="apple-touch-icon" sizes="180x180" href="<?php echo Uri::base(true); ?>/media/templates/site/wmarka/images/favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="<?php echo Uri::base(true); ?>/media/templates/site/wmarka/images/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="<?php echo Uri::base(true); ?>/media/templates/site/wmarka/images/favicon/favicon-16x16.png">
+	<link rel="manifest" href="<?php echo Uri::base(true); ?>/media/templates/site/wmarka/images/favicon/site.webmanifest">
+	<link rel="mask-icon" href="<?php echo Uri::base(true); ?>/media/templates/site/wmarka/images/favicon/safari-pinned-tab.svg" color="#5bbad5">
+	<link rel="shortcut icon" href="<?php echo Uri::base(true); ?>/media/templates/site/wmarka/images/favicon/favicon.ico">
+	<meta name="msapplication-TileColor" content="#2d89ef">
+	<meta name="msapplication-config" content="/media/templates/site/wmarka/images/favicon/browserconfig.xml">
+	<meta name="theme-color" content="#ffffff">	
+    <link href="<?php echo Uri::base(true); ?>/media/templates/site/wmarka/css/uikit.min.css" rel="stylesheet" />
+    <link href="<?php echo Uri::base(true); ?>/media/templates/site/wmarka/css/user.css" rel="stylesheet" />
+	<script src="/media/templates/site/wmarka/js/uikit.min.js" defer=""></script>	
+	<script src="/media/templates/site/wmarka/js/uikit-icons.min.js" defer=""></script>
 </head>
 <body>
 
@@ -37,7 +48,7 @@ $errorFile = str_replace(JPATH_ROOT, 'JROOT', $this->error->getFile());
         <div class="uk-container">
             <div class="uk-navbar">
                 <ul class="uk-navbar-nav">
-                    <li><a href="<?php echo Uri::base(true) ?: '/'; ?>"><?php echo Text::_('JERROR_LAYOUT_GO_TO_THE_HOME_PAGE'); ?></a></li>
+                    <li><a href="<?php echo Uri::base(true) ?: '/'; ?>"><span uk-icon="home"></span>  <?php echo Text::_('JERROR_LAYOUT_GO_TO_THE_HOME_PAGE'); ?></a></li>
                 </ul>
             </div>
         </div>
