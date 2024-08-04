@@ -88,7 +88,7 @@ $main_str = $text;
 
 if (strpos($main_str, 'Эксклюзив') !== false) {
   echo '<a href="/t/eksklyuziv" class="uk-link-heading uk-text-bolder uk-flex-first excl uk-border-rounded ">Эксклюзив</a>';
-} elseif (strpos($main_str0, 'Эксклюзив') !== false) {
+} elseif (strpos($main_str, 'Эксклюзив') !== false) {
   echo '<a href="/t/eksklyuziv" class="uk-link-heading uk-text-bolder uk-flex-first excl uk-border-rounded ">Эксклюзив</a>';
 }; ?>
 		   
