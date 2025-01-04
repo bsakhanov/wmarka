@@ -11,7 +11,7 @@
 
 defined('_JEXEC') or die;
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-
+use Joomla\CMS\Filesystem\Path; 
 
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
 
@@ -86,24 +86,30 @@ class JBlankTemplate
     /**
      * @var string
      */
-    public $dir;
+ 
+ 
     public $baseurl;
     public $path;
-    public $pathFull;
-    public $fonts;
-    public $fontsFull;
     public $img;
-    public $imgFull;
+    public $fonts;
     public $less;
-    public $lessFull;
     public $scss;
-    public $scssFull;
     public $css;
-    public $cssFull;
     public $js;
+    public $pathFull;
+    public $imgFull;
+    public $fontsFull;
+    public $cssFull;
+    public $lessFull;
+    public $scssFull;
     public $jsFull;
+    public $partial;
     public $lang;
     public $langDef;
+ 
+    public $dir;
+ 
+ 
 
     /**
      * @var bool
@@ -124,6 +130,8 @@ class JBlankTemplate
 
         return $instance;
     }
+ 
+
 
     /**
      * Init internal vars
@@ -131,13 +139,13 @@ class JBlankTemplate
     private function __construct()
     {
         // get links to global vars
-        $this->doc     = JFactory::getDocument();
-        $this->config  = JFactory::getConfig();
-        $this->url     = JUri::getInstance();
-        $this->app     = JFactory::getApplication();
+        $this->doc     = \Joomla\CMS\Factory::getDocument();
+        $this->config  = \Joomla\CMS\Factory::getConfig();
+        $this->url     = \Joomla\CMS\Uri\Uri::getInstance();
+        $this->app     = \Joomla\CMS\Factory::getApplication();
         $this->menu    = $this->app->getMenu();
         $this->params  = $this->app->getTemplate(true)->params;
-        $this->user    = JFactory::getUser();
+        $this->user    = \Joomla\CMS\Factory::getUser();
         $this->baseurl = $this->_getBaseUrl();
 
         // relative paths
@@ -151,14 +159,13 @@ class JBlankTemplate
 
         // absolute paths
         $this->pathFull  = $this->_getTemplatePathFull();
-        $this->imgFull   = JPath::clean($this->pathFull . '/images');
-        $this->fontsFull = JPath::clean($this->pathFull . '/fonts');
-        $this->cssFull   = JPath::clean($this->pathFull . '/css');
-        $this->lessFull  = JPath::clean($this->pathFull . '/less');
-        $this->scssFull  = JPath::clean($this->pathFull . '/scss');
-        $this->jsFull    = JPath::clean($this->pathFull . '/js');
-		$this->partial    = JPath::clean($this->pathFull . '/partial');
- 
+        $this->imgFull   = \Joomla\CMS\Filesystem\Path::clean($this->pathFull . '/images');
+        $this->fontsFull = \Joomla\CMS\Filesystem\Path::clean($this->pathFull . '/fonts');
+        $this->cssFull   = \Joomla\CMS\Filesystem\Path::clean($this->pathFull . '/css');
+        $this->lessFull  = \Joomla\CMS\Filesystem\Path::clean($this->pathFull . '/less');
+        $this->scssFull  = \Joomla\CMS\Filesystem\Path::clean($this->pathFull . '/scss');
+        $this->jsFull    = \Joomla\CMS\Filesystem\Path::clean($this->pathFull . '/js');
+        $this->partial   = \Joomla\CMS\Filesystem\Path::clean($this->pathFull . '/partial');
 
         // init template vars
         $this->lang    = $this->_getLangCurrent();
@@ -171,6 +178,8 @@ class JBlankTemplate
 
         $this->_debugMode = defined('JDEBUG') && JDEBUG;
     }
+
+
 
     /**
      * @return bool
