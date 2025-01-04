@@ -26,12 +26,9 @@
     <uikit_actual>3.21.6</uikit_actual>
 	<inheritable>1</inheritable>
     <files>
-        <folder>amp</folder>
         <folder>html</folder>
         <folder>partial</folder>
-        <folder>php</folder>
-        <filename>amp.php</filename>	    
-        <filename>ampcomponent.php</filename>		    
+        <folder>php</folder>  
        <filename>component.php</filename>
         <filename>error.php</filename>
         <filename>index.html</filename>
