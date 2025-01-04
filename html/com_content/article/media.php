@@ -47,9 +47,6 @@ $option = $input->getWord('option'); // JRequest::getWord
 
 $document = JFactory::getDocument();
 $view   = $input->getCmd('view', null); // JRequest::getCmd
-if ($view == 'article') {
-$document->addCustomTag( '<link rel="amphtml" href="'.JURI::current().'?tmpl=amp" />' );
-}
 
 if (!empty($this->item->pagination) && $this->item->pagination && !$this->item->paginationposition && $this->item->paginationrelative) {
     echo $this->item->pagination;
