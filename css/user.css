@@ -1,4 +1,6 @@
 /* Wmarka custom CSS */
+
+
 .data-hidden {
     display: block;
     width: 0;
@@ -211,11 +213,13 @@ blockquote footer::before {
 }
 .uk-navbar-nav  {
     font-weight: 700   !important;
+	font-size: 0.775rem  !important;
 }
 .uk-navbar-nav > li > a, .uk-navbar-toggle {
     min-height: 50px;
 	text-transform: none;
     font-weight: 700   !important;
+	font-size: 0.775rem  !important;
 }
 
 .uk-background-secondary {
@@ -621,4 +625,51 @@ td.gsc-search-button > .gsc-search-button-v2, td.gsc-search-button > .gsc-search
 td.gsib_b {
     display: none;
 }
+
+/* Примерная стилизация select#limit под uk-select */
+/* Потребуется подгонка цветов, отступов, стрелки под ваш стиль UIkit */
+
+form#adminForm select#limit {
+    /* Сбрасываем стандартное оформление */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    /* Размеры и отступы (примерные, подгоните под uk-form-small) */
+    height: 30px; /* Пример для uk-form-small */
+    padding: 5px 30px 5px 10px; /* Отступы + место для стрелки */
+    line-height: 1.5; /* Пример */
+    font-size: 0.875rem; /* Пример для uk-form-small */
+
+    /* Цвета и рамка (возьмите из переменных UIkit или укажите явно) */
+    color: #666; /* Пример */
+    background-color: #fff; /* Пример */
+    border: 1px solid #e5e5e5; /* Пример */
+    border-radius: 0px; /* UIkit обычно не скругляет селекты */
+
+    /* Ширина (соответствует uk-form-width-xsmall/small) */
+    width: auto; /* Или фиксированная, напр. 80px */
+    max-width: 100px; /* Пример */
+    vertical-align: middle; /* Для выравнивания с меткой */
+
+    /* Кастомная стрелка (самая сложная часть) */
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23666'%3E%3Cpath d='M5 8l5 5 5-5H5z'/%3E%3C/svg%3E"); /* Пример SVG стрелки UIkit, цвет #666 */
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center; /* Позиция стрелки */
+    background-size: 0.8em auto; /* Размер стрелки */
+
+    /* Убираем стандартную стрелку в некоторых браузерах */
+    &::-ms-expand {
+        display: none;
+    }
+}
+
+/* Стиль при фокусе (пример) */
+form#adminForm select#limit:focus {
+  border-color: #1e87f0; /* Пример цвета фокуса UIkit */
+  outline: 0;
+  background-color: #fff;
+  color: #666;
+}
+
 </style>
