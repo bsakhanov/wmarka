@@ -2,7 +2,7 @@
 
 /**
  * @package     Joomla.Site
- * @subpackage  com_tags
+ * @subpackage  com_tags - Items layout for TAGS view (displaying tags as cards)
  *
  * @copyright   (C) 2013 Open Source Matters, Inc. <https://www.joomla.org>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -10,37 +10,44 @@
 
 defined('_JEXEC') or die;
 
+// Необходимые классы Joomla
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
-// use Joomla\Component\Tags\Site\Helper\RouteHelper; // Не используется для ссылок на материалы
+use Joomla\Component\Tags\Site\Helper\RouteHelper;
 
+/** @var \Joomla\Component\Tags\Site\View\Tags\HtmlView $this */
 /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
-$wa = $this->document->getWebAssetManager();
-// $wa->useScript('com_tags.tags-default'); // Убедитесь, что этот скрипт нужен для списка МАТЕРИАЛОВ
+$wa = $this->getDocument()->getWebAssetManager();
+// $wa->useScript('com_tags.tags-default');
 
-// Get the user object.
+// Get the user object and access levels
 $user = Factory::getUser();
+$authorisedViewLevels = $user->getAuthorisedViewLevels();
 
-// Переменные разрешений (если нужны для кнопок редактирования и т.п.)
-// $canEdit      = $user->authorise('core.edit', $item->core_content_item_id); // Проверка для конкретного элемента
-// $canCreate    = $user->authorise('core.create', 'com_content'); // Пример для com_content
-// $canEditState = $user->authorise('core.edit.state', $item->core_content_item_id);
+// --- НАЧАЛО: Инициализация JUImage ---
+if (!class_exists('JUImage')) {
+    JLoader::register('JUImage', JPATH_LIBRARIES . '/juimage/JUImage.php');
+}
+$juImg = new JUImage();
+$regexImageSrc = '/#joomlaImage?([^\'" >]+)/';
+// --- КОНЕЦ: Инициализация JUImage ---
 
-$n = count($this->items);
 
-// --- Параметры отображения (из настроек меню/компонента) ---
-// Важно: Имена параметров могут отличаться в зависимости от того,
-// как настроен вид "Tagged Items" в Joomla. Проверьте XML вашего меню/компонента.
-// Используем префикс 'item_' чтобы отличать от параметров списка тегов
-$showFilter          = $this->params->get('filter_field'); // Стандартный параметр Joomla
-$itemColumns         = $this->params->get('num_columns', 1); // Стандартный параметр для "Blog" или "Featured" view
-$itemColumnsMedium   = $this->params->get('num_columns_medium', $itemColumns); // Пользовательский параметр (добавить в XML)
-$itemColumnsLarge    = $this->params->get('num_columns_large', $itemColumnsMedium); // Пользовательский параметр (добавить в XML)
-$showItemDescription = $this->params->get('show_intro', '1'); // Стандартный параметр 'show_intro' или 'item_show_description'
-$showItemHits        = $this->params->get('item_show_hits', '1'); // Пользовательский параметр (добавить в XML) или стандартный если есть
+// --- Параметры отображения ---
+$itemColumns        = $this->params->get('list_columns', 1);
+$itemColumnsMedium  = $this->params->get('list_columns_medium', 3);
+$itemColumnsLarge   = $this->params->get('list_columns_large', $itemColumnsMedium);
+$showItemImage      = $this->params->get('show_tag_image', 1);
+$showItemHits       = $this->params->get('show_tag_hits', 1);
+$showItemDesc       = $this->params->get('show_tag_description', 1);
+$imageWidth         = $this->params->get('tag_image_width', 390);
+$imageHeight        = $this->params->get('tag_image_height', 260);
+$truncateChars      = $this->params->get('tag_description_truncate', 100);
+$placeholderServiceUrl = $this->params->get('tag_placeholder_service', 'https://placehold.co/{width}x{height}/EFEFEF/AAAAAA.png?text={text}');
+
 
 // Формируем классы для сетки UIkit
 $gridChildWidths = 'uk-child-width-1-1';
@@ -52,147 +59,129 @@ if ((int) $itemColumnsLarge > 1) {
 }
 
 ?>
-<div class="tag-items tag-items__list"> <?php // Изменен класс для ясности ?>
 
-    <?php // Форма фильтрации (если нужна для списка материалов) ?>
-    <?php if ($showFilter) : ?>
-    <form action="<?php echo htmlspecialchars(Uri::getInstance()->toString()); ?>" method="post" name="adminForm" id="adminForm" class="uk-margin">
-        <fieldset class="uk-fieldset">
-            <legend class="uk-legend uk-hidden"><?php echo Text::_('JGLOBAL_FILTER_LABEL'); ?></legend>
-            <div class="uk-margin">
-                <div class="uk-form-controls uk-display-inline-block">
-                     <label class="uk-form-label uk-hidden" for="filter-search">
-                        <?php echo Text::_('COM_TAGS_FILTER_LABEL'); // Может быть другой текст фильтра ?>:
-                    </label>
-                    <input
-                        type="text"
-                        name="filter-search"
-                        id="filter-search"
-                        value="<?php echo $this->escape($this->state->get('list.filter')); ?>"
-                        class="uk-input uk-form-width-medium uk-form-small"
-                        onchange="document.adminForm.submit();"
-                        placeholder="<?php echo Text::_('COM_TAGS_FILTER_PLACEHOLDER'); // Может быть другой текст ?>"
-                        aria-label="<?php echo Text::_('COM_TAGS_FILTER_LABEL'); ?>"
-                    >
-                </div>
-                <div class="uk-display-inline-block uk-margin-small-left">
-                    <button type="submit" name="filter_submit" class="uk-button uk-button-primary uk-button-small">
-                        <?php echo Text::_('JGLOBAL_FILTER_BUTTON'); ?>
-                    </button>
-                    <button type="button" name="filter-clear-button" class="uk-button uk-button-secondary uk-button-small" onclick="document.getElementById('filter-search').value='';this.form.submit();">
-                        <?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
-                    </button>
-                </div>
-            </div>
-        </fieldset>
-        <input type="hidden" name="limitstart" value="">
-        <input type="hidden" name="task" value="">
-    </form>
-    <?php endif; ?>
+<div class="com-tags-tags__items tags-items-cards"> <?php // Основной контейнер ?>
 
-    <?php // Контейнер для элементов ?>
-    <div class="uk-margin-top">
+    <?php // Сообщение об отсутствии тегов ?>
+    <?php if (empty($this->items)) : ?>
+        <div class="uk-alert uk-alert-primary" uk-alert>
+             <a class="uk-alert-close" uk-close></a>
+            <p><?php echo Text::_('COM_TAGS_NO_TAGS_FOUND'); ?></p>
+        </div>
+    <?php else : ?>
+        <?php // Сетка UIkit для карточек тегов ?>
+        <div class="<?php echo $gridChildWidths; ?> tags-cards-grid uk-grid-small uk-grid-match uk-margin-top" uk-grid>
 
-        <?php if ($this->items === false || $n === 0) : ?>
-            <?php // Сообщение об отсутствии элементов ?>
-            <div class="uk-alert uk-alert-primary" uk-alert>
-                 <a class="uk-alert-close" uk-close></a> <?php // Кнопка закрытия ?>
-                <p><?php echo Text::_('COM_TAGS_NO_ITEMS_FOUND'); // Используем текст для отсутствия МАТЕРИАЛОВ ?></p>
-            </div>
+            <?php foreach ($this->items as $i => $item) : // Теперь $item - это объект ТЕГА ?>
+                <?php
+                // Пропускаем неопубликованные или если нет доступа
+                if (!isset($item->published) || $item->published == 0 || !in_array($item->access, $authorisedViewLevels)) {
+                    continue;
+                }
 
-        <?php else : ?>
-            <?php // Сетка UIkit для карточек материалов ?>
-            <div class="uk-grid <?php echo $gridChildWidths; ?> uk-grid-match" uk-grid>
+                // --- Подготовка изображения (реальное или заглушка) ---
+                $images = json_decode($item->images ?? '{}');
+                $imageOutput = null;
 
-                <?php foreach ($this->items as $i => $item) : ?>
-                    <?php // Проверка доступа к элементу ?>
-                    <?php if (!empty($item->access) && in_array($item->access, $user->getAuthorisedViewLevels())) : ?>
-                        <?php // Каждый элемент - это дочерний элемент сетки ?>
-                        <div>
-                            <?php // Карточка UIkit для материала ?>
-                            <article class="uk-card uk-card-default uk-card-hover uk-height-1-1"
-                                     itemscope itemtype="https://schema.org/Article"> <?php // Schema для статьи ?>
+                if ($showItemImage) {
+                    $sourceImagePath = '';
+                    if (!empty($images->image_intro)) {
+                        $sourceImagePath = preg_replace($regexImageSrc, '', $images->image_intro);
+                    }
 
-                                <?php // --- Изображение материала (если нужно и доступно) --- ?>
-                                <?php /* Пример добавления изображения (если есть в $item)
-                                <?php if (!empty($item->image_intro)) : // Или другое поле с изображением ?>
-                                <div class="uk-card-media-top">
-                                    <a href="<?php echo Route::_($item->readmore_link); ?>" itemprop="url">
-                                        <img src="<?php echo $item->image_intro; ?>"
-                                             alt="<?php echo $this->escape($item->image_intro_alt ?: $item->core_title); ?>"
-                                             loading="lazy" itemprop="image">
-                                    </a>
-                                </div>
-                                <?php endif; ?>
-                                */ ?>
+                    if (!empty($sourceImagePath)) {
+                        // Пытаемся обработать реальное изображение
+                        $juImageParams = [
+                            'w'         => $imageWidth, 'h' => $imageHeight, 'q' => 65,
+                            'zc'        => 'C', 'far' => 'C', 'webp' => true,
+                            'webp_q'    => 60, 'webp_maxq' => 65, 'cache' => 'img',
+                        ];
+                        $thumb = $juImg->render($sourceImagePath, $juImageParams);
+                        if ($thumb && (isset($thumb->webp) || isset($thumb->url))) {
+                            $imageOutput = $thumb;
+                        }
+                    }
 
-                                <?php // Тело карточки ?>
-                                <div class="uk-card-body">
+                    // Если не удалось обработать реальное или его не было, генерируем заглушку
+                    if (!$imageOutput) {
+                        $dynamicPlaceholderText = (int)$imageWidth . 'x' . (int)$imageHeight;
+                        $placeholderUrl = str_replace(
+                            ['{width}', '{height}', '{text}'],
+                            [(int)$imageWidth, (int)$imageHeight, urlencode($dynamicPlaceholderText)],
+                            $placeholderServiceUrl
+                        );
+                         $imageOutput = (object) [
+                             'url'    => $placeholderUrl, 'webp' => $placeholderUrl,
+                             'width'  => $imageWidth, 'height' => $imageHeight
+                         ];
+                    }
+                }
+                // --- Конец подготовки изображения ---
 
-                                    <?php // Заголовок материала ?>
-                                    <h3 class="uk-card-title uk-margin-remove-bottom">
-                                        <a href="<?php echo Route::_($item->readmore_link); ?>" itemprop="url">
-                                            <span itemprop="headline"><?php echo $this->escape($item->core_title); ?></span>
+
+                // --- Готовим HTML для хитов ЗАРАНЕЕ ---
+                $hitsHtml = '';
+                if ($showItemHits && isset($item->hits)) {
+                    $hitsTooltip = Text::sprintf('JGLOBAL_HITS_COUNT', $item->hits);
+                    $hitsHtml = '<div class="uk-width-auto@s uk-text-nowrap uk-text-meta" data-uk-tooltip title="' . $hitsTooltip . '">';
+                    $hitsHtml .= '<span uk-icon="icon: eye" class="uk-text-middle"></span>';
+                    $hitsHtml .= '<span class="uk-text-middle uk-margin-small-left">' . (int) $item->hits . '</span>';
+                    $hitsHtml .= '</div>';
+                }
+                // --- Конец подготовки HTML для хитов ---
+                ?>
+                <div> <?php // Обертка для элемента сетки ?>
+                    <article class="uk-card uk-card-default uk-box-shadow-small uk-box-shadow-hover-large uk-border-rounded uk-height-1-1 uk-flex uk-flex-column"
+                             itemscope itemtype="http://schema.org/Thing">
+
+                        <?php // Медиа-секция - Изображение Тега (или заглушка) ?>
+                        <?php if ($showItemImage && $imageOutput && isset($imageOutput->webp)) : ?>
+                            <div class="uk-card-media-top uk-inline-clip uk-transition-toggle">
+                                <a href="<?php echo Route::_(RouteHelper::getTagRoute($item->id . ':' . $item->alias)); ?>"
+                                   aria-label="<?php echo $this->escape(Text::sprintf('COM_TAGS_VIEW_TAG_TITLE', $item->title)); ?>">
+                                    <img src="<?php echo $this->escape($imageOutput->webp); ?>"
+                                         width="<?php echo $this->escape($imageOutput->width); ?>"
+                                         height="<?php echo $this->escape($imageOutput->height); ?>"
+                                         alt="<?php echo $this->escape(!empty($images->image_intro_alt) ? $images->image_intro_alt : $item->title); ?>"
+                                         class="uk-transition-scale-up uk-transition-opaque"
+                                         itemprop="image" loading="lazy"/>
+                                </a>
+                            </div>
+                        <?php endif; ?>
+
+                         <?php // Шапка карточки с ЗАГОЛОВКОМ (крупнее) и ХИТАМИ ?>
+                        <div class="uk-card-header uk-padding-small">
+                            <div class="uk-grid-small uk-flex-middle uk-flex-between" uk-grid>
+                                <div class="uk-width-expand@s">
+                                    <?php // H3 для семантики, uk-h5 для размера ?>
+                                    <h3 class="uk-card-title uk-margin-remove uk-text-bold uk-h5"> <?php // <<< Изменено на uk-h5 >>> ?>
+                                        <a class="uk-link-heading" href="<?php echo Route::_(RouteHelper::getTagRoute($item->id . ':' . $item->alias)); ?>" itemprop="url">
+                                            <span itemprop="name"><?php echo $this->escape($item->title); ?></span>
                                         </a>
                                     </h3>
-
-                                    <?php // Дата публикации / Автор (Пример метаданных) ?>
-                                    <?php /* Пример добавления даты
-                                    <?php if ($this->params->get('item_show_date', 1)) : ?>
-                                    <p class="uk-text-meta uk-margin-remove-top uk-margin-small-bottom">
-                                        <time datetime="<?php echo HTMLHelper::_('date', $item->core_created_time, 'c'); ?>" itemprop="datePublished">
-                                            <?php echo HTMLHelper::_('date', $item->core_created_time, Text::_('DATE_FORMAT_LC3')); ?>
-                                        </time>
-                                    </p>
-                                    <?php endif; ?>
-                                    */ ?>
-
-                                    <?php // Вводный текст / Описание ?>
-                                    <?php if ($showItemDescription && !empty($item->core_introtext)) : ?>
-                                        <div class="item-introtext uk-margin-top uk-text-small" itemprop="description">
-                                            <?php echo HTMLHelper::_('content.prepare', $item->core_introtext, '', 'com_tags.item'); ?>
-                                        </div>
-                                    <?php endif; ?>
-
-                                </div> <?php // end uk-card-body ?>
-
-                                <?php // Футер карточки с метаданными (Хиты) ?>
-                                <?php if ($showItemHits) : ?>
-                                <div class="uk-card-footer uk-text-meta">
-                                     <span title="<?php echo Text::_('JGLOBAL_HITS'); ?>">
-                                         <span uk-icon="icon: eye; ratio: 0.9" class="uk-margin-small-right uk-text-middle"></span>
-                                         <span class="uk-text-middle"><?php echo $item->core_hits; ?></span>
-                                     </span>
-                                     <?php // Сюда можно добавить другие метаданные (категория, автор и т.д.) ?>
                                 </div>
-                                <?php endif; ?>
+                                <?php echo $hitsHtml; // Выводим хиты ?>
+                            </div>
+                        </div>
 
-                            </article> <?php // end uk-card ?>
-                        </div> <?php // end grid child ?>
-                    <?php endif; // end access check ?>
-                <?php endforeach; ?>
+                        <?php // Тело карточки (опциональное описание) ?>
+                        <?php if ($showItemDesc && !empty($item->description)) : ?>
+                        <div class="uk-card-body uk-padding-small uk-padding-remove-top uk-flex-1">
+                            <div class="tag-description uk-text-small" itemprop="description">
+                                <?php echo HTMLHelper::_('string.truncate', strip_tags($item->description), $truncateChars); ?>
+                            </div>
+                        </div>
+                        <?php else: // Пустой растягивающийся блок, если нет описания ?>
+                        <div class="uk-card-body uk-padding-remove uk-flex-1"></div>
+                        <?php endif; ?>
 
-            </div> <?php // end uk-grid ?>
-        <?php endif; ?>
+                        <?php // Футер теперь не используется ?>
 
-    </div> <?php // end item container ?>
+                    </article> <?php // end uk-card ?>
+                </div> <?php // end grid child ?>
+            <?php endforeach; ?>
 
-    <?php // Пагинация ?>
-    <?php if (!empty($this->items) && $this->pagination->pagesTotal > 1) : ?>
-        <?php if ($this->params->get('show_pagination')) : // Стандартный параметр пагинации ?>
-            <div class="pagination-wrapper uk-margin-medium-top uk-clearfix">
-                 <?php if ($this->params->get('show_pagination_results', 1)) : // Стандартный параметр ?>
-                    <div class="counter uk-float-right">
-                        <p class="uk-text-meta">
-                            <?php echo $this->pagination->getPagesCounter(); ?>
-                        </p>
-                    </div>
-                <?php endif; ?>
-                 <div class="uk-pagination-container">
-                    <?php echo $this->pagination->getPagesLinks(['pagination' => 'uk-pagination']); // Пытаемся применить стиль UIkit ?>
-                 </div>
-            </div>
-        <?php endif; ?>
+        </div> <?php // end uk-grid ?>
     <?php endif; ?>
 
-</div> <?php // end tag-items__list ?>
+</div> <?php // end com-tags-tags__items ?>
