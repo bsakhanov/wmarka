@@ -10,37 +10,53 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
+/** @var \Joomla\Component\Finder\Site\View\Search\HtmlView $this */
 ?>
-<?php HTMLHelper::_('bootstrap.dropdown', '.dropdown-toggle'); ?>
-<div class="sorting">
-    <label id="sorting_label" for="sorting_btn"><?php echo Text::_('COM_FINDER_SORT_BY'); ?></label>
-    <div class="sorting__select btn-group">
+
+<div class="com-finder__sorting uk-flex uk-flex-middle">
+    
+    <span class="uk-form-label uk-margin-small-right uk-margin-remove-top" id="sorting_label">
+        <?php echo Text::_('COM_FINDER_SORT_BY'); ?>
+    </span>
+
+    <div class="uk-inline">
+        
         <?php foreach ($this->sortOrderFields as $sortOrderField) : ?>
             <?php if ($sortOrderField->active) : ?>
-                <button id="sorting_btn" class="btn btn-secondary dropdown-toggle" type="button"
-                        data-bs-toggle="dropdown"
-                        aria-haspopup="listbox"
-                        aria-expanded="false" aria-controls="finder_sorting_list">
+                <button id="sorting_btn" class="uk-button uk-button-default uk-button-small" type="button"
+                        aria-haspopup="true"
+                        aria-expanded="false" 
+                        aria-controls="finder_sorting_list">
                     <?php echo $this->escape($sortOrderField->label); ?>
+                    <span uk-icon="icon: chevron-down; ratio: 0.8" class="uk-margin-small-left"></span>
                 </button>
                 <?php
+                // Прерываем цикл после нахождения активного элемента
                 break;
-            endif; ?>
+                endif; ?>
         <?php endforeach; ?>
 
-        <ul id="finder_sorting_list" class="sorting__list block dropdown-menu" role="listbox" aria-labelledby="finder_sorting_desc">
-            <?php foreach ($this->sortOrderFields as $sortOrderField) : ?>
-            <li  class="sorting__list-li <?php echo $sortOrderField->active ? 'sorting__list-li-active' : ''; ?>">
-                <a class="dropdown-item" role="option" href="<?php echo Route::_($sortOrderField->url);?>" <?php echo $sortOrderField->active ? 'aria-current="true"' : ''; ?>>
-                    <?php echo $this->escape($sortOrderField->label); ?>
-                </a>
-            </li>
-            <?php endforeach; ?>
-        </ul>
+        <div uk-dropdown="mode: click; pos: bottom-right; boundary: !.com-finder__sorting; animation: uk-animation-slide-top-small; duration: 200">
+            <ul id="finder_sorting_list" class="uk-nav uk-dropdown-nav" role="listbox" aria-labelledby="sorting_label">
+                <?php foreach ($this->sortOrderFields as $sortOrderField) : ?>
+                    <li class="<?php echo $sortOrderField->active ? 'uk-active' : ''; ?>">
+                        <a href="<?php echo Route::_($sortOrderField->url); ?>" 
+                           role="option" 
+                           <?php echo $sortOrderField->active ? 'aria-current="true"' : ''; ?>>
+                            <?php echo $this->escape($sortOrderField->label); ?>
+                            
+                            <?php // Добавляем галочку для активного пункта для наглядности ?>
+                            <?php if ($sortOrderField->active) : ?>
+                                <span uk-icon="icon: check; ratio: 0.8" class="uk-float-right"></span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        
     </div>
-    <div class="clearfix"></div>
 </div>
