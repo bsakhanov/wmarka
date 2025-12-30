@@ -2,7 +2,7 @@
 /**
  * @package     Joomla.Site
  * @subpackage  com_content
- * @version     Joomla 6 WMARKA ULTRA (Full SEO + CLS Fix + JUImage + Responsive Text Images)
+ * @version     Joomla 6 WMARKA GENTLEMAN SET (Final + Fallback + JUImage + SEO)
  */
 
 defined('_JEXEC') or die;
@@ -21,19 +21,20 @@ $item      = $this->item;
 $images    = json_decode($item->images);
 $sitename  = Factory::getConfig()->get('sitename');
 
-// --- 1. НАСТРОЙКА JUImage ---
+// --- 1. ПУТИ И ИНИЦИАЛИЗАЦИЯ ---
+$defaultImageFallback = 'media/templates/site/wmarka/images/zamena.jpg'; // Твоя заглушка
 require_once(JPATH_SITE . '/libraries/juimage/vendor/autoload.php');
 $juImg = new JUImage\Image();
 $qValue = '75'; 
 
-// Конфигурация размеров для srcset
+// Конфигурация размеров
 $sz = [
-    'main' => ['w' => 1200, 'h' => 630], // Главное фото
-    'text' => ['w' => 800,  'h' => 500], // Фото в тексте (Десктоп)
-    'mob'  => ['w' => 480,  'h' => 300]  // Мобильные версии
+    'main' => ['w' => 1200, 'h' => 630],
+    'text' => ['w' => 800,  'h' => 500],
+    'mob'  => ['w' => 480,  'h' => 300]
 ];
 
-// --- 2. SEO ЛОГИКА (Кавычки) ---
+// --- 2. SEO ЛОГИКА (Кавычки и Мета) ---
 $fixQuotes = function ($text) {
     return preg_replace_callback('#(([\"]{2,})|(?![^\W])(\"))|([^\s][\"]+(?![\w]))#u', function ($m) {
         if (count($m) === 3) return "«»";
@@ -41,32 +42,23 @@ $fixQuotes = function ($text) {
     }, $text);
 };
 
-// Заголовки и Мета
 $document->setTitle(strip_tags(trim($fixQuotes($item->title) . ' | ' . $sitename)));
 $metaDesc = $item->metadesc ?: HTMLHelper::_('string.truncate', strip_tags($item->text), 160, true, false);
 $document->setMetadata('description', $fixQuotes($metaDesc));
 
-// --- 3. ОБРАБОТКА ИЗОБРАЖЕНИЙ ВНУТРИ ТЕКСТА ---
+// --- 3. ОБРАБОТКА ИЗОБРАЖЕНИЙ В ТЕКСТЕ ---
 $articleBody = preg_replace_callback('/<img [^>]*src=["\']([^"\']+)["\'][^>]*>/i', function($m) use ($juImg, $qValue, $sz) {
     $src = ltrim($m[1], '/');
-    if (!file_exists(JPATH_SITE . '/' . $src)) return $m[0]; // Если файла нет, возвращаем как было
+    if (!file_exists(JPATH_SITE . '/' . $src)) return $m[0];
     
-    // Генерируем WebP версии для десктопа и мобилок
     $dImg = $juImg->render($src, ['w' => $sz['text']['w'], 'h' => $sz['text']['h'], 'q' => $qValue, 'f' => 'webp']);
     $mImg = $juImg->render($src, ['w' => $sz['mob']['w'],  'h' => $sz['mob']['h'],  'q' => $qValue, 'f' => 'webp']);
     $base = Uri::base(true) . '/';
 
-    // Возвращаем адаптивную разметку с srcset для CLS Fix
-    return '<figure class="uk-margin-medium-bottom">
-                <picture>
-                    <source srcset="'.$base.$mImg.'" media="(max-width: 640px)">
-                    <source srcset="'.$base.$dImg.'">
-                    <img src="'.$base.$dImg.'" 
-                         width="'.$sz['text']['w'].'" 
-                         height="'.$sz['text']['h'].'" 
-                         class="uk-border-rounded" alt="image" loading="lazy">
-                </picture>
-            </figure>';
+    return '<figure class="uk-margin-medium-bottom"><picture>
+                <source srcset="'.$base.$mImg.'" media="(max-width: 640px)">
+                <img src="'.$base.$dImg.'" width="'.$sz['text']['w'].'" height="'.$sz['text']['h'].'" class="uk-border-rounded" alt="image" loading="lazy">
+            </picture></figure>';
 }, $item->text);
 
 // --- 4. ВРЕМЯ ЧТЕНИЯ ---
@@ -76,12 +68,28 @@ $minWord = Text::_('COM_CCK_MINUT');
 if ($minutesToRead % 10 == 1 && $minutesToRead % 100 != 11) $minWord = Text::_('COM_CCK_MINUTE');
 elseif ($minutesToRead % 10 >= 2 && $minutesToRead % 10 <= 4 && ($minutesToRead % 100 < 10 || $minutesToRead % 100 >= 20)) $minWord = Text::_('COM_CCK_MINUTES');
 
+// --- 5. ЛОГИКА ГЛАВНОГО ИЗОБРАЖЕНИЯ (С Fallback) ---
+$mainImgPath = ($images->image_fulltext ?: $images->image_intro) ?: $defaultImageFallback;
+
+// --- 6. OPEN GRAPH & JSON-LD ---
+$ogR = $juImg->render($mainImgPath, ['w' => 1200, 'h' => 630, 'q' => 80, 'f' => 'jpg', 'fit' => 'cover']);
+$ogImg = Uri::root() . ltrim($ogR, '/');
+$document->setMetadata('og:image', $ogImg);
+$document->setMetadata('og:locale', Text::_('OG_LANG'));
+
+$jsonLd = [
+    "@context" => "https://schema.org",
+    "@type" => "NewsArticle",
+    "headline" => $item->title,
+    "image" => [$ogImg],
+    "datePublished" => Factory::getDate($item->publish_up)->format('c')
+];
+$document->addScriptDeclaration(json_encode($jsonLd, JSON_UNESCAPED_UNICODE), 'application/ld+json');
 ?>
 
 <article class="uk-article" itemscope itemtype="https://schema.org/Article">
     <div class="uk-container uk-container-small">
         
-        <?php /* Мета-данные */ ?>
         <div class="uk-flex uk-flex-middle uk-text-meta uk-margin-small-bottom">
             <span uk-icon="icon: calendar; ratio: 0.8"></span>
             <time class="uk-margin-small-left" datetime="<?php echo Factory::getDate($item->publish_up)->format('c'); ?>" itemprop="datePublished">
@@ -95,33 +103,27 @@ elseif ($minutesToRead % 10 >= 2 && $minutesToRead % 10 <= 4 && ($minutesToRead 
             <?php echo $this->escape($item->title); ?>
         </h1>
 
-        <?php // СИСТЕМНОЕ СОБЫТИЕ: onContentAfterTitle ?>
         <?php echo $item->event->afterDisplayTitle; ?>
-
-        <?php // СИСТЕМНОЕ СОБЫТИЕ: onContentBeforeDisplay ?>
         <?php echo $item->event->beforeDisplayContent; ?>
 
         <div class="uk-grid-medium" uk-grid>
             <div class="uk-width-expand@m">
                 
-                <?php /* Главное фото со srcset */ ?>
-                <?php if ($img = ($images->image_fulltext ?: $images->image_intro)) : 
-                    $mainD = $juImg->render($img, ['w' => $sz['main']['w'], 'h' => $sz['main']['h'], 'q' => 80, 'f' => 'webp']);
-                    $mainM = $juImg->render($img, ['w' => $sz['mob']['w'],  'h' => $sz['mob']['h'],  'q' => 80, 'f' => 'webp']);
+                <?php /* Главное фото / Fallback со srcset */ ?>
+                <?php 
+                    $mainD = $juImg->render($mainImgPath, ['w' => $sz['main']['w'], 'h' => $sz['main']['h'], 'q' => 80, 'f' => 'webp']);
+                    $mainM = $juImg->render($mainImgPath, ['w' => $sz['mob']['w'],  'h' => $sz['mob']['h'],  'q' => 80, 'f' => 'webp']);
                     $base  = Uri::base(true) . '/';
                 ?>
-                    <figure class="uk-margin-medium-bottom">
-                        <picture>
-                            <source srcset="<?php echo $base.$mainM; ?>" media="(max-width: 640px)">
-                            <img src="<?php echo $base.$mainD; ?>" 
-                                 width="<?php echo $sz['main']['w']; ?>" 
-                                 height="<?php echo $sz['main']['h']; ?>" 
-                                 class="uk-border-rounded uk-box-shadow-medium" alt="main" fetchpriority="high">
-                        </picture>
-                    </figure>
-                <?php endif; ?>
+                <figure class="uk-margin-medium-bottom">
+                    <picture>
+                        <source srcset="<?php echo $base.$mainM; ?>" media="(max-width: 640px)">
+                        <img src="<?php echo $base.$mainD; ?>" 
+                             width="<?php echo $sz['main']['w']; ?>" height="<?php echo $sz['main']['h']; ?>" 
+                             class="uk-border-rounded uk-box-shadow-medium" alt="main image" fetchpriority="high">
+                    </picture>
+                </figure>
 
-                <?php /* ТЕКСТ СТАТЬИ (уже обработанный через JUImage) */ ?>
                 <div itemprop="articleBody" class="uk-article-body uk-dropcap">
                     <?php echo $articleBody; ?>
                 </div>
@@ -140,8 +142,6 @@ elseif ($minutesToRead % 10 >= 2 && $minutesToRead % 10 <= 4 && ($minutesToRead 
             </div>
         </div>
 
-        <?php // СИСТЕМНОЕ СОБЫТИЕ: onContentAfterDisplay ?>
         <?php echo $item->event->afterDisplayContent; ?>
-        
     </div>
 </article>
