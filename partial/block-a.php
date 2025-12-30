@@ -1,18 +1,19 @@
 <?php
-
 defined('_JEXEC') or die;
 
-?>
-<?php
-$blocka = $_this->countModules('block-a');
-$blocka = $blocka > 6 ? 6 : $blocka;
-if ($blocka) {
-?>
-<section id="block-a" class="uk-section uk-section-xsmall uk-section-muted uk-margin-remove-vertical ">
-    <div class="uk-container">
-        <div class="uk-child-width-1-<?php echo $blocka; ?>@l uk-child-width-1-<?php echo ceil($blocka / 2); ?>@m uk-child-width-1-1@s uk-grid-large uk-grid-divider"  data-uk-grid>
-            <jdoc:include type="modules" name="block-a" style="master3" />
+use Joomla\CMS\Factory;
+
+/** @var \Wmarka\Template\Helper $this */
+$doc = $this->doc;
+
+// Проверяем наличие модулей в позиции, чтобы не плодить пустые теги в DOM
+if ($doc->countModules('block-a')) : ?>
+    <section id="section-block-a" class="uk-section uk-section-default">
+        <div class="uk-container">
+            
+            <?php /* Вывод модулей с нашим новым стилем хрома */ ?>
+            <jdoc:include type="modules" name="block-a" style="wmarka" />
+            
         </div>
-    </div>
-</section>
-<?php } ?>
+    </section>
+<?php endif; ?>
