@@ -1,53 +1,38 @@
 <?php
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
- * Стиль Wmarka: Только полезный код, никакого мусора.
+ * Стиль вывода модулей "wmarka"
+ * Используется в jdoc:include style="wmarka"
  */
 function renderModuleWmarka($module, &$params, &$attribs)
 {
-    if (empty($module->content)) {
-        return;
-    }
-
-    // Базовые параметры
-    $moduleTag      = $params->get('module_tag', 'div');
-    $headerTag      = htmlspecialchars($params->get('header_tag', 'h3'));
-    $headerClass    = htmlspecialchars($params->get('header_class', ''));
+    $headerTag = $params->get('header_tag', 'h3');
+    $moduleTag = $params->get('module_tag', 'div');
+    $badge     = $params->get('badge', 0);
     $moduleClassSfx = htmlspecialchars($params->get('moduleclass_sfx', ''));
-
-    // Авто-замена тега для модулей навигации
-    if ($module->module === 'mod_menu' && $moduleTag === 'div') {
-        $moduleTag = 'nav';
+    
+    // Определяем базовый класс. Если это сайдбар, можно добавить uk-card
+    $baseClass = 'uk-panel';
+    if (str_contains($moduleClassSfx, 'uk-card')) {
+        $baseClass = ''; // Если класс карты уже передан в суффиксе
     }
 
-    // Собираем только нужные классы модуля
-    $moduleClasses = ['uk-panel', $moduleClassSfx];
+    if ($module->content) : ?>
+        <<?php echo $moduleTag; ?> class="<?php echo $baseClass; ?> <?php echo $moduleClassSfx; ?>">
 
-    // Классы заголовка: только эстетика UIkit и то, что ввел юзер
-    $titleClasses = ['uk-h4', 'uk-heading-bullet', $headerClass];
+            <?php if ($module->showtitle) : ?>
+                <<?php echo $headerTag; ?> class="uk-h4 uk-heading-bullet uk-margin-small-bottom">
+                    <?php echo $module->title; ?>
+                </<?php echo $headerTag; ?>>
+            <?php endif; ?>
 
-    ?>
-    <<?php echo $moduleTag; ?> class="<?php echo trim(implode(' ', array_filter($moduleClasses))); ?>">
+            <div class="uk-panel-content">
+                <?php echo $module->content; ?>
+            </div>
 
-        <?php if ($module->showtitle) : ?>
-            <<?php echo $headerTag; ?> class="<?php echo trim(implode(' ', array_filter($titleClasses))); ?>">
-                <?php echo $module->title; ?>
-            </<?php echo $headerTag; ?>>
-        <?php endif; ?>
-
-        <?php echo $module->content; ?>
-
-    </<?php echo $moduleTag; ?>>
-    <?php
-}
-
-/**
- * Стиль Empty: Абсолютно голый контент.
- */
-function renderModuleEmpty($module, &$params, &$attribs)
-{
-    echo $module->content ?? '';
+        </<?php echo $moduleTag; ?>>
+    <?php endif;
 }
