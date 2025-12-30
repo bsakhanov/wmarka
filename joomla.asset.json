@@ -1,7 +1,8 @@
 {
   "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
   "name": "wmarka",
-  "version": "2.0.2",
+  "version": "3.0.0",
+  "description": "Wmarka template assets (Joomla 6 & UIkit 3)",
   "assets": [
     {
       "name": "fonts",
@@ -13,7 +14,7 @@
       "type": "style",
       "uri": "media/templates/site/wmarka/css/uikit.min.css",
       "dependencies": ["fonts"]
-    }, 
+    },
     {
       "name": "user",
       "type": "style",
@@ -24,12 +25,19 @@
       "name": "uikit.min",
       "type": "script",
       "uri": "media/templates/site/wmarka/js/uikit.min.js",
-      "attributes" : { "defer": true } 
+      "attributes" : { "defer": true }
     },
     {
       "name": "uikit-icons.min",
       "type": "script",
       "uri": "media/templates/site/wmarka/js/uikit-icons.min.js",
+      "attributes" : { "defer": true },
+      "dependencies": ["uikit.min"]
+    },
+    {
+      "name": "wmarka-icons-min",
+      "type": "script",
+      "uri": "media/templates/site/wmarka/js/wmarka-icons-min.js",
       "attributes" : { "defer": true },
       "dependencies": ["uikit.min"]
     }
