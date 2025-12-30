@@ -1,22 +1,36 @@
 <?php
+/**
+ * Файл вывода чистого компонента (версия для печати / модальные окна)
+ * Joomla 6 + UIkit 3
+ */
+
 defined('_JEXEC') or die;
-$app             = JFactory::getApplication();
-$doc             = JFactory::getDocument();
-$this->language  = $doc->language;
-$this->direction = $doc->direction;
 
-// init $tpl helper
-require dirname(__FILE__) . '/php/init.php';
+// Инициализация хелпера шаблона (подключает стили и скрипты)
+require_once dirname(__FILE__) . '/php/init.php';
 
-?><?php echo $tpl->renderHTML(); ?>
+/** @var \Wmarka\Template\Helper $tpl */
+$doc = $this->doc;
+?>
+
+<!DOCTYPE html>
+<?php echo $tpl->renderHTML(); ?>
 <head>
-    <jdoc:include type="head"/>
+    <?php /* Подключаем системные мета-теги и ассеты из joomla.asset.json */ ?>
+    <jdoc:include type="head" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-<body class="<?php echo $tpl->getBodyClasses(); ?>">
 
-    <div class="component-wrapper">
-        <jdoc:include type="message" />
-        <jdoc:include type="component" />
-    </div>
+<body class="<?php echo $tpl->getBodyClasses(); ?> uk-background-white">
+    
+    <main class="uk-section uk-section-small">
+        <div class="uk-container">
+            
+            <?php /* Вывод основного содержимого компонента */ ?>
+            <jdoc:include type="component" />
+            
+        </div>
+    </main>
 
-</body></html>
+</body>
+</html>
