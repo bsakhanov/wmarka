@@ -7,5 +7,5 @@ use Joomla\CMS\Factory;
 // Подключаем обновленный хелпер
 require_once __DIR__ . '/Helper.php';
 
-// Инициализируем ваш класс (вместо тяжелого JBlank)
+// Инициализируем наш класс (вместо тяжелого JBlank)
 $tpl = new Wmarka\Template\Helper($this);
