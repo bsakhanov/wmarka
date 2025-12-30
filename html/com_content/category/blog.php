@@ -2,7 +2,7 @@
 /**
  * @package     Joomla.Site
  * @subpackage  com_content
- * @version     Joomla 6 WMARKA BLOG ULTRA (SEO + OpenGraph + UIkit 3)
+ * @version     Joomla 6 WMARKA BLOG (SEO + OpenGraph + UIkit 3 + Local Assets)
  */
 
 defined('_JEXEC') or die;
@@ -20,14 +20,16 @@ $document = Factory::getDocument();
 $config   = Factory::getConfig();
 $params   = $this->params;
 $sitename = $config->get('sitename');
-$tplPath  = Uri::base(true) . '/media/templates/site/wmarka';
-$defaultImageFallback = $tplPath . '/images/zamena.jpg'; // Твоя заглушка
 
-// --- 1. SEO ЛОГИКА: Автоматизация заголовков и мета-тегов ---
-$docTitle = $document->getTitle();
-$document->setTitle(strip_tags(trim($docTitle)));
+// --- 1. ПУТИ И ИНИЦИАЛИЗАЦИЯ ---
+$tplPath = Uri::base(true) . '/media/templates/site/wmarka';
+$defaultImageFallback = 'media/templates/site/wmarka/images/zamena.jpg';
 
-// Функция исправления кавычек «елочки»
+// Подключаем JUImage для обработки изображения категории
+require_once(JPATH_SITE . '/libraries/juimage/vendor/autoload.php');
+$juImg = new JUImage\Image();
+
+// --- 2. SEO ЛОГИКА: Автоматизация и кавычки ---
 $fixQuotes = function ($text) {
     return preg_replace_callback('#(([\"]{2,})|(?![^\W])(\"))|([^\s][\"]+(?![\w]))#u', function ($m) {
         if (count($m) === 3) return "«»";
@@ -35,39 +37,34 @@ $fixQuotes = function ($text) {
     }, $text);
 };
 
-// Keywords: автогенерация если пусто
+$docTitle = $document->getTitle();
+$document->setTitle(strip_tags(trim($fixQuotes($docTitle))));
+
+// Автозаполнение Keywords и Description
 if (empty($this->category->metakey)) {
     $mk = html_entity_decode(strip_tags(trim($docTitle . ', ' . $sitename)));
     $document->setMetadata('keywords', preg_replace('/[\s]{2,}/', ' ', $mk));
 }
 
-// Description: автогенерация если пусто
 if (empty($this->category->metadesc)) {
     $md = HTMLHelper::_('string.truncate', strip_tags($this->category->description), 350);
     $document->setMetadata('description', preg_replace('/[\s]{2,}/', ' ', html_entity_decode($md)));
 }
 
-// --- 2. OPEN GRAPH & ТЕХНИЧЕСКИЕ ТЕГИ ---
-$timage = ($params->get('show_description_image') && $this->category->getParams()->get('image'))
-    ? Uri::root() . $this->category->getParams()->get('image')
-    : Uri::root() . ltrim($defaultImageFallback, '/');
+// --- 3. OPEN GRAPH (Локальные изображения) ---
+$catImage = $this->category->getParams()->get('image') ?: $defaultImageFallback;
+$ogRendered = $juImg->render($catImage, ['w' => 1200, 'h' => 630, 'q' => 75, 'f' => 'jpg', 'fit' => 'cover']);
+$ogFullImage = Uri::root() . ltrim($ogRendered, '/');
 
-$document->setMetadata('og:title', $docTitle);
+$document->setMetadata('og:title', $fixQuotes($docTitle));
 $document->setMetadata('og:description', $document->getMetadata('description'));
 $document->setMetadata('og:type', 'website');
 $document->setMetadata('og:url', Uri::getInstance()->toString());
-$document->setMetadata('og:image', $timage);
+$document->setMetadata('og:image', $ogFullImage);
 $document->setMetadata('og:locale', Text::_('OG_LANG'));
 $document->setMetadata('twitter:card', 'summary_large_image');
 
-// DNS Prefetch для ускорения загрузки
-$document->addCustomTag('
-    <link rel="dns-prefetch preconnect" href="//metrika.yandex.ru" />
-    <link rel="dns-prefetch preconnect" href="//www.google-analytics.com" />
-    <link rel="dns-prefetch preconnect" href="//static.doubleclick.net" />
-');
-
-// --- 3. ПОДГОТОВКА СОБЫТИЙ ПЛАГИНОВ ---
+// --- 4. СОБЫТИЯ ПЛАГИНОВ ---
 $this->category->text = $this->category->description;
 $app->triggerEvent('onContentPrepare', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]);
 $this->category->description = $this->category->text;
@@ -103,13 +100,16 @@ $htag = $params->get('show_page_heading') ? 'h2' : 'h1';
         </div>
     <?php endif; ?>
 
-    <?php /* Описание категории с поддержкой JUImage (если добавишь логику) */ ?>
+    <?php /* Описание категории */ ?>
     <?php if ($beforeDisplayContent || $afterDisplayContent || $params->get('show_description', 1)) : ?>
         <div class="category-desc uk-panel uk-margin-medium-bottom">
-            <?php if ($params->get('show_description_image') && $this->category->getParams()->get('image')) : ?>
-                <img src="<?php echo $this->category->getParams()->get('image'); ?>" 
+            <?php if ($params->get('show_description_image') && ($img = $this->category->getParams()->get('image'))) : 
+                $cI = $juImg->render($img, ['w' => 400, 'h' => 250, 'q' => 60, 'f' => 'webp', 'fit' => 'cover']);
+            ?>
+                <img src="<?php echo Uri::base(true) . '/' . $cI; ?>" 
                      alt="<?php echo $this->category->title; ?>" 
-                     class="uk-align-right@m uk-border-rounded uk-margin-remove-adjacent">
+                     class="uk-align-right@m uk-border-rounded uk-margin-remove-adjacent"
+                     width="400" height="250">
             <?php endif; ?>
             
             <?php echo $beforeDisplayContent; ?>
@@ -122,7 +122,7 @@ $htag = $params->get('show_page_heading') ? 'h2' : 'h1';
         </div>
     <?php endif; ?>
 
-    <?php /* --- ГЛАВНЫЕ МАТЕРИАЛЫ (LEADING) --- */ ?>
+    <?php /* --- ГЛАВНЫЕ НОВОСТИ (LEADING) --- */ ?>
     <?php if (!empty($this->lead_items)) : ?>
         <div class="uk-grid-large uk-child-width-1-1 blog-items items-leading" uk-grid>
             <?php foreach ($this->lead_items as &$item) : ?>
@@ -133,7 +133,7 @@ $htag = $params->get('show_page_heading') ? 'h2' : 'h1';
         </div>
     <?php endif; ?>
 
-    <?php /* --- СЕТКА МАТЕРИАЛОВ (INTRO) --- */ ?>
+    <?php /* --- СЕТКА НОВОСТЕЙ (INTRO) --- */ ?>
     <?php if (!empty($this->intro_items)) : ?>
         <?php $numCol = (int)$params->get('num_columns', 1); ?>
         <div class="uk-grid-small uk-child-width-1-<?php echo $numCol; ?>@m uk-grid-match blog-items" uk-grid>
@@ -144,13 +144,6 @@ $htag = $params->get('show_page_heading') ? 'h2' : 'h1';
                     </div>
                 </div>
             <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
-
-    <?php /* Ссылки на другие материалы */ ?>
-    <?php if (!empty($this->link_items)) : ?>
-        <div class="uk-margin-medium-top uk-card uk-card-secondary uk-card-body uk-border-rounded">
-            <?php echo $this->loadTemplate('links'); ?>
         </div>
     <?php endif; ?>
 
