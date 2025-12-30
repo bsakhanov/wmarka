@@ -1,18 +1,43 @@
 <?php
+/**
+ * Ультра-лаконичный универсальный шаблон секции для Joomla 6
+ * Использует имя позиции в качестве ID напрямую.
+ */
 
 defined('_JEXEC') or die;
 
-?>
-<?php
-$blockh = $_this->countModules('block-h');
-$blockh = $blockh > 6 ? 6 : $blockh;
-if ($blockh) {
-?>
-<section id="block-h" class="uk-section uk-section-secondary">
-    <div class="uk-container uk-container-small uk-container-center uk-flex uk-flex-center">
-        <div class="uk-child-width-1-<?php echo $blockh; ?>@l uk-child-width-1-<?php echo ceil($blockh / 2); ?>@m uk-child-width-1-1@s" data-uk-grid>
-            <jdoc:include type="modules" name="block-h" style="master3lite" />
+/** @var \Wmarka\Template\Helper $this */
+$doc = $this->doc;
+
+// --- ИМЯ ПОЗИЦИИ ---
+// Просто меняй это значение для каждого нового файла в папке /partial/
+$position = 'block-h'; 
+
+// Проверка: если в позиции нет модулей, секция не рендерится вовсе
+if ($doc->countModules($position)) : ?>
+
+    <?php /* 
+       Контейнер секции: uk-section-default — белый фон. Можно менять на muted, primary, secondary или любой кастомный.
+       id — полезен для якорных ссылок (меню -> #section-block-a)
+    */ ?>
+    <section id="<?php echo $position; ?>" class="uk-section uk-section-default">
+        
+        <div class="uk-container">
+            
+            <?php /* Сетка UIkit 3:
+               - uk-grid-match: делает все модули в ряду одной высоты.
+               - uk-child-width-*: управляет колонками (1 на мобиле, 2 на планшете, 3 на ПК).
+            */ ?>
+            <div class="uk-grid-medium uk-child-width-1-1 uk-child-width-1-2@s uk-child-width-1-3@m uk-grid-match" uk-grid>
+                
+                <?php /* Твой стиль wmarka из html/modules.php.
+                   Все модули станут элементами этой сетки автоматически.
+                */ ?>
+                <jdoc:include type="modules" name="<?php echo $position; ?>" style="wmarka" />
+                
+            </div>
+            
         </div>
-    </div>
-</section>
-<?php } ?>
+    </section>
+
+<?php endif; ?>
