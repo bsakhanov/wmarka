@@ -117,6 +117,10 @@ if ($this->params->get('show_url', 1)) {
                 <?php if (count($taxonomies) && $this->params->get('show_taxonomy', 1)) : ?>
                     <div class="uk-margin-small-top uk-flex uk-flex-wrap" uk-margin>
                         <?php foreach ($taxonomies as $type => $taxonomy) : ?>
+                            
+                            <?php // --- ИСКЛЮЧАЕМ ТИП И АВТОРА --- ?>
+                            <?php if (in_array($type, ['Type', 'Author'])) continue; ?>
+
                             <?php if ($type == 'Language' && (!Multilanguage::isEnabled() || (isset($taxonomy[0]) && $taxonomy[0]->title == '*'))) : ?>
                                 <?php continue; ?>
                             <?php endif; ?>
@@ -136,7 +140,7 @@ if ($this->params->get('show_url', 1)) {
                                             <?php echo Text::_(LanguageHelper::branchSingular($type)); ?>:
                                         </span>
                                         <?php foreach($taxonomy_text as $term): ?>
-                                            <span class="uk-label uk-label-secondary uk-text-small">
+                                            <span class="uk-label uk-label-soft-blue uk-text-small">
                                                 <?php echo Text::_($term); ?>
                                             </span>
                                         <?php endforeach; ?>

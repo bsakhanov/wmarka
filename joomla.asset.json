@@ -1,52 +1,45 @@
 {
   "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
   "name": "wmarka",
-  "version": "2.0.2",
-  "description": "This file contains details of the assets used by Wmarka, the default Joomla 5 site template.",
-  "license": "GPL-2.0-or-later",
+  "version": "3.0.0",
+  "description": "Wmarka template assets (Joomla 6 & UIkit 3)",
   "assets": [
     {
-      "name": "uikit.min",
-      "description": "This is a minified CSS file of the Uikit 3 design framework.",
+      "name": "fonts",
       "type": "style",
-      "uri": "media/templates/site/wmarka/css/uikit.min.css"
- 
-    }, 
+      "uri": "media/templates/site/wmarka/css/fonts.css"
+    },
+    {
+      "name": "uikit.min",
+      "type": "style",
+      "uri": "media/templates/site/wmarka/css/uikit.min.css",
+      "dependencies": ["fonts"]
+    },
     {
       "name": "user",
-      "description": "This is a CSS file for customizing the template.",
       "type": "style",
-      "uri": "media/templates/site/wmarka/css/user.css"
- 
-    },     
-
+      "uri": "media/templates/site/wmarka/css/user.css",
+      "dependencies": ["uikit.min"]
+    },
     {
       "name": "uikit.min",
-      "description": "This is a minified javascript file of the Uikit 3 design framework.",
       "type": "script",
       "uri": "media/templates/site/wmarka/js/uikit.min.js",
-      "attributes" : {
-        "defer": true
-      } 
+      "attributes" : { "defer": true }
     },
     {
       "name": "uikit-icons.min",
-      "description": "This is a minified sprite of the SVG icons of the Uikit 3 design framework.",
       "type": "script",
       "uri": "media/templates/site/wmarka/js/uikit-icons.min.js",
-      "attributes" : {
-        "defer": true
-      } 
-    }, 
+      "attributes" : { "defer": true },
+      "dependencies": ["uikit.min"]
+    },
     {
       "name": "wmarka-icons-min",
-      "description": "This is a modified sprite of the SVG icons of the Wmarka template.",
       "type": "script",
       "uri": "media/templates/site/wmarka/js/wmarka-icons-min.js",
-      "attributes" : {
-        "defer": true
-      } 
-    }    
-    
+      "attributes" : { "defer": true },
+      "dependencies": ["uikit.min"]
+    }
   ]
 }

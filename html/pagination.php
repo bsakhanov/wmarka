@@ -1,209 +1,65 @@
 <?php
-
-/**
- * @package     Joomla.Site
- * @subpackage  Templates.Master3_J4
- * @copyright   Copyright (C) Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
- */
-
-\defined('_JEXEC') or die;
-
+defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-
 /**
- * This is a file to add template specific chrome to pagination rendering.
- * pagination_list_footer
- *     Input variable $list is an array with offsets:
- *         $list[ limit ]        : int
- *         $list[ limitstart ]    : int
- *         $list[ total ]        : int
- *         $list[ limitfield ]    : string
- *         $list[ pagescounter ]    : string
- *         $list[ pageslinks ]    : string
- * pagination_list_render
- *     Input variable $list is an array with offsets:
- *         $list[ all ]
- *             [ data ]        : string
- *             [ active ]    : boolean
- *         $list[ start ]
- *             [ data ]        : string
- *             [ active ]    : boolean
- *         $list[ previous ]
- *             [ data ]        : string
- *             [ active ]    : boolean
- *         $list[ next ]
- *             [ data ]        : string
- *             [ active ]    : boolean
- *         $list[ end ]
- *             [ data ]        : string
- *             [ active ]    : boolean
- *         $list[ pages ]
- *             [ {PAGE} ][ data ]        : string
- *             [ {PAGE} ][ active ]    : boolean
- * pagination_item_active
- *     Input variable $item is an object with fields:
- *         $item->base    : integer
- *         $item->link    : string
- *         $item->text    : string
- * pagination_item_inactive
- *     Input variable $item is an object with fields:
- *         $item->base    : integer
- *         $item->link    : string
- *         $item->text    : string
- * This gives template designers ultimate control over how pagination is rendered.
- * NOTE: If you override pagination_item_active OR pagination_item_inactive you MUST override them both
+ * Рендеринг списка страниц (Обертка)
  */
-
-
-/**
- * Renders the pagination footer
- * @param   array   $list  Array containing pagination footer
- * @return  string         HTML markup for the full pagination footer
- * @since   3.0
- */
-function pagination_list_footer($list)
+function pagination_list_render($list): string
 {
-    $html = "<div>\n";
-    $html .= $list['pageslinks'];
-    $html .= "\n<input type=\"hidden\" name=\"" . $list['prefix'] .
-        "limitstart\" value=\"" . $list['limitstart'] . "\">";
-    $html .= "\n</div>";
+    // Если страниц нет — ничего не выводим
+    if (empty($list['pages'])) {
+        return '';
+    }
+
+    $html = '<ul class="uk-pagination uk-flex-center uk-margin-large-top" uk-margin>';
+
+    // Кнопки "В начало" и "Назад"
+    $html .= $list['start']['data'];
+    $html .= $list['previous']['data'];
+
+    // Номера страниц
+    foreach ($list['pages'] as $page) {
+        $html .= $page['data'];
+    }
+
+    // Кнопки "Вперед" и "В конец"
+    $html .= $list['next']['data'];
+    $html .= $list['end']['data'];
+
+    $html .= '</ul>';
 
     return $html;
 }
 
 /**
- * Renders the pagination list
- * @param   array   $list  Array containing pagination information
- * @return  string         HTML markup for the full pagination object
- * @since   3.0
+ * Рендеринг активной ссылки (другие страницы)
  */
-function pagination_list_render($list)
+function pagination_item_active(&$item): string
 {
-    $app = Factory::getContainer()->get(Joomla\CMS\Application\SiteApplication::class);
-
-    $currentId = 0;
-    $range = 3;
-
-    foreach ($list['pages'] as $id => $page) {
-        if (!$page['active']) {
-            $currentId = $id;
-        }
+    // Определяем иконки для навигации
+    $title = $item->text;
+    
+    // Заменяем текст на иконки UIkit для крайних кнопок
+    if (str_contains($item->text, 'JLIB_HTML_PAGINATION_NEXT') || $item->text == '>') {
+        $title = '<span uk-pagination-next></span>';
+    } elseif (str_contains($item->text, 'JLIB_HTML_PAGINATION_PREV') || $item->text == '<') {
+        $title = '<span uk-pagination-previous></span>';
     }
 
-    $template = $app->getTemplate(true);
-    $paginationTitles = $template->params->get('paginationtitles', 0);
-    if ($currentId > 1 && $paginationTitles > 0) {
-        if ($paginationTitles == 1) {
-            $sfx = ' (' . Text::sprintf('JLIB_HTML_PAGE_CURRENT', $currentId) . ')';
-        } else {
-            $sfx = ' (' . Text::sprintf('JLIB_HTML_PAGE_CURRENT_OF_TOTAL', $currentId, count($list['pages'])) . ')';
-        }
-        $doc = $app->getDocument();
-
-        $sitename = $app->getConfig()->get('sitename');
-        $pageTitlesMode = $app->getConfig()->get('sitename_pagetitles');
-
-        $pageTitle = $doc->getTitle();
-        if ($pageTitlesMode == 2) {
-            $_i = mb_stripos($pageTitle, ' - ' . $sitename);
-            $pageTitle = mb_eregi_replace(' - ' . $sitename, '', $pageTitle) . $sfx . ' - ' . $sitename;
-        } else {
-            $pageTitle .= $sfx;
-        }
-        $doc->setTitle($pageTitle);
-
-        $pageDescription = $doc->getDescription();
-        if (!empty($pageDescription)) {
-            $doc->setDescription($pageDescription . $sfx);
-        }
-    }
-
-    $html = [];
-    $html[] = '<ul class="uk-pagination">';
-
-    if ($list['start']['active'] == 1) {
-        $html[] = $list['start']['data'];
-    }
-
-    if ($list['previous']['active'] == 1) {
-        $html[] = $list['previous']['data'];
-    }
-
-    foreach ($list['pages'] as $id => $page) {
-        if ($id <= $currentId + $range && $id >= $currentId - $range) {
-            $html[] = $page['data'];
-        }
-    }
-
-    if ($list['next']['active'] == 1) {
-        $html[] = $list['next']['data'];
-    }
-
-    if ($list['end']['active'] == 1) {
-        $html[] = $list['end']['data'];
-    }
-
-    $html[] = "</ul>";
-
-    return implode("\n", $html);
+    return '<li><a href="' . $item->link . '" aria-label="' . htmlspecialchars($item->text) . '">' . $title . '</a></li>';
 }
 
 /**
- * Renders an active item in the pagination block
- * @param   PaginationObject  $item  The current pagination object
- * @return  string                    HTML markup for active item
- * @since   3.0
+ * Рендеринг неактивного элемента (текущая страница или заглушка)
  */
-function pagination_item_active(&$item)
+function pagination_item_inactive(&$item): string
 {
-    $app = Factory::getContainer()->get(Joomla\CMS\Application\SiteApplication::class);
-
-    $template = $app->getTemplate(true);
-    $jsIcons = $template->params->get('jsIcons', 'none');
-
-    $cls = '';
-    $title = '';
-    $name = '';
-
-    if ($item->text == Text::_('JNEXT')) {
-        $item->text = $jsIcons !== 'none' ? '<span data-uk-pagination-next></span>' : $item->text;
-        $cls = "next";
-        $title = Text::_('JNEXT');
-    } elseif ($item->text == Text::_('JPREV')) {
-        $item->text = $jsIcons !== 'none' ? '<span data-uk-pagination-previous></span>' : $item->text;
-        $cls = "previous";
-        $title = Text::_('JPREV');
-    } elseif ($item->text == Text::_('JLIB_HTML_START')) {
-        $item->text = $jsIcons !== 'none' ? '<span data-uk-icon="icon:chevron-double-left"></span>' : $item->text;
-        $cls = "first";
-        $title = Text::_('JLIB_HTML_START');
-    } elseif ($item->text == Text::_('JLIB_HTML_END')) {
-        $item->text = $jsIcons !== 'none' ? '<span data-uk-icon="icon:chevron-double-right"></span>' : $item->text;
-        $cls = "last";
-        $title = Text::_('JLIB_HTML_END');
-    } else {
-        $name = ' aria-label="' . Text::sprintf('JLIB_HTML_GOTO_PAGE', $item->text) . '"';
+    // Если это текущая страница
+    if ($item->active) {
+        return '<li class="uk-active"><span>' . $item->text . '</span></li>';
     }
 
-    if ($cls) {
-        $cls = ' class="' . $cls . '"';
-        $name = ' aria-label="' . $title . '"';
-        $title = ' data-uk-tooltip="' . $title . '"';
-    }
-
-    return '<li><a' . ' href="' . $item->link . '"' . $cls . $title . $name . '>' . $item->text . '</a></li>';
-}
-
-/**
- * Renders an inactive item in the pagination block
- * @param   PaginationObject  $item  The current pagination object
- * @return  string  HTML markup for inactive item
- * @since   3.0
- */
-function pagination_item_inactive(&$item)
-{
-    return '<li class="uk-active uk-button-default uk-icon-button"><span>' . $item->text . '</span></li>';
+    // Если это отключенные стрелки (например, "Назад" на первой странице)
+    return '<li class="uk-disabled"><span>' . $item->text . '</span></li>';
 }

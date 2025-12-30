@@ -1,0 +1,31 @@
+/**
+ * Подключение шрифтов Noto Sans SemiCondensed
+ * Формат: WOFF2 (максимальное сжатие)
+ */
+
+/* Regular (400) */
+@font-face {
+    font-family: 'Noto Sans SemiCondensed';
+    src: url('../fonts/subset-NotoSansSemiCondensed-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* SemiBold (600) */
+@font-face {
+    font-family: 'Noto Sans SemiCondensed';
+    src: url('../fonts/subset-NotoSansSemiCondensed-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Bold (700) */
+@font-face {
+    font-family: 'Noto Sans SemiCondensed';
+    src: url('../fonts/subset-NotoSansSemiCondensed-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}

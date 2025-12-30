@@ -1,11 +1,8 @@
 <?php
-
 /**
  * @package     Joomla.Site
  * @subpackage  com_content
- *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version     Joomla 6 WMARKA BLOG (SEO + OpenGraph + UIkit 3 + Local Assets)
  */
 
 defined('_JEXEC') or die;
@@ -14,225 +11,165 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
-use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Uri\Uri;
 
+/** @var Joomla\Component\Content\Site\View\Category\HtmlView $this */
 
-$app = Factory::getApplication();
-$document = JFactory::getDocument();
+$app      = Factory::getApplication();
+$document = Factory::getDocument();
+$config   = Factory::getConfig();
+$params   = $this->params;
+$sitename = $config->get('sitename');
 
-$docTitle = $document->title;
-$config = JFactory::getConfig();
- 
-$document->setTitle(strip_tags(trim($docTitle)));
+// --- 1. ПУТИ И ИНИЦИАЛИЗАЦИЯ ---
+$tplPath = Uri::base(true) . '/media/templates/site/wmarka';
+$defaultImageFallback = 'media/templates/site/wmarka/images/zamena.jpg';
 
-if($this->category->metakey == "") {$mmk = $str = html_entity_decode(strip_tags(trim($docTitle.',  ' . $config->get( 'sitename' )))); $fixed_str = preg_replace('/[\s]{2,}/', ' ', $str);} else {$mmk = $this->category->metakey;}
-$document->setMetadata('keywords', $mmk);
+// Подключаем JUImage для обработки изображения категории
+require_once(JPATH_SITE . '/libraries/juimage/vendor/autoload.php');
+$juImg = new JUImage\Image();
 
-if($this->category->metadesc == "") {$mmd = $str = html_entity_decode(strip_tags (trim((JHtml::_('string.truncate', ($this->category->description), '350'))))); $fixed_str = preg_replace('/[\s]{2,}/', ' ', $str);} else {$mmd = $this->category->metadesc;}
-$document->setMetadata('description', $mmd);
+// --- 2. SEO ЛОГИКА: Автоматизация и кавычки ---
+$fixQuotes = function ($text) {
+    return preg_replace_callback('#(([\"]{2,})|(?![^\W])(\"))|([^\s][\"]+(?![\w]))#u', function ($m) {
+        if (count($m) === 3) return "«»";
+        return (isset($m[1]) && $m[1]) ? "«" : "»";
+    }, $text);
+};
 
+$docTitle = $document->getTitle();
+$document->setTitle(strip_tags(trim($fixQuotes($docTitle))));
+
+// Автозаполнение Keywords и Description
+if (empty($this->category->metakey)) {
+    $mk = html_entity_decode(strip_tags(trim($docTitle . ', ' . $sitename)));
+    $document->setMetadata('keywords', preg_replace('/[\s]{2,}/', ' ', $mk));
+}
+
+if (empty($this->category->metadesc)) {
+    $md = HTMLHelper::_('string.truncate', strip_tags($this->category->description), 350);
+    $document->setMetadata('description', preg_replace('/[\s]{2,}/', ' ', html_entity_decode($md)));
+}
+
+// --- 3. OPEN GRAPH (Локальные изображения) ---
+$catImage = $this->category->getParams()->get('image') ?: $defaultImageFallback;
+$ogRendered = $juImg->render($catImage, ['w' => 1200, 'h' => 630, 'q' => 75, 'f' => 'jpg', 'fit' => 'cover']);
+$ogFullImage = Uri::root() . ltrim($ogRendered, '/');
+
+$document->setMetadata('og:title', $fixQuotes($docTitle));
+$document->setMetadata('og:description', $document->getMetadata('description'));
+$document->setMetadata('og:type', 'website');
+$document->setMetadata('og:url', Uri::getInstance()->toString());
+$document->setMetadata('og:image', $ogFullImage);
+$document->setMetadata('og:locale', Text::_('OG_LANG'));
+$document->setMetadata('twitter:card', 'summary_large_image');
+
+// --- 4. СОБЫТИЯ ПЛАГИНОВ ---
 $this->category->text = $this->category->description;
 $app->triggerEvent('onContentPrepare', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]);
 $this->category->description = $this->category->text;
 
-$results = $app->triggerEvent('onContentAfterTitle', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]);
-$afterDisplayTitle = trim(implode("\n", $results));
+$afterDisplayTitle    = trim(implode("\n", $app->triggerEvent('onContentAfterTitle', [$this->category->extension . '.categories', &$this->category, &$this->params, 0])));
+$beforeDisplayContent = trim(implode("\n", $app->triggerEvent('onContentBeforeDisplay', [$this->category->extension . '.categories', &$this->category, &$this->params, 0])));
+$afterDisplayContent  = trim(implode("\n", $app->triggerEvent('onContentAfterDisplay', [$this->category->extension . '.categories', &$this->category, &$this->params, 0])));
 
-$results = $app->triggerEvent('onContentBeforeDisplay', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]);
-$beforeDisplayContent = trim(implode("\n", $results));
-
-$results = $app->triggerEvent('onContentAfterDisplay', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]);
-$afterDisplayContent = trim(implode("\n", $results));
-
-$htag    = $this->params->get('show_page_heading') ? 'h2' : 'h1';
-
-//OpenGraph start
- 
-if ($this->params->get('show_description_image') && $this->category->getParams()->get('image')) {
-   $timage = htmlspecialchars(JURI :: root().$this->category->getParams()->get('image')); 
-   }
-else {
-   $timage = $pathToImage = htmlspecialchars(JURI::base(true).'/media/templates/site/'.$app->getTemplate().'/images/logotype.jpg');
-   }
-
-$lang = JText::_('OG_LANG');
-$countrycity = JText::_('SEO_COUNTRY_CITY');
-$postalcode = JText::_('SEO_POSTALCODE');
-$country = JText::_('SEO_COUNTRY');
-$region = JText::_('SEO_REGION');
-$locality = JText::_('SEO_LOCALITY');
-$street = JText::_('SEO_STREET_ADDRESS');
-$tel = JText::_('SEO_TEL');
-$latitude = JText::_('SEO_LATITUDE');
-$longitude = JText::_('SEO_LONGITUDE');
-$descauthor = JText::_('SEO_DESCRIPTION_AUTHOR');
-$descpublisher = JText::_('SEO_DESCRIPTION_PUBLISHER');
-$usernamesite = JText::_('SEO_TWITTER_SITE');
-$usernameautor = JText::_('SEO_TWITTER_CREATOR');
-$facebookid = JText::_('SEO_FACEBOOK_ID');
-$yourappid = JText::_('SEO_YOUR_APP_ID'); 
- 
-$document -> addCustomTag( ' 
-
-
-
-
-<!-- Twitter card --> 
-<meta name="twitter:title" content="'.$docTitle.'">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="'.$usernamesite.'">
-<meta name="twitter:creator" content="'.$usernameautor.'">
-<meta name="twitter:url" content="'.JURI :: current().'">
-<meta name="twitter:description" content="'.$mmd.'">
-<meta name="twitter:image" content="'.$timage.'">
-<meta name="twitter:image:src" content="'.$timage.'">
-<!-- Open Graph data --> 
-<meta property="og:title" content="'.$docTitle.'"> 
-<meta property="og:description" content="'.$mmd.'">
-<meta property="og:type" content="website"> 
-<meta property="og:url" content="'.JURI :: current().'"> 
-<meta property="og:url:see_also" content="'.JURI :: current().'"> 
-<meta property="og:image" content="'.$timage.'"> 
-<meta property="og:image:secure_url" content="'.$timage.'"> 
-<meta property="og:locale" content="'.$lang.'">
-<meta property="og:site_name" content="'.$config->get( 'sitename' ).'"> 
-<meta property="article:author" content="'.$descauthor.'"> 
-<meta property="fb:admins" content="'.$facebookid.'">
-<meta property="fb:app_id" content="'.$yourappid.'">
-<!-- Open Graph data end--> 
-<link href="//img.youtube.com" rel="dns-prefetch preconnect" />
-<link href="//ajax.googleapis.com" rel="dns-prefetch preconnect" />
-<link href="//www.google-analytics.com" rel="dns-prefetch preconnect" />
-<link href="//pagead2.googlesyndication.com" rel="dns-prefetch preconnect" />
-<link href="//static.doubleclick.net" rel="dns-prefetch preconnect" />
-<link href="//www.youtube.com" rel="dns-prefetch preconnect" />
-<link href="//graph.facebook.com" rel="dns-prefetch preconnect" />
-<link href="//maxcdn.bootstrapcdn.com" rel="dns-prefetch preconnect" />
-<link href="//cdnjs.cloudflare.com" rel="dns-prefetch preconnect" />
-<link href="//cdn.jsdelivr.net" rel="dns-prefetch preconnect" />
-<link href="//oss.maxcdn.com" rel="dns-prefetch preconnect" />
-<link href="//metrika.yandex.ru" rel="dns-prefetch preconnect" />
-<link href="//informer.yandex.ru" rel="dns-prefetch preconnect" />
-'); 
-//OpenGraph end
-
+$htag = $params->get('show_page_heading') ? 'h2' : 'h1';
 ?>
-<div class="com-content-category-blog blog">
-    <?php if ($this->params->get('show_page_heading')) : ?>
-        <div class="page-header">
-            <h1> <?php echo $this->escape($this->params->get('page_heading')); ?> </h1>
+
+<div class="com-content-category-blog blog" itemscope itemtype="https://schema.org/Blog">
+    
+    <?php if ($params->get('show_page_heading')) : ?>
+        <div class="page-header uk-margin-bottom">
+            <h1 class="uk-heading-bullet"> <?php echo $this->escape($params->get('page_heading')); ?> </h1>
         </div>
     <?php endif; ?>
 
-    <?php if ($this->params->get('show_category_title', 1)) : ?>
-    <<?php echo $htag; ?>>
-        <?php echo $this->category->title; ?>
-    </<?php echo $htag; ?>>
+    <?php if ($params->get('show_category_title', 1)) : ?>
+        <<?php echo $htag; ?> class="uk-article-title uk-margin-small-bottom">
+            <?php echo $fixQuotes($this->category->title); ?>
+        </<?php echo $htag; ?>>
     <?php endif; ?>
+
     <?php echo $afterDisplayTitle; ?>
 
-    <?php if ($this->params->get('show_cat_tags', 1) && !empty($this->category->tags->itemTags)) : ?>
-        <?php $this->category->tagLayout = new FileLayout('joomla.content.tags'); ?>
-        <?php echo $this->category->tagLayout->render($this->category->tags->itemTags); ?>
+    <?php /* Теги категории */ ?>
+    <?php if ($params->get('show_cat_tags', 1) && !empty($this->category->tags->itemTags)) : ?>
+        <div class="uk-margin-small-bottom">
+            <?php $this->category->tagLayout = new FileLayout('joomla.content.tags'); ?>
+            <?php echo $this->category->tagLayout->render($this->category->tags->itemTags); ?>
+        </div>
     <?php endif; ?>
 
-    <?php if ($beforeDisplayContent || $afterDisplayContent || $this->params->get('show_description', 1) || $this->params->def('show_description_image', 1)) : ?>
-        <div class="category-desc clearfix">
-            <?php if ($this->params->get('show_description_image') && $this->category->getParams()->get('image')) : ?>
-                <?php echo LayoutHelper::render(
-                    'joomla.html.image',
-                    [
-                        'src' => $this->category->getParams()->get('image'),
-                        'alt' => empty($this->category->getParams()->get('image_alt')) && empty($this->category->getParams()->get('image_alt_empty')) ? false : $this->category->getParams()->get('image_alt'),
-                    ]
-                ); ?>
+    <?php /* Описание категории */ ?>
+    <?php if ($beforeDisplayContent || $afterDisplayContent || $params->get('show_description', 1)) : ?>
+        <div class="category-desc uk-panel uk-margin-medium-bottom">
+            <?php if ($params->get('show_description_image') && ($img = $this->category->getParams()->get('image'))) : 
+                $cI = $juImg->render($img, ['w' => 400, 'h' => 250, 'q' => 60, 'f' => 'webp', 'fit' => 'cover']);
+            ?>
+                <img src="<?php echo Uri::base(true) . '/' . $cI; ?>" 
+                     alt="<?php echo $this->category->title; ?>" 
+                     class="uk-align-right@m uk-border-rounded uk-margin-remove-adjacent"
+                     width="400" height="250">
             <?php endif; ?>
+            
             <?php echo $beforeDisplayContent; ?>
-            <?php if ($this->params->get('show_description') && $this->category->description) : ?>
-                <?php echo HTMLHelper::_('content.prepare', $this->category->description, '', 'com_content.category'); ?>
+            <?php if ($params->get('show_description') && $this->category->description) : ?>
+                <div class="uk-text-lead@m">
+                    <?php echo HTMLHelper::_('content.prepare', $this->category->description, '', 'com_content.category'); ?>
+                </div>
             <?php endif; ?>
             <?php echo $afterDisplayContent; ?>
         </div>
     <?php endif; ?>
 
-    <?php if (empty($this->lead_items) && empty($this->link_items) && empty($this->intro_items)) { ?>
-        <?php if ($this->params->get('show_no_articles', 1)) { ?>
-            <div class="uk-alert uk-alert-info">
-                <?php echo Text::_('COM_CONTENT_NO_ARTICLES'); ?>
-            </div>
-        <?php } ?>
-    <?php } ?>
+    <?php /* --- ГЛАВНЫЕ НОВОСТИ (LEADING) --- */ ?>
+    <?php if (!empty($this->lead_items)) : ?>
+        <div class="uk-grid-large uk-child-width-1-1 blog-items items-leading" uk-grid>
+            <?php foreach ($this->lead_items as &$item) : ?>
+                <div itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+                    <?php $this->item = &$item; echo $this->loadTemplate('item'); ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
-    <?php $leadingcount = 0; ?>
-    <?php if (!empty($this->lead_items)) { ?>
-        <div class="uk-child-width-1-1 blog-items items-leading <?php echo $this->params->get('blog_class_leading'); ?>" data-uk-grid>
-            <?php foreach ($this->lead_items as &$item) { ?>
-                <div class="blog-item" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-                    <div class="uk-panel">
-                        <?php
-                        $this->item = &$item;
-                        echo $this->loadTemplate('item');
-                        ?>
+    <?php /* --- СЕТКА НОВОСТЕЙ (INTRO) --- */ ?>
+    <?php if (!empty($this->intro_items)) : ?>
+        <?php $numCol = (int)$params->get('num_columns', 1); ?>
+        <div class="uk-grid-small uk-child-width-1-<?php echo $numCol; ?>@m uk-grid-match blog-items" uk-grid>
+            <?php foreach ($this->intro_items as &$item) : ?>
+                <div itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+                    <div class="uk-card uk-card-default uk-card-small uk-border-rounded uk-box-shadow-hover-medium">
+                        <?php $this->item = &$item; echo $this->loadTemplate('item'); ?>
                     </div>
                 </div>
-                <?php $leadingcount++; ?>
-            <?php } ?>
+            <?php endforeach; ?>
         </div>
-    <?php } ?>
+    <?php endif; ?>
 
-    <?php
-    $introcount = count($this->intro_items);
-    $counter = 0;
-    ?>
-
-    <?php if (!empty($this->intro_items)) { ?>
-        <?php $blogClass = $this->params->get('blog_class', ''); ?>
-        <div class="uk-child-width-1-<?php echo (int)$this->params->get('num_columns', 1); ?>@m blog-items <?php echo $blogClass; ?> uk-grid-small uk-flex uk-flex-center uk-flex-wrap  uk-grid-match" uk-grid>
-            <?php foreach ($this->intro_items as $key => &$item) { ?>
-                <div class="blog-item" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-                    <div class=" uk-card uk-card-default uk-padding-remove-horizontal  uk-box-shadow-small uk-box-shadow-hover-large uk-border-rounded">
-                        <?php
-                        $this->item = &$item;
-                        echo $this->loadTemplate('item');
-                        ?>
-                    </div>
-                </div>
-            <?php } ?>
-        </div>
-    <?php } ?>
-
-    <?php if (!empty($this->link_items)) { ?>
-        <div class="items-more">
-            <?php echo $this->loadTemplate('links'); ?>
-        </div>
-    <?php } ?>        <hr class="uk-margin-medium">
-
-    <?php if (($this->params->def('show_pagination', 1) == 1 || ($this->params->get('show_pagination') == 2)) && ($this->pagination->pagesTotal > 1)) { ?>
-        <div class="uk-flex uk-flex-between@m uk-flex-middle uk-flex-wrap uk-margin-top navigation">
-            <div class="com-content-category-blog__pagination">
+    <?php /* ПАГИНАЦИЯ */ ?>
+    <?php if (($params->def('show_pagination', 1) != 0) && ($this->pagination->pagesTotal > 1)) : ?>
+        <div class="uk-margin-large-top uk-flex uk-flex-between uk-flex-middle uk-flex-wrap">
+            <div class="wmarka-pagination">
                 <?php echo $this->pagination->getPagesLinks(); ?>
             </div>
-            <?php if ($this->params->def('show_pagination_results', 1)) { ?>
-                <div class="counter">
+            <?php if ($params->get('show_pagination_results')) : ?>
+                <div class="uk-text-meta">
                     <?php echo $this->pagination->getPagesCounter(); ?>
                 </div>
-            <?php } ?>
+            <?php endif; ?>
         </div>
-    <?php } ?>
+    <?php endif; ?>
 
-	<?php if ($this->params->get('show_category_heading_title_text', 1) == 1) { ?>
-                
-				
-				
-				<h3><?php echo Text::_('JGLOBAL_SUBCATEGORIES'); ?></h3>
-            <?php } ?>
-<div class="uk-grid-small uk-child-width-1-3@m uk-text-center uk-hr uk-margin uk-padding-small" uk-grid>
-    <?php if ($this->maxLevel != 0 && !empty($this->children[$this->category->id])) { ?>
-
-        
-
-            <?php echo $this->loadTemplate('children'); ?>
-
-    <?php } ?>
+    <?php /* ПОДКАТЕГОРИИ */ ?>
+    <?php if ($this->maxLevel != 0 && !empty($this->children[$this->category->id])) : ?>
+        <div class="uk-margin-large-top">
+            <hr class="uk-divider-icon">
+            <h3 class="uk-heading-line uk-text-center"><span><?php echo Text::_('JGLOBAL_SUBCATEGORIES'); ?></span></h3>
+            <div class="uk-grid-small uk-child-width-1-3@m uk-text-center" uk-grid>
+                <?php echo $this->loadTemplate('children'); ?>
+            </div>
         </div>
+    <?php endif; ?>
+
 </div>
