@@ -1,102 +1,53 @@
 <?php
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
 
 /**
- * @package     Joomla.Site
- * @subpackage  Templates.Master3_J4
- * @copyright   Copyright (C) Aleksey A. Morozov. All rights reserved.
- * @license     GNU General Public License version 3 or later; see http://www.gnu.org/licenses/gpl-3.0.txt
+ * Стиль Wmarka: Только полезный код, никакого мусора.
  */
-
-\defined('_JEXEC') or die;
-
-function modChrome_master3($module, &$params, &$attribs)
+function renderModuleWmarka($module, &$params, &$attribs)
 {
-    $moduleTag = 'div';
-    if ($module->module === 'mod_menu') {
+    if (empty($module->content)) {
+        return;
+    }
+
+    // Базовые параметры
+    $moduleTag      = $params->get('module_tag', 'div');
+    $headerTag      = htmlspecialchars($params->get('header_tag', 'h3'));
+    $headerClass    = htmlspecialchars($params->get('header_class', ''));
+    $moduleClassSfx = htmlspecialchars($params->get('moduleclass_sfx', ''));
+
+    // Авто-замена тега для модулей навигации
+    if ($module->module === 'mod_menu' && $moduleTag === 'div') {
         $moduleTag = 'nav';
     }
 
-    $moduleClass = [];
-    $moduleClass[] = 'tm-position-' . $module->position;
-    $moduleClass[] = 'tm-modid-' . $module->id;
-    $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''));
-    if ($moduleclass_sfx) {
-        $moduleClass[] = 'tm-modclass-' . $moduleclass_sfx;
-    }
-    $moduleClass = trim(implode(' ', $moduleClass));
+    // Собираем только нужные классы модуля
+    $moduleClasses = ['uk-panel', $moduleClassSfx];
 
-    $titleTag = htmlspecialchars($params->get('header_tag', 'h3'));
-    $titleClass = htmlspecialchars($params->get('header_class', ''), ENT_COMPAT, 'UTF-8');
-    $titleClass = $titleClass ? ' class="' . $titleClass . '"' : '';
+    // Классы заголовка: только эстетика UIkit и то, что ввел юзер
+    $titleClasses = ['uk-h4', 'uk-heading-bullet', $headerClass];
 
-    if ($module->content) {
-        echo '<div><' . $moduleTag . ' class="' . trim($moduleClass) . '">';
+    ?>
+    <<?php echo $moduleTag; ?> class="<?php echo trim(implode(' ', array_filter($moduleClasses))); ?>">
 
-        if ($module->showtitle) {
-            echo '<' . $titleTag . $titleClass . '>' . $module->title . '</' . $titleTag . '>';
-        }
+        <?php if ($module->showtitle) : ?>
+            <<?php echo $headerTag; ?> class="<?php echo trim(implode(' ', array_filter($titleClasses))); ?>">
+                <?php echo $module->title; ?>
+            </<?php echo $headerTag; ?>>
+        <?php endif; ?>
 
-        echo $module->content;
+        <?php echo $module->content; ?>
 
-        echo '</' . $moduleTag . '></div>';
-    }
+    </<?php echo $moduleTag; ?>>
+    <?php
 }
 
-function modChrome_empty($module, &$params, &$attribs)
+/**
+ * Стиль Empty: Абсолютно голый контент.
+ */
+function renderModuleEmpty($module, &$params, &$attribs)
 {
-    echo str_replace(
-        ["<div >\r\n    ", "<div >\n    ", "</div>\r\n", "</div>\n", "</div>\r"],
-        ['<div>', '<div>', '</div>', '</div>', '</div>'],
-        $module->content
-    );
-}
-// Uikit3 Specific Module Chrome
-function modChrome_uikit($module, &$params, &$attribs)
-{
-	$moduleTag      = $params->get('module_tag', 'div');
-	$headerTag      = htmlspecialchars($params->get('header_tag', 'h3'));
-	$bootstrapSize  = (int) $params->get('bootstrap_size', 0);
-	$moduleClass    = $bootstrapSize != 0 ? ' span' . $bootstrapSize : '';
-
-	// Temporarily store header class in variable
-	$headerClass    = $params->get('header_class', 'uk-title');
-	$headerClass    = ($headerClass) ? ' class="uk-heading-divider uk-heading-bullet uk-h2"' : '';
-
-	if (!empty ($module->content)) : ?>
-		<<?php echo $moduleTag; ?> class="moduletable <?php echo htmlspecialchars($params->get('moduleclass_sfx')) . $moduleClass; ?>">
-			<?php echo $module->content; ?>
-		</<?php echo $moduleTag; ?>>
-	<?php endif;
-}
-function modChrome_uikittitle($module, &$params, &$attribs)
-{
-    $moduleTag = 'div';
-    if ($module->module === 'mod_menu') {
-        $moduleTag = 'nav';
-    }
-
-    $moduleClass = [];
-    $moduleClass[] = 'tm-position-' . $module->position;
-    $moduleClass[] = 'tm-modid-' . $module->id;
-    $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''));
-    if ($moduleclass_sfx) {
-        $moduleClass[] = 'tm-modclass-' . $moduleclass_sfx;
-    }
-    $moduleClass = trim(implode(' ', $moduleClass));
-
-    $titleTag = htmlspecialchars($params->get('header_tag', 'h3'));
-    $titleClass = htmlspecialchars($params->get('header_class', ''), ENT_COMPAT, 'UTF-8');
-    $titleClass = ' class="uk-heading-divider uk-heading-bullet uk-h2"';
-
-    if ($module->content) {
-        echo '<div><' . $moduleTag . ' class="' . trim($moduleClass) . ' ">';
-
-        if ($module->showtitle) {
-            echo '<' . $titleTag . $titleClass . '>' . $module->title . '</' . $titleTag . '>';
-        }
-
-        echo $module->content;
-
-        echo '</' . $moduleTag . '></div>';
-    }
+    echo $module->content ?? '';
 }
