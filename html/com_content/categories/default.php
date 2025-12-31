@@ -1,31 +1,29 @@
 <?php
-
 /**
  * @package     Joomla.Site
  * @subpackage  com_content
- *
- * @copyright   (C) 2009 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version     WMARKA ULTRA CLEAN (No legacy classes)
  */
 
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 
-// Add strings for translations in Javascript.
-Text::script('JGLOBAL_EXPAND_CATEGORIES');
-Text::script('JGLOBAL_COLLAPSE_CATEGORIES');
-
-/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
-$wa = $this->document->getWebAssetManager();
-$wa->getRegistry()->addExtensionRegistryFile('com_categories');
-$wa->usePreset('com_categories.shared-categories-accordion');
-
+/** @var \Joomla\Component\Content\Site\View\Categories\HtmlView $this */
 ?>
-<div class="com-content-categories categories-list">
-    <?php
-    echo LayoutHelper::render('joomla.content.categories_default', $this);
-    echo $this->loadTemplate('items');
-    ?>
+
+<div class="uk-section uk-section-xsmall" itemscope itemtype="https://schema.org/CollectionPage">
+    <div class="uk-container">
+        
+        <?php /* Заголовок и описание (Layout) */ ?>
+        <header class="uk-margin-medium-bottom">
+            <?php echo LayoutHelper::render('joomla.content.categories_default', $this); ?>
+        </header>
+
+        <?php /* Список элементов (Template items) */ ?>
+        <main itemprop="mainEntity" itemscope itemtype="https://schema.org/ItemList">
+            <?php echo $this->loadTemplate('items'); ?>
+        </main>
+
+    </div>
 </div>
