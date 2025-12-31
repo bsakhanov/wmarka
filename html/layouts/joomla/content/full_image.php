@@ -2,83 +2,79 @@
 /**
  * @package     Joomla.Site
  * @subpackage  Layout
- *
- * @copyright   (C) 2016 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version     WMARKA FULL IMAGE (Intro Source + WebP q=35 + CLS Fix)
  */
 
 defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Uri\Uri;
 
-$params  = $displayData->params;
-$images  = json_decode($displayData->images);
+/** @var object $displayData Обьект статьи */
+$params = $displayData->params;
+$images = json_decode($displayData->images);
 
-if (empty($images->image_intro))
-{
-	return;
+// Используем Intro Image в качестве основного источника для Full Image
+if (empty($images->image_intro)) {
+    return;
 }
 
-$imgclass  = empty($images->float_fulltext) ? $params->get('float_fulltext') : $images->float_fulltext;
-$extraAttr = '';
-$img       = HTMLHelper::cleanImageURL($images->image_intro);
-$alt       = empty($images->image_fulltext_alt) && empty($images->image_fulltext_alt_empty) ? '' : 'alt="' . htmlspecialchars($images->image_fulltext_alt, ENT_COMPAT, 'UTF-8') . '"';
+// Настройка путей и JUImage
+require_once(JPATH_SITE . '/libraries/juimage/vendor/autoload.php');
+$juImg = new JUImage\Image();
+$baseUrl = Uri::base(true) . '/';
 
-// Set lazyloading only for images which have width and height attributes
-if ((isset($img->attributes['width']) && (int) $img->attributes['width'] > 0)
-&& (isset($img->attributes['height']) && (int) $img->attributes['height'] > 0))
-{
-	$extraAttr = ArrayHelper::toString($img->attributes) . ' loading="lazy"';
+// Очистка пути от системных хешей Joomla
+$cleanSrc = preg_replace('/#joomlaImage?([^\'" >]+)/', '', $images->image_intro);
+
+// Проверка физического наличия файла
+if (!file_exists(JPATH_ROOT . '/' . ltrim($cleanSrc, '/'))) {
+    return;
 }
-JLoader::register('JUImage',  JPATH_LIBRARIES . '/juimage/JUImage.php');
 
-$juImg = new JUImage();
+// --- ПАРАМЕТРЫ ОБРАБОТКИ ---
+$qValue = '35'; // Ваша установка агрессивного сжатия
+$deskSize = ['w' => '750', 'h' => '500'];
+$mobSize  = ['w' => '360', 'h' => '240'];
+
+// Рендерим локальные WebP версии
+$thumbDesktop = $juImg->render($cleanSrc, [
+    'w' => $deskSize['w'], 'h' => $deskSize['h'], 'q' => $qValue, 'f' => 'webp', 'cache' => 'img', 'fit' => 'cover'
+]);
+
+$thumbMobile = $juImg->render($cleanSrc, [
+    'w' => $mobSize['w'],  'h' => $mobSize['h'],  'q' => $qValue, 'f' => 'webp', 'cache' => 'img', 'fit' => 'cover'
+]);
 ?>
-<?php
-$regexImageSrc = '/#joomlaImage?([^\'" >]+)/';
-?>
-<?php
 
-$thumb = $juImg->render(preg_replace($regexImageSrc, '', $images->image_intro), [
-	'w'     	=> '900',
-	'h'     	=> '600',
-	'q'         => '100',
-	'zc'        => 'C',
-	'far'        => 'C',	
-	'webp'      => true,
-	'webp_q'    => '100',
-	'webp_maxq' => '100',
-	'cache'     => 'img' 
+<figure class="article-full-image uk-margin-medium-bottom" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+    <picture>
+        <?php /* Мобильная версия (srcset) до 640px */ ?>
+        <source srcset="<?php echo $baseUrl . ltrim($thumbMobile, '/'); ?>" 
+                media="(max-width: 640px)" 
+                type="image/webp"
+                width="<?php echo $mobSize['w']; ?>" 
+                height="<?php echo $mobSize['h']; ?>">
 
-	
-]); 
+        <?php /* Основное изображение (Desktop) */ ?>
+        <img src="<?php echo $baseUrl . ltrim($thumbDesktop, '/'); ?>" 
+             width="<?php echo $deskSize['w']; ?>" 
+             height="<?php echo $deskSize['h']; ?>" 
+             alt="<?php echo htmlspecialchars($displayData->title, ENT_QUOTES, 'UTF-8'); ?>" 
+             class="uk-border-rounded uk-box-shadow-medium"
+             fetchpriority="high" 
+             loading="eager"
+             itemprop="url">
+    </picture>
 
-?>
-<figure class="uk-hidden@m uk-visibles">
+    <?php /* Подпись к изображению */ ?>
+    <?php if (!empty($images->image_intro_caption)) : ?>
+        <figcaption class="uk-text-meta uk-margin-small-top uk-text-center">
+            <span uk-icon="icon: camera; ratio: 0.7"></span> 
+            <?php echo htmlspecialchars($images->image_intro_caption, ENT_COMPAT, 'UTF-8'); ?>
+        </figcaption>
+    <?php endif; ?>
 
-
-				<img src="<?php echo $thumb->webp; ?>" type="image/webp" width="900" height="600" alt="<?php echo $this->escape($displayData->title); ?> "  loading="lazy" <?php echo $extraAttr; ?> >
-					<meta itemprop="url" content="<?php echo JUri::root(); ?><?php echo $thumb->img; ?>">					
-				    <meta itemprop="height" content="600" />
-				    <meta itemprop="width" content="900" />	
-  <div class=" uk-margin-top">
-	<?php if ($images->image_intro_caption !== '') : ?>
-		<figcaption class="uk-text-meta"><?php echo htmlspecialchars($images->image_intro_caption, ENT_COMPAT, 'UTF-8'); ?></figcaption>
-	<?php endif; ?>
-  </div>
-</figure>
-<figure class="uk-flex uk-visible@m uk-flex-center uk-grid-small uk-margin-bottom uk-visibles" uk-grid>
-  <div class="uk-width-xlarge">
-
-				<img src="<?php echo $thumb->webp; ?>" type="image/webp" width="900" height="600" alt="<?php echo $this->escape($displayData->title); ?> "  loading="lazy" <?php echo $extraAttr; ?> >
-					<meta itemprop="url" content="<?php echo JUri::root(); ?><?php echo $thumb->img; ?>">					
-				    <meta itemprop="height" content="600" />
-				    <meta itemprop="width" content="900" />	
-  </div>
-  <div class="uk-width-expand uk-margin-top">
-	<?php if ($images->image_intro_caption !== '') : ?>
-		<figcaption class="uk-text-meta"><?php echo htmlspecialchars($images->image_intro_caption, ENT_COMPAT, 'UTF-8'); ?></figcaption>
-	<?php endif; ?>
-  </div>
+    <meta itemprop="width" content="<?php echo $deskSize['w']; ?>">
+    <meta itemprop="height" content="<?php echo $deskSize['h']; ?>">
 </figure>
