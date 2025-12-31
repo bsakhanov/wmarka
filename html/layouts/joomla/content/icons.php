@@ -1,22 +1,15 @@
 <?php
-
-/**
- * @package     Joomla.Site
- * @subpackage  Layout
- *
- * @copyright   (C) 2013 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
- */
-
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 
-$canEdit   = $displayData['params']->get('access-edit');
+$canEdit = $displayData['params']->get('access-edit');
 ?>
-
-<?php if ($canEdit) { ?>
-    <div class="uk-margin icons">
-        <?php echo HTMLHelper::_('icon.edit', $displayData['item'], $displayData['params']); ?>
+<?php if ($canEdit) : ?>
+    <div class="uk-align-right uk-margin-remove-bottom edit-icon">
+        <div class="uk-button-group">
+            <?php /* Joomla сама отрендерит иконку правки, мы просто даем ей контекст */ ?>
+            <?php echo HTMLHelper::_('icon.edit', $displayData['item'], $displayData['params']); ?>
+        </div>
     </div>
-<?php } ?>
+<?php endif; ?>
