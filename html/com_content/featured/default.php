@@ -1,69 +1,77 @@
 <?php
-
 /**
  * @package     Joomla.Site
  * @subpackage  com_content
- *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version     WMARKA ULTRA (Featured Main Wrap + UIkit Grid)
  */
 
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
+use Joomla\CMS\Layout\LayoutHelper;
+
+/** @var \Joomla\Component\Content\Site\View\Featured\HtmlView $this */
+
+$params = $this->params;
+$columns = (int) $params->get('num_columns', 2);
+$gridClass = 'uk-child-width-1-1';
+if ($columns > 1) {
+    $gridClass .= " uk-child-width-1-{$columns}@m";
+}
 ?>
-<div class="blog-featured" itemscope itemtype="https://schema.org/Blog">
-    <?php if ($this->params->get('show_page_heading') != 0) { ?>
-        <div class="page-header">
-            <h1><?php echo $this->escape($this->params->get('page_heading')); ?></h1>
-        </div>
-    <?php } ?>
 
-    <?php $leadingcount = 0; ?>
-    <?php if (!empty($this->lead_items)) { ?>
-        <div class="uk-child-width-1-1 blog-items items-leading <?php echo $this->params->get('blog_class_leading'); ?>" data-uk-grid>
-            <?php foreach ($this->lead_items as &$item) { ?>
-                <div class="blog-item" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+<div class="com-content-featured featured-blog uk-section uk-section-xsmall" itemscope itemtype="https://schema.org/Blog">
+    
+    <?php if ($params->get('show_page_heading')) : ?>
+        <h1 class="uk-heading-bullet uk-margin-medium-bottom">
+            <?php echo $this->escape($params->get('page_heading')); ?>
+        </h1>
+    <?php endif; ?>
+
+    <?php /* 1. Вводные (Leading) материалы — на всю ширину */ ?>
+    <?php if (!empty($this->lead_items)) : ?>
+        <div class="uk-grid-medium uk-child-width-1-1 uk-margin-medium-bottom" uk-grid>
+            <?php foreach ($this->lead_items as &$item) : ?>
+                <div>
                     <?php
-                    $this->item = &$item;
+                    $this->item = & $item;
                     echo $this->loadTemplate('item');
                     ?>
                 </div>
-                <?php $leadingcount++; ?>
-            <?php } ?>
+            <?php endforeach; ?>
         </div>
-    <?php } ?>
+    <?php endif; ?>
 
-    <?php if (!empty($this->intro_items)) { ?>
-        <?php $blogClass = $this->params->get('blog_class', ''); ?>
-        <div class="uk-child-width-1-<?php echo (int) $this->params->get('num_columns', 1); ?>@m blog-items <?php echo $blogClass; ?>" data-uk-grid="masonry:true">
-            <?php foreach ($this->intro_items as $key => &$item) { ?>
-                <div class="blog-item" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <?php /* 2. Основные (Intro) материалы в колонках */ ?>
+    <?php if (!empty($this->intro_items)) : ?>
+        <div class="uk-grid-medium uk-grid-match <?php echo $gridClass; ?>" uk-grid>
+            <?php foreach ($this->intro_items as $key => &$item) : ?>
+                <div>
                     <?php
-                    $this->item = &$item;
+                    $this->item = & $item;
                     echo $this->loadTemplate('item');
                     ?>
                 </div>
-            <?php } ?>
+            <?php endforeach; ?>
         </div>
-    <?php } ?>
+    <?php endif; ?>
 
-    <?php if (!empty($this->link_items)) { ?>
-        <div class="items-more">
+    <?php /* 3. Ссылки на другие материалы */ ?>
+    <?php if (!empty($this->link_items)) : ?>
+        <div class="uk-margin-large-top">
             <?php echo $this->loadTemplate('links'); ?>
         </div>
-    <?php } ?>
+    <?php endif; ?>
 
-    <?php if ($this->params->def('show_pagination', 2) == 1  || ($this->params->get('show_pagination') == 2 && $this->pagination->pagesTotal > 1)) { ?>
-        <div class="uk-flex uk-flex-between@m uk-flex-middle uk-flex-wrap uk-margin-top navigation">
-            <div class="com-content-category-blog__pagination">
-                <?php echo $this->pagination->getPagesLinks(); ?>
-            </div>
-            <?php if ($this->params->def('show_pagination_results', 1)) { ?>
-                <div class="counter">
+    <?php /* 4. Пагинация */ ?>
+    <?php if ($params->def('show_pagination', 2) == 1 || ($params->get('show_pagination') == 2 && $this->pagination->pagesTotal > 1)) : ?>
+        <div class="uk-margin-large-top">
+            <?php echo $this->pagination->getPagesLinks(); ?>
+            <?php if ($params->def('show_pagination_results', 1)) : ?>
+                <div class="uk-text-meta uk-text-center uk-margin-small-top">
                     <?php echo $this->pagination->getPagesCounter(); ?>
                 </div>
-            <?php } ?>
+            <?php endif; ?>
         </div>
-    <?php } ?>
+    <?php endif; ?>
 
 </div>
