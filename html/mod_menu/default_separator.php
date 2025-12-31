@@ -1,26 +1,19 @@
 <?php
-/**
- * @package     Joomla.Site
- * @subpackage  mod_menu
- * @version     WMARKA ULTRA (UIkit 3 Separator)
- */
-
 defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 
 $anchor_css = $item->anchor_css ?: '';
-$linktype   = $item->title;
-
-// Если это пункт-разделитель в выпадающем меню, делаем его заголовком UIkit
-$class = "uk-nav-header " . $anchor_css;
+$linktype = '<span itemprop="name">' . $item->title . '</span>';
 
 if ($item->menu_icon) {
-    $linktype = '<span class="uk-margin-small-right ' . $item->menu_icon . '" aria-hidden="true"></span>' . $item->title;
-} elseif ($item->menu_image) {
-    $linktype = HTMLHelper::_('image', $item->menu_image, '', ['class' => 'uk-margin-small-right']) . $item->title;
+    $icon = '<span data-uk-icon="icon: ' . $item->menu_icon . '" aria-hidden="true" class="uk-margin-small-right"></span>';
+    $linktype = ($itemParams->get('menu_text', 1)) 
+        ? $icon . '<span itemprop="name">' . $item->title . '</span>' 
+        : $icon . '<span class="uk-hidden" itemprop="name">' . $item->title . '</span>';
 }
+
 ?>
-<span class="<?php echo $class; ?>" <?php echo $item->anchor_title ? 'title="'.$item->anchor_title.'"' : ''; ?>>
+<span class="uk-nav-header <?php echo $anchor_css; ?>" itemprop="name">
     <?php echo $linktype; ?>
 </span>
