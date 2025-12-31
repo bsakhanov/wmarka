@@ -55,7 +55,15 @@ if ($this->maxLevelcat != 0 && count($this->items[$this->parent->id]) > 0) : ?>
                     <?php if ($this->params->get('show_description_image') && ($img = $item->getParams()->get('image'))) : ?>
                         <div class="uk-card-media-top">
                             <a href="<?php echo Route::_(RouteHelper::getCategoryRoute($item->id, $item->language)); ?>">
-                                <img src="<?php echo $img; ?>" alt="<?php echo $this->escape($item->getParams()->get('image_alt')); ?>" loading="lazy">
+                                <?php echo Joomla\CMS\Layout\LayoutHelper::render(
+                                    'joomla.html.image',
+                                    [
+                                        'src' => $img,
+                                        'alt' => $item->getParams()->get('image_alt'),
+                                        'loading' => 'lazy',
+                                        'class' => 'wmarka-optimized-img'
+                                    ]
+                                ); ?>
                             </a>
                         </div>
                     <?php endif; ?>
