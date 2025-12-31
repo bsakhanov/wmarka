@@ -56,6 +56,12 @@ if ($doc->countModules($navPositions)) : ?>
 
                     <?php /* Поиск и мобильное меню */ ?>
                     <a class="uk-navbar-toggle" href="#modal-full-search" uk-search-icon uk-toggle aria-label="Search"></a>
+                    <div class="uk-inline">
+                        <button class="uk-button uk-button-text" type="button">Вход <span uk-icon="icon: chevron-down"></span></button>
+                        <div uk-dropdown="mode: click; pos: bottom-right; boundary: !.uk-navbar">
+                            <jdoc:include type="modules" name="login" style="none" />
+                        </div>
+                    </div>     
                     <a href="#offcanvas-menu" class="uk-navbar-toggle uk-hidden@m" uk-navbar-toggle-icon uk-toggle aria-label="Menu"></a>
                 </div>
 
