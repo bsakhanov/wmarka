@@ -1,55 +1,54 @@
 <?php
-
 /**
  * @package     Joomla.Site
  * @subpackage  Layout
- *
- * @copyright   (C) 2016 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version     WMARKA UIKIT (Associations Sublayout)
  */
 
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Filesystem\Path;
 
-$app          = Factory::getContainer()->get(Joomla\CMS\Application\SiteApplication::class);
-$templateName = $app->getTemplate(true)->template;
-$jsIcons      = $app->getTemplate(true)->params->get('jsIcons', 'none') != 'none';
+/**
+ * $displayData['item'] - объект материала
+ */
+if (empty($displayData['item']->associations)) {
+    return;
+}
 
+$associations = $displayData['item']->associations;
+$params = $displayData['item']->params;
 ?>
 
-<?php
-if (!empty($displayData['item']->associations)) {
-    $associations = $displayData['item']->associations;
-    ?>
-    <dd class="uk-flex uk-flex-middle association">
-        <?php
-        if ($jsIcons) {
-            echo '<span data-uk-icon="icon:world" aria-hidden="true"></span>%nbsp;';
-        }
-        echo  '<span>' . Text::_('JASSOCIATIONS');
-        foreach ($associations as $association) {
-            if ($displayData['item']->params->get('flags', 1) && $association['language']->image) {
-                $lang_image = realpath(Path::clean(JPATH_ROOT . '/templates/' . $templateName . '/html/mod_languages/images/' .  $association['language']->image . '.svg'));
-                if ($lang_image) {
-                    $flag = '<span class="uk-border-circle uk-flex-inline" style="width:1em;">' . file_get_contents($lang_image) . '</span>';
-                } else {
-                    $flag = HTMLHelper::_('image', 'mod_languages/' . $association['language']->image . '.gif', '', array('class' => 'me-1'), true) . htmlspecialchars($association['language']->title_native, ENT_COMPAT, 'UTF-8');
-                }
+<div class="article-associations uk-flex uk-flex-middle">
+    <?php /* Используем иконку world из UIkit вместо icon-globe */ ?>
+    <span uk-icon="icon: world; ratio: 0.8" class="uk-margin-xsmall-right"></span>
+    
+    <span class="uk-visible@m uk-margin-small-right"><?php echo Text::_('JASSOCIATIONS'); ?>:</span>
+
+    <?php foreach ($associations as $association) : ?>
+        <?php /* Логика вывода флагов */ ?>
+        <?php if ($params->get('flags', 1) && $association['language']->image) : ?>
+            <?php 
+                $flag = HTMLHelper::_('image', 
+                    'mod_languages/' . $association['language']->image . '.gif', 
+                    $association['language']->title_native, 
+                    ['title' => $association['language']->title_native, 'class' => 'uk-border-rounded uk-margin-xsmall-right'], 
+                    true
+                ); 
             ?>
-                <a class="uk-link uk-link-reset" href="<?php echo Route::_($association['item']); ?>"><?php echo $flag; ?></a>
-            <?php } else { ?>
-                <?php $class = 'uk-link uk-link-reset btn-' . strtolower($association['language']->lang_code); ?>
-                <a class="<?php echo $class; ?>" title="<?php echo $association['language']->title_native; ?>" href="<?php echo Route::_($association['item']); ?>"><?php echo $association['language']->lang_code; ?></a>
-            <?php
-            }
-        }
-        echo '</span>';
-        ?>
-    </dd>
-<?php
-}
+            <a href="<?php echo Route::_($association['item']); ?>" class="uk-link-reset"><?php echo $flag; ?></a>
+        
+        <?php else : ?>
+            <?php /* Логика вывода текстовых кодов языков */ ?>
+            <a class="uk-text-uppercase uk-text-bold uk-margin-small-right uk-link-muted" 
+               title="<?php echo $association['language']->title_native; ?>" 
+               href="<?php echo Route::_($association['item']); ?>">
+                <?php echo $association['language']->lang_code; ?>
+                <span class="uk-hidden"><?php echo $association['language']->title_native; ?></span>
+            </a>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</div>
