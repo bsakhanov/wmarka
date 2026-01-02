@@ -12,8 +12,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 /** @var \Joomla\Component\Content\Site\View\Categories\HtmlView $this */
 ?>
 
-<div class="uk-section uk-section-xsmall" itemscope itemtype="https://schema.org/CollectionPage">
-    <div class="uk-container">
+<div itemscope itemtype="https://schema.org/CollectionPage">
         
         <?php /* Заголовок и описание (Layout) */ ?>
         <header class="uk-margin-medium-bottom">
@@ -21,9 +20,7 @@ use Joomla\CMS\Layout\LayoutHelper;
         </header>
 
         <?php /* Список элементов (Template items) */ ?>
-        <main itemprop="mainEntity" itemscope itemtype="https://schema.org/ItemList">
+        <div itemprop="mainEntity" itemscope itemtype="https://schema.org/ItemList">
             <?php echo $this->loadTemplate('items'); ?>
-        </main>
-
-    </div>
+        </div>
 </div>
