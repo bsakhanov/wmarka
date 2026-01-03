@@ -11,24 +11,17 @@
     <description>TPL_WMARKA_XML_DESCRIPTION</description>
 
     <inheritable>1</inheritable>
-    
     <scriptfile>script.php</scriptfile>
 
     <files>
         <filename>index.php</filename>
         <filename>templateDetails.xml</filename>
-        <filename>joomla.asset.json</filename>
         <filename>script.php</filename>
-        <folder>css</folder>
-        <folder>js</folder>
-        <folder>images</folder>
-        <folder>fonts</folder>
         <folder>html</folder>
         <folder>php</folder>
         <folder>partial</folder>
         <folder>language</folder>
-        <folder>media</folder>
-    </files>
+        </files>
 
     <media destination="templates/site/wmarka" folder="">
         <folder>css</folder>
@@ -50,11 +43,9 @@
         <position>lang</position>
         <position>offcanvas-menu</position>
         <position>offcanvas</position>
-        
         <position>breadcrumb</position>
         <position>adver-top</position>
         <position>slider</position>
-        
         <position>block-a</position>
         <position>block-b</position>
         <position>block-c</position>
@@ -65,7 +56,6 @@
         <position>block-h</position>
         <position>block-i</position>
         <position>block-k</position>
-        
         <position>footer-left</position>
         <position>footer-center</position>
         <position>footer-right</position>
