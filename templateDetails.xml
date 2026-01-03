@@ -30,7 +30,7 @@
         <folder>media</folder>
     </files>
 
-    <media destination="templates/site/wmarka" folder="media">
+    <media destination="templates/site/wmarka" folder="">
         <folder>css</folder>
         <folder>js</folder>
         <folder>images</folder>
