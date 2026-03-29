@@ -1,103 +1,78 @@
 <?php
-
-/**
- * @package     Joomla.Site
- * @subpackage  Layout
- *
- * @copyright   (C) 2013 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
- */
-
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Event\GenericEvent;
 
-/**
- * Note that this layout opens a div with the page class suffix. If you do not use the category children
- * layout you need to close this div either by overriding this file or in your main layout.
- */
 $params    = $displayData->params;
 $category  = $displayData->get('category');
 $extension = $category->extension;
-$canEdit   = $params->get('access-edit');
-$className = substr($extension, 4);
 $htag      = $params->get('show_page_heading') ? 'h2' : 'h1';
 
-$app = Factory::getContainer()->get(Joomla\CMS\Application\SiteApplication::class);
-
+// Триггеры событий контента сохраняем полностью
+$app = Factory::getApplication();
 $category->text = $category->description;
-$app->getDispatcher()->dispatch('onContentPrepare', new GenericEvent('onContentPrepare', [$extension . '.categories', &$category, &$params, 0]));
+$app->triggerEvent('onContentPrepare', [$extension . '.categories', &$category, &$params, 0]);
 $category->description = $category->text;
 
-$results = $app->getDispatcher()->dispatch('onContentAfterTitle', new GenericEvent('onContentAfterTitle', [$extension . '.categories', &$category, &$params, 0]));
-$afterDisplayTitle = trim(implode("\n", $results->getArgument('result') ?? []));
-
-$results = $app->getDispatcher()->dispatch('onContentBeforeDisplay', new GenericEvent('onContentBeforeDisplay', [$extension . '.categories', &$category, &$params, 0]));
-$beforeDisplayContent = trim(implode("\n", $results->getArgument('result') ?? []));
-
-$results = $app->getDispatcher()->dispatch('onContentAfterDisplay', new GenericEvent('onContentAfterDisplay', [$extension . '.categories', &$category, &$params, 0]));
-$afterDisplayContent = trim(implode("\n", $results->getArgument('result') ?? []));
-
-/**
- * This will work for the core components but not necessarily for other components
- * that may have different pluralisation rules.
- */
-if (substr($className, -1) === 's') {
-    $className = rtrim($className, 's');
-}
-
-$tagsData = $category->tags->itemTags;
+$afterDisplayTitle    = trim(implode("\n", $app->triggerEvent('onContentAfterTitle', [$extension . '.categories', &$category, &$params, 0])));
+$beforeDisplayContent = trim(implode("\n", $app->triggerEvent('onContentBeforeDisplay', [$extension . '.categories', &$category, &$params, 0])));
+$afterDisplayContent  = trim(implode("\n", $app->triggerEvent('onContentAfterDisplay', [$extension . '.categories', &$category, &$params, 0])));
 ?>
-<div class="<?php echo $className . '-category' . $displayData->pageclass_sfx; ?>">
-    <?php if ($params->get('show_page_heading')) { ?>
-        <h1><?php echo $displayData->escape($params->get('page_heading')); ?></h1>
-    <?php } ?>
 
-    <?php if ($params->get('show_category_title', 1)) { ?>
-        <<?php echo $htag; ?>>
+<div class="category-container">
+    <?php if ($params->get('show_page_heading')) : ?>
+        <h1 class="uk-heading-bullet uk-margin-bottom">
+            <?php echo $displayData->escape($params->get('page_heading')); ?>
+        </h1>
+    <?php endif; ?>
+
+    <?php if ($params->get('show_category_title', 1)) : ?>
+        <<?php echo $htag; ?> class="uk-article-title">
             <?php echo HTMLHelper::_('content.prepare', $category->title, '', $extension . '.category.title'); ?>
         </<?php echo $htag; ?>>
-    <?php } ?>
+    <?php endif; ?>
+
     <?php echo $afterDisplayTitle; ?>
 
-    <?php if ($params->get('show_cat_tags', 1)) { ?>
-        <?php echo LayoutHelper::render('joomla.content.tags', $tagsData); ?>
-    <?php } ?>
+    <?php if ($params->get('show_cat_tags', 1)) : ?>
+        <?php echo LayoutHelper::render('joomla.content.tags', $category->tags->itemTags); ?>
+    <?php endif; ?>
 
-    <?php if ($beforeDisplayContent || $afterDisplayContent || $params->get('show_description', 1) || $params->def('show_description_image', 1)) { ?>
-        <div class="category-desc">
-            <?php if ($params->get('show_description_image') && $category->getParams()->get('image')) { ?>
-                <?php echo LayoutHelper::render(
-                    'joomla.html.image',
-                    [
-                        'src'   => $category->getParams()->get('image'),
-                        'alt'   => empty($category->getParams()->get('image_alt')) && empty($category->getParams()->get('image_alt_empty')) ? false : $category->getParams()->get('image_alt'),
-                        'width' => '100%'
-                    ]
-                ); ?>
-            <?php } ?>
+    <?php if ($beforeDisplayContent || $afterDisplayContent || $params->get('show_description', 1) || $params->def('show_description_image', 1)) : ?>
+        <div class="uk-panel uk-margin-medium-bottom">
+            <?php if ($params->get('show_description_image') && ($img = $category->getParams()->get('image'))) : ?>
+                <div class="uk-align-right@m uk-margin-remove-adjacent">
+                    <img src="<?php echo $img; ?>" alt="<?php echo $this->escape($category->getParams()->get('image_alt')); ?>" class="uk-border-rounded uk-box-shadow-medium">
+                </div>
+            <?php endif; ?>
+
             <?php echo $beforeDisplayContent; ?>
-            <?php if ($params->get('show_description') && $category->description) { ?>
-                <?php echo HTMLHelper::_('content.prepare', $category->description, '', $extension . '.category.description'); ?>
-            <?php } ?>
+            
+            <?php if ($params->get('show_description') && $category->description) : ?>
+                <div class="uk-text-lead">
+                    <?php echo HTMLHelper::_('content.prepare', $category->description, '', $extension . '.category.description'); ?>
+                </div>
+            <?php endif; ?>
+
             <?php echo $afterDisplayContent; ?>
         </div>
-    <?php } ?>
+    <?php endif; ?>
 
-    <?php echo $displayData->loadTemplate($displayData->subtemplatename); ?>
+    <?php /* Загрузка вложенных элементов (статей или подкатегорий) */ ?>
+    <div class="category-items">
+        <?php echo $displayData->loadTemplate($displayData->subtemplatename); ?>
+    </div>
 
-    <?php if ($displayData->maxLevel != 0 && $displayData->get('children')) { ?>
-        <div class="cat-children">
-            <?php if ($params->get('show_category_heading_title_text', 1) == 1) { ?>
-                <h3>
-                    <?php echo Text::_('JGLOBAL_SUBCATEGORIES'); ?>
-                </h3>
-            <?php } ?>
+    <?php if ($displayData->maxLevel != 0 && $displayData->get('children')) : ?>
+        <div class="uk-margin-large-top cat-children">
+            <hr class="uk-divider-icon">
+            <h3 class="uk-heading-line uk-text-center">
+                <span><?php echo Text::_('JGLOBAL_SUBCATEGORIES'); ?></span>
+            </h3>
             <?php echo $displayData->loadTemplate('children'); ?>
         </div>
-    <?php } ?>
+    <?php endif; ?>
 </div>

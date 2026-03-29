@@ -1,8 +1,11 @@
 <?php
-defined('_JEXEC') or die;
+/**
+ * @package     Joomla.Site
+ * @subpackage  Template.wmarka
+ * @version     3.0.0 (Joomla 6 & UIkit 3)
+ */
 
-// --- СТАТИЧЕСКИЙ ДОМЕН (если используется) ---
-// define('STATIC_DOMAIN', 'https://static.bestnews.kz'); 
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -15,71 +18,40 @@ use Joomla\CMS\Session\Session;
 
 /** @var Joomla\CMS\Document\HtmlDocument $this */
 
-// 1. Инициализация хелперов
-require dirname(__FILE__) . '/php/init.php';
+// 1. Инициализация логики, автозагрузчика и SEO
+require_once __DIR__ . '/php/init.php';
 
-// 2. Подготовка путей и опций Joomla (для корректной работы JS)
-$mediaPath = Uri::root(true) . '/media/templates/site/wmarka';
-$rootFull  = Uri::root();
-$baseFull  = Uri::base();
-
-$scriptOptions = [
-    "system.paths" => ["root" => "", "rootFull" => $rootFull, "base" => "", "baseFull" => $baseFull],
-    "csrf.token"   => Session::getFormToken()
-];
-$jsonOptions = json_encode($scriptOptions);
-
-// 3. Логика главной страницы
+// 2. Переменные окружения для шаблона
 $isHome = (Uri::current() === Uri::base());
 $option = Factory::getApplication()->input->get('option');
+$mediaPath = Uri::root(true) . '/media/templates/site/' . $this->template;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $this->language; ?>" dir="<?php echo $this->direction; ?>">
 <head>
-    <?php /* --- ЛАЙФХАК: Предзагрузка критических стилей --- */ ?>
+    <?php /* --- Предзагрузка критических стилей (PageSpeed Hack) --- */ ?>
     <link rel="preload" href="<?php echo $mediaPath; ?>/css/uikit.min.css" as="style">
     <link rel="preload" href="<?php echo $mediaPath; ?>/css/user.css" as="style">
 
+    <?php /* --- Системный вывод Joomla (Meta, Title, CSS, JS от WebAssetManager) --- */ ?>
     <jdoc:include type="metas" />
-
-    <?php /* --- Настройки Joomla для JS --- */ ?>
-    <script type="application/json" class="joomla-script-options new">
-        <?php echo $jsonOptions; ?>
-    </script>
-
-    <?php /* --- Подключение основных стилей --- */ ?>
-    <link rel="stylesheet" href="<?php echo $mediaPath; ?>/css/uikit.min.css">
-    <link rel="stylesheet" href="<?php echo $mediaPath; ?>/css/user.css">
-
-    <?php /* --- ЛАЙФХАК: Асинхронная загрузка шрифтов (без блокировки рендеринга) --- */ ?>
-    <link rel="stylesheet" href="<?php echo $mediaPath; ?>/css/fonts.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="<?php echo $mediaPath; ?>/css/fonts.css"></noscript>
-
     <jdoc:include type="styles" />
-
-    <?php /* --- ЛАЙФХАК: Системные скрипты только для поиска com_finder --- */ ?>
-    <?php if ($option === 'com_finder') : ?>
-        <jdoc:include type="scripts" />
-    <?php endif; ?>
-
-    <?php /* --- Основные скрипты шаблона (Deferred) --- */ ?>
-    <script src="<?php echo $mediaPath; ?>/js/uikit.min.js" defer></script>
-    <script src="<?php echo $mediaPath; ?>/js/uikit-icons.min.js" defer></script>
+    <jdoc:include type="scripts" />
 </head>
 
 <body class="<?php echo $tpl->getBodyClasses(); ?>">
  
     <?php 
-    // Верхние секции
+    // ВЕРХНИЕ СЕКЦИИ
     echo $tpl->partial('toolbar.php');
     echo $tpl->partial('navbar.php');
 
-    // Хлебные крошки (скрываем на главной)
+    // ХЛЕБНЫЕ КРОШКИ (скрываем на главной)
     if (!$isHome) {
         echo $tpl->partial('breadcrumb.php');
     }
 
-    // Блоки модулей (набор секций для гибкости)
+    // БЛОКИ ПОЗИЦИЙ (A, B)
     echo $tpl->partial('block-a.php');
     echo $tpl->partial('block-b.php');
 
@@ -88,24 +60,28 @@ $option = Factory::getApplication()->input->get('option');
         echo $tpl->partial('content.php');
     }
 
-    // Секции для сборки лендинга на главной
-    echo $tpl->partial('slider.php');
-    echo $tpl->partial('block-c.php');
-    echo $tpl->partial('block-d.php');
-    echo $tpl->partial('block-e.php');
+    // ЛЕНДИНГ-БЛОКИ ДЛЯ ГЛАВНОЙ (опционально)
+    if ($isHome) {
+        echo $tpl->partial('slider.php');
+        echo $tpl->partial('block-c.php');
+        echo $tpl->partial('block-d.php');
+        echo $tpl->partial('block-e.php');
+    }
 
-    // Футер
+    // ФУТЕР
     echo $tpl->partial('footer.php');
     ?>
  
-    <?php /* --- Кнопка Вверх --- */ ?>
+    <?php /* --- Кнопка "Наверх" (UIkit) --- */ ?>
     <a class="uk-icon uk-totop uk-position-fixed uk-position-bottom-left uk-margin-small-left uk-margin-small-bottom" 
        uk-totop uk-scroll href="#section-toolbar" aria-label="Up"></a>
 
+    <?php /* --- Системная отладка --- */ ?>
     <?php if ($this->countModules('debug')) : ?>
         <jdoc:include type="modules" name="debug" style="none" />
     <?php endif; ?>
 
+    <?php /* --- Метрики и счетчики --- */ ?>
     <?php echo $tpl->partial('counters.php'); ?>
 
 </body>

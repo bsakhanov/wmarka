@@ -1,31 +1,45 @@
 <?php
-
 /**
  * @package     Joomla.Site
  * @subpackage  com_content
- *
- * @copyright   (C) 2009 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version     Joomla 6 WMARKA Core Edition (UIkit 3 Categories Grid)
  */
 
-\defined('_JEXEC') or die;
+declare(strict_types=1);
 
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Layout\LayoutHelper;
+defined('_JEXEC') or die;
 
-// Add strings for translations in Javascript.
-Text::script('JGLOBAL_EXPAND_CATEGORIES');
-Text::script('JGLOBAL_COLLAPSE_CATEGORIES');
+use Joomla\CMS\HTML\HTMLHelper;
 
-/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
-$wa = $this->document->getWebAssetManager();
-$wa->getRegistry()->addExtensionRegistryFile('com_categories');
-$wa->usePreset('com_categories.shared-categories-accordion');
-
+/** @var \Joomla\Component\Content\Site\View\Categories\HtmlView $this */
 ?>
-<div class="com-content-categories categories-list">
-    <?php
-    echo LayoutHelper::render('joomla.content.categories_default', $this);
-    echo $this->loadTemplate('items');
-    ?>
+<div class="com-content-categories categories-list uk-margin-bottom">
+
+    <?php /* --- ЗАГОЛОВОК СТРАНИЦЫ --- */ ?>
+    <?php if ($this->params->get('show_page_heading')) : ?>
+        <div class="page-header uk-margin-bottom">
+            <h1 class="uk-heading-bullet">
+                <?php echo $this->escape($this->params->get('page_heading')); ?>
+            </h1>
+        </div>
+    <?php endif; ?>
+
+    <?php /* --- ОПИСАНИЕ БАЗОВОЙ КАТЕГОРИИ --- */ ?>
+    <?php if ($this->params->get('show_base_description')) : ?>
+        <?php if ($this->params->get('categories_description')) : ?>
+            <div class="category-desc uk-margin-medium-bottom uk-text-lead uk-text-muted">
+                <?php echo HTMLHelper::_('content.prepare', $this->params->get('categories_description'), '', 'com_content.categories'); ?>
+            </div>
+        <?php elseif ($this->parent->description) : ?>
+            <div class="category-desc uk-margin-medium-bottom uk-text-lead uk-text-muted">
+                <?php echo HTMLHelper::_('content.prepare', $this->parent->description, '', 'com_content.categories'); ?>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+
+    <?php /* --- ПОДКЛЮЧЕНИЕ СЕТКИ КАТЕГОРИЙ --- */ ?>
+    <div class="uk-margin-medium-top">
+        <?php echo $this->loadTemplate('items'); ?>
+    </div>
+
 </div>

@@ -5,6 +5,8 @@
  * @version     Joomla 6 WMARKA BLOG (SEO + OpenGraph + UIkit 3 + Local Assets)
  */
 
+declare(strict_types=1);
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
@@ -13,70 +15,46 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
 use Joomla\CMS\Uri\Uri;
 
-/** @var Joomla\Component\Content\Site\View\Category\HtmlView $this */
+/** @var \Joomla\Component\Content\Site\View\Category\HtmlView $this */
 
 $app      = Factory::getApplication();
-$document = Factory::getDocument();
-$config   = Factory::getConfig();
 $params   = $this->params;
-$sitename = $config->get('sitename');
+$root     = Uri::base(true) . '/';
 
-// --- 1. ПУТИ И ИНИЦИАЛИЗАЦИЯ ---
-$tplPath = Uri::base(true) . '/media/templates/site/wmarka';
-$defaultImageFallback = 'media/templates/site/wmarka/images/zamena.jpg';
-
-// Подключаем JUImage для обработки изображения категории
-require_once(JPATH_SITE . '/libraries/juimage/vendor/autoload.php');
-$juImg = new JUImage\Image();
-
-// --- 2. SEO ЛОГИКА: Автоматизация и кавычки ---
-$fixQuotes = function ($text) {
+// --- 1. ТИПОГРАФИКА (Кавычки «елочки») ---
+$fixQuotes = function (?string $text): string {
+    if (empty($text)) return '';
     return preg_replace_callback('#(([\"]{2,})|(?![^\W])(\"))|([^\s][\"]+(?![\w]))#u', function ($m) {
         if (count($m) === 3) return "«»";
-        return (isset($m[1]) && $m[1]) ? "«" : "»";
-    }, $text);
+        return (!empty($m[1])) ? str_replace('"', "«", $m[1]) : str_replace('"', "»", $m[4] ?? '"');
+    }, $text) ?? $text;
 };
 
-$docTitle = $document->getTitle();
-$document->setTitle(strip_tags(trim($fixQuotes($docTitle))));
+// --- 2. JUIMAGE И SEO ДАННЫЕ ---
+require_once JPATH_SITE . '/libraries/juimage/vendor/autoload.php';
+$juImg = new \JUImage\Image();
 
-// Автозаполнение Keywords и Description
-if (empty($this->category->metakey)) {
-    $mk = html_entity_decode(strip_tags(trim($docTitle . ', ' . $sitename)));
-    $document->setMetadata('keywords', preg_replace('/[\s]{2,}/', ' ', $mk));
-}
-
-if (empty($this->category->metadesc)) {
-    $md = HTMLHelper::_('string.truncate', strip_tags($this->category->description), 350);
-    $document->setMetadata('description', preg_replace('/[\s]{2,}/', ' ', html_entity_decode($md)));
-}
-
-// --- 3. OPEN GRAPH (Локальные изображения) ---
-$catImage = $this->category->getParams()->get('image') ?: $defaultImageFallback;
+$catImage   = $this->category->getParams()->get('image') ?: 'media/templates/site/wmarka/images/zamena.jpg';
 $ogRendered = $juImg->render($catImage, ['w' => 1200, 'h' => 630, 'q' => 75, 'f' => 'jpg', 'fit' => 'cover']);
-$ogFullImage = Uri::root() . ltrim($ogRendered, '/');
 
-$document->setMetadata('og:title', $fixQuotes($docTitle));
-$document->setMetadata('og:description', $document->getMetadata('description'));
-$document->setMetadata('og:type', 'website');
-$document->setMetadata('og:url', Uri::getInstance()->toString());
-$document->setMetadata('og:image', $ogFullImage);
-$document->setMetadata('og:locale', Text::_('OG_LANG'));
-$document->setMetadata('twitter:card', 'summary_large_image');
+// Передаем данные в ядро шаблона (Seo.php)
+$app->set('seo_category_title', $fixQuotes($this->category->title));
+$app->set('seo_fallback_text', strip_tags((string)$this->category->description));
+$app->set('current_item_image', ltrim($ogRendered, '/'));
 
-// --- 4. СОБЫТИЯ ПЛАГИНОВ ---
+// --- 3. СОБЫТИЯ ПЛАГИНОВ ---
 $this->category->text = $this->category->description;
-$app->triggerEvent('onContentPrepare', [$this->category->extension . '.categories', &$this->category, &$this->params, 0]);
+$app->triggerEvent('onContentPrepare', [$this->category->extension . '.categories', &$this->category, &$params, 0]);
 $this->category->description = $this->category->text;
 
-$afterDisplayTitle    = trim(implode("\n", $app->triggerEvent('onContentAfterTitle', [$this->category->extension . '.categories', &$this->category, &$this->params, 0])));
-$beforeDisplayContent = trim(implode("\n", $app->triggerEvent('onContentBeforeDisplay', [$this->category->extension . '.categories', &$this->category, &$this->params, 0])));
-$afterDisplayContent  = trim(implode("\n", $app->triggerEvent('onContentAfterDisplay', [$this->category->extension . '.categories', &$this->category, &$this->params, 0])));
+$afterDisplayTitle    = trim(implode("\n", $app->triggerEvent('onContentAfterTitle', [$this->category->extension . '.categories', &$this->category, &$params, 0])));
+$beforeDisplayContent = trim(implode("\n", $app->triggerEvent('onContentBeforeDisplay', [$this->category->extension . '.categories', &$this->category, &$params, 0])));
+$afterDisplayContent  = trim(implode("\n", $app->triggerEvent('onContentAfterDisplay', [$this->category->extension . '.categories', &$this->category, &$params, 0])));
 
 $htag = $params->get('show_page_heading') ? 'h2' : 'h1';
 ?>
 
-<div class="com-content-category-blog blog" itemscope itemtype="https://schema.org/Blog">
+<div class="com-content-category-blog blog uk-margin-bottom" itemscope itemtype="https://schema.org/Blog">
     
     <?php if ($params->get('show_page_heading')) : ?>
         <div class="page-header uk-margin-bottom">
@@ -100,14 +78,14 @@ $htag = $params->get('show_page_heading') ? 'h2' : 'h1';
         </div>
     <?php endif; ?>
 
-    <?php /* Описание категории */ ?>
+    <?php /* Описание категории с картинкой WebP */ ?>
     <?php if ($beforeDisplayContent || $afterDisplayContent || $params->get('show_description', 1)) : ?>
         <div class="category-desc uk-panel uk-margin-medium-bottom">
             <?php if ($params->get('show_description_image') && ($img = $this->category->getParams()->get('image'))) : 
                 $cI = $juImg->render($img, ['w' => 400, 'h' => 250, 'q' => 60, 'f' => 'webp', 'fit' => 'cover']);
             ?>
-                <img src="<?php echo Uri::base(true) . '/' . $cI; ?>" 
-                     alt="<?php echo $this->category->title; ?>" 
+                <img src="<?php echo $root . ltrim($cI, '/'); ?>" 
+                     alt="<?php echo htmlspecialchars((string) $this->category->title, ENT_QUOTES, 'UTF-8'); ?>" 
                      class="uk-align-right@m uk-border-rounded uk-margin-remove-adjacent"
                      width="400" height="250">
             <?php endif; ?>
@@ -124,7 +102,7 @@ $htag = $params->get('show_page_heading') ? 'h2' : 'h1';
 
     <?php /* --- ГЛАВНЫЕ НОВОСТИ (LEADING) --- */ ?>
     <?php if (!empty($this->lead_items)) : ?>
-        <div class="uk-grid-large uk-child-width-1-1 blog-items items-leading" uk-grid>
+        <div class="uk-grid-large uk-child-width-1-1 blog-items items-leading uk-margin-medium-bottom" uk-grid>
             <?php foreach ($this->lead_items as &$item) : ?>
                 <div itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
                     <?php $this->item = &$item; echo $this->loadTemplate('item'); ?>
@@ -135,15 +113,22 @@ $htag = $params->get('show_page_heading') ? 'h2' : 'h1';
 
     <?php /* --- СЕТКА НОВОСТЕЙ (INTRO) --- */ ?>
     <?php if (!empty($this->intro_items)) : ?>
-        <?php $numCol = (int)$params->get('num_columns', 1); ?>
+        <?php $numCol = (int) $params->get('num_columns', 1); ?>
         <div class="uk-grid-small uk-child-width-1-<?php echo $numCol; ?>@m uk-grid-match blog-items" uk-grid>
             <?php foreach ($this->intro_items as &$item) : ?>
                 <div itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-                    <div class="uk-card uk-card-default uk-card-small uk-border-rounded uk-box-shadow-hover-medium">
+                    <div class="uk-card uk-card-default uk-card-small uk-border-rounded uk-box-shadow-hover-medium uk-height-1-1 uk-flex uk-flex-column">
                         <?php $this->item = &$item; echo $this->loadTemplate('item'); ?>
                     </div>
                 </div>
             <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php /* --- ССЫЛКИ --- */ ?>
+    <?php if (!empty($this->link_items)) : ?>
+        <div class="items-more uk-margin-medium-top">
+            <?php echo $this->loadTemplate('links'); ?>
         </div>
     <?php endif; ?>
 

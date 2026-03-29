@@ -2,11 +2,11 @@
 <extension type="template" client="site" method="upgrade">
     <name>wmarka</name>
     <version>3.0.0</version>
-    <creationDate>December 2025</creationDate>
+    <creationDate>March 2026</creationDate>
     <author>Webmarka Kazakhstan</author>
     <authorEmail>support@webmarka.kz</authorEmail>
     <authorUrl>https://webmarka.kz</authorUrl>
-    <copyright>Copyright (C) 2025 Webmarka. All rights reserved.</copyright>
+    <copyright>Copyright (C) 2026 Webmarka. All rights reserved.</copyright>
     <license>GNU General Public License v2 or later</license>
     <description>TPL_WMARKA_XML_DESCRIPTION</description>
 
@@ -17,20 +17,19 @@
     <files>
         <filename>index.php</filename>
         <filename>templateDetails.xml</filename>
-        <filename>joomla.asset.json</filename>
+        <filename>component.php</filename> 
+        <filename>error.php</filename>     
+        <filename>offline.php</filename>   
+        <filename>raw.php</filename>       
+        <filename>readme.md</filename>     
         <filename>script.php</filename>
-        <folder>css</folder>
-        <folder>js</folder>
-        <folder>images</folder>
-        <folder>fonts</folder>
         <folder>html</folder>
         <folder>php</folder>
         <folder>partial</folder>
         <folder>language</folder>
-        <folder>media</folder>
     </files>
 
-    <media destination="templates/site/wmarka" folder="media">
+    <media destination="templates/site/wmarka" folder="">
         <folder>css</folder>
         <folder>js</folder>
         <folder>images</folder>
@@ -50,11 +49,9 @@
         <position>lang</position>
         <position>offcanvas-menu</position>
         <position>offcanvas</position>
-        
         <position>breadcrumb</position>
         <position>adver-top</position>
         <position>slider</position>
-        
         <position>block-a</position>
         <position>block-b</position>
         <position>block-c</position>
@@ -65,7 +62,6 @@
         <position>block-h</position>
         <position>block-i</position>
         <position>block-k</position>
-        
         <position>footer-left</position>
         <position>footer-center</position>
         <position>footer-right</position>
@@ -73,7 +69,7 @@
         <position>debug</position>
     </positions>
 
-    <languages folder="language">
+<languages folder="language">
         <language tag="ru-RU">ru-RU/tpl_wmarka.ini</language>
         <language tag="ru-RU">ru-RU/tpl_wmarka.sys.ini</language>
         <language tag="en-GB">en-GB/tpl_wmarka.ini</language>

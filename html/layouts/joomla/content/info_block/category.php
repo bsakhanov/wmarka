@@ -1,41 +1,18 @@
 <?php
-
-/**
- * @package     Joomla.Site
- * @subpackage  Layout
- *
- * @copyright   (C) 2013 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
- */
-
-\defined('_JEXEC') or die;
-
-use Joomla\CMS\Factory;
+defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\Component\Content\Site\Helper\RouteHelper;
 
-$jsIcons = Factory::getContainer()
-    ->get(Joomla\CMS\Application\SiteApplication::class)
-    ->getTemplate(true)
-    ->params
-    ->get('jsIcons', 'none') != 'none';
-
+$item   = $displayData['item'];
+$params = $displayData['params'];
+$title  = $this->escape($item->category_title);
 ?>
-<dd class="uk-flex uk-flex-middle category-name">
-    <?php
-   
-       
- 
-    $title = $this->escape($displayData['item']->category_title);
-    if ($displayData['params']->get('link_category') && !empty($displayData['item']->catid)) {
-        $url = '<a href="' . Route::_(
-            RouteHelper::getCategoryRoute($displayData['item']->catid, $displayData['item']->category_language)
-        ) . '" itemprop="genre"  class="uk-text-italic">' . $title . '</a>&nbsp;&nbsp;| ';
-        echo '<span>' . Text::sprintf('COM_CONTENT_CATEGORY', $url) . '</span>';
-    } else {
-        echo '<span>' . Text::sprintf('COM_CONTENT_CATEGORY', '<span itemprop="genre"  class="uk-text-italic">' . $title . '</span>') . '</span>';
-    }
-    ?>
-</dd>
+<span itemprop="articleSection">
+    <?php if ($params->get('link_category') && !empty($item->catid)) : ?>
+        <?php $url = '<a href="' . Route::_(RouteHelper::getCategoryRoute($item->catid, $item->category_language)) . '">' . $title . '</a>'; ?>
+        <?php echo Text::sprintf('COM_CONTENT_CATEGORY', $url); ?>
+    <?php else : ?>
+        <?php echo Text::sprintf('COM_CONTENT_CATEGORY', '<span>' . $title . '</span>'); ?>
+    <?php endif; ?>
+</span>

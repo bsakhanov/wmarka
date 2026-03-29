@@ -2,83 +2,92 @@
 /**
  * @package     Joomla.Site
  * @subpackage  Layout
- *
- * @copyright   (C) 2016 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version     WMARKA FULL IMAGE (PHP 8.4 Fixed + Ultra Logic)
+ * @author      Partner Programmer & Beibit Sakhanov
  */
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Uri\Uri;
 
-$params  = $displayData->params;
-$images  = json_decode($displayData->images);
+// Универсальное извлечение объекта (как в твоем intro_image)
+$item = is_array($displayData) ? ($displayData['item'] ?? null) : $displayData;
+if (!$item) return;
 
-if (empty($images->image_intro))
-{
-	return;
+// Декодируем изображения в массив (true)
+$images = json_decode($item->images, true) ?: [];
+
+$defaultImageFallback = 'media/templates/site/wmarka/images/zamena.jpg';
+$baseUrl = Uri::base(true) . '/';
+
+// Размеры для полного изображения
+$w = 900; 
+$h = 600;
+$mobW = 390;
+$mobH = 260;
+
+$imageToRender = $defaultImageFallback;
+$imageAlt      = $item->title;
+
+/**
+ * Логика выбора изображения: 
+ * Для полнотекстового макета сначала ищем image_fulltext, 
+ * если нет - берем image_intro (как в твоем рабочем примере).
+ */
+if (!empty($images['image_fulltext'])) {
+    $imageToRender = preg_replace('/#joomlaImage?([^\'" >]+)/', '', $images['image_fulltext']);
+    $imageAlt      = ($images['image_fulltext_caption'] ?? '') ?: $item->title;
+} elseif (!empty($images['image_intro'])) {
+    $imageToRender = preg_replace('/#joomlaImage?([^\'" >]+)/', '', $images['image_intro']);
+    $imageAlt      = ($images['image_intro_caption'] ?? '') ?: $item->title;
 }
 
-$imgclass  = empty($images->float_fulltext) ? $params->get('float_fulltext') : $images->float_fulltext;
-$extraAttr = '';
-$img       = HTMLHelper::cleanImageURL($images->image_intro);
-$alt       = empty($images->image_fulltext_alt) && empty($images->image_fulltext_alt_empty) ? '' : 'alt="' . htmlspecialchars($images->image_fulltext_alt, ENT_COMPAT, 'UTF-8') . '"';
-
-// Set lazyloading only for images which have width and height attributes
-if ((isset($img->attributes['width']) && (int) $img->attributes['width'] > 0)
-&& (isset($img->attributes['height']) && (int) $img->attributes['height'] > 0))
-{
-	$extraAttr = ArrayHelper::toString($img->attributes) . ' loading="lazy"';
+// Проверка физического наличия
+if (!file_exists(JPATH_ROOT . '/' . ltrim($imageToRender, '/'))) {
+    $imageToRender = $defaultImageFallback;
 }
-JLoader::register('JUImage',  JPATH_LIBRARIES . '/juimage/JUImage.php');
 
-$juImg = new JUImage();
+// Подключаем JUImage
+require_once(JPATH_SITE . '/libraries/juimage/vendor/autoload.php');
+$juImg = new JUImage\Image();
+
+/** * ПАРАМЕТРЫ КАК В ТВОЕМ INTRO_IMAGE:
+ * Используем раздельный вызов: render($path, $options)
+ */
+$options = [
+    'w'     => $w, 
+    'h'     => $h, 
+    'q'     => '65', 
+    'f'     => 'webp', 
+    'cache' => 'img',   // Кропы в /img/
+    'fit'   => 'cover'  // Метод обрезки
+];
+
+// Генерация кропов (передаем ПУТЬ СТРОКОЙ первым аргументом)
+$thumbD = $juImg->render((string)$imageToRender, $options);
+$thumbM = $juImg->render((string)$imageToRender, array_merge($options, ['w' => $mobW, 'h' => $mobH]));
 ?>
-<?php
-$regexImageSrc = '/#joomlaImage?([^\'" >]+)/';
-?>
-<?php
 
-$thumb = $juImg->render(preg_replace($regexImageSrc, '', $images->image_intro), [
-	'w'     	=> '900',
-	'h'     	=> '600',
-	'q'         => '100',
-	'zc'        => 'C',
-	'far'        => 'C',	
-	'webp'      => true,
-	'webp_q'    => '100',
-	'webp_maxq' => '100',
-	'cache'     => 'img' 
+<figure class="article-full-image uk-margin-remove" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+    <picture>
+        <?php /* Мобильная версия */ ?>
+        <source srcset="<?php echo $baseUrl . ltrim((string)$thumbM, '/'); ?>" media="(max-width: 640px)">
+        
+        <?php /* Основное изображение */ ?>
+        <img src="<?php echo $baseUrl . ltrim((string)$thumbD, '/'); ?>" 
+             width="<?php echo $w; ?>" 
+             height="<?php echo $h; ?>" 
+             alt="<?php echo htmlspecialchars((string)$imageAlt, ENT_QUOTES, 'UTF-8'); ?>" 
+             class="uk-border-rounded uk-box-shadow-medium"
+             fetchpriority="high" 
+             loading="eager"
+             itemprop="url">
+    </picture>
 
-	
-]); 
-
-?>
-<figure class="uk-hidden@m uk-visibles">
-
-
-				<img src="<?php echo $thumb->webp; ?>" type="image/webp" width="900" height="600" alt="<?php echo $this->escape($displayData->title); ?> "  loading="lazy" <?php echo $extraAttr; ?> >
-					<meta itemprop="url" content="<?php echo JUri::root(); ?><?php echo $thumb->img; ?>">					
-				    <meta itemprop="height" content="600" />
-				    <meta itemprop="width" content="900" />	
-  <div class=" uk-margin-top">
-	<?php if ($images->image_intro_caption !== '') : ?>
-		<figcaption class="uk-text-meta"><?php echo htmlspecialchars($images->image_intro_caption, ENT_COMPAT, 'UTF-8'); ?></figcaption>
-	<?php endif; ?>
-  </div>
-</figure>
-<figure class="uk-flex uk-visible@m uk-flex-center uk-grid-small uk-margin-bottom uk-visibles" uk-grid>
-  <div class="uk-width-xlarge">
-
-				<img src="<?php echo $thumb->webp; ?>" type="image/webp" width="900" height="600" alt="<?php echo $this->escape($displayData->title); ?> "  loading="lazy" <?php echo $extraAttr; ?> >
-					<meta itemprop="url" content="<?php echo JUri::root(); ?><?php echo $thumb->img; ?>">					
-				    <meta itemprop="height" content="600" />
-				    <meta itemprop="width" content="900" />	
-  </div>
-  <div class="uk-width-expand uk-margin-top">
-	<?php if ($images->image_intro_caption !== '') : ?>
-		<figcaption class="uk-text-meta"><?php echo htmlspecialchars($images->image_intro_caption, ENT_COMPAT, 'UTF-8'); ?></figcaption>
-	<?php endif; ?>
-  </div>
+    <?php if (!empty($images['image_fulltext_caption']) || !empty($images['image_intro_caption'])) : ?>
+        <figcaption class="uk-text-meta uk-margin-small uk-text-center">
+            <span uk-icon="icon: camera; ratio: 0.7" class="uk-margin-xsmall-right"></span> 
+            <?php echo htmlspecialchars((string)($images['image_fulltext_caption'] ?: $images['image_intro_caption']), ENT_COMPAT, 'UTF-8'); ?>
+        </figcaption>
+    <?php endif; ?>
 </figure>

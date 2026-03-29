@@ -1,38 +1,76 @@
 <?php
+/**
+ * Хромы (стили) модулей для шаблона Wmarka
+ * * @package     Joomla.Site
+ * @subpackage  Templates.wmarka
+ * @version     Joomla 6.x
+ * @PHP         8.3 / 8.4
+ */
+
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
-
 /**
- * Стиль вывода модулей "wmarka"
- * Используется в jdoc:include style="wmarka"
+ * Продвинутый стиль модулей Wmarka (на базе UIkit 3 Card)
+ * Использование: выберите стиль "wmarka" в настройках модуля.
  */
-function renderModuleWmarka($module, &$params, &$attribs)
+function modChrome_wmarka($module, &$params, &$attribs)
 {
-    $headerTag = $params->get('header_tag', 'h3');
-    $moduleTag = $params->get('module_tag', 'div');
-    $badge     = $params->get('badge', 0);
-    $moduleClassSfx = htmlspecialchars($params->get('moduleclass_sfx', ''));
+    $moduleTag      = $params->get('module_tag', 'div');
+    $headerTag      = htmlspecialchars($params->get('header_tag', 'h3'), ENT_QUOTES, 'UTF-8');
+    $headerClass    = htmlspecialchars($params->get('header_class', 'uk-card-title'), ENT_QUOTES, 'UTF-8');
+    $bootstrapSize  = (int) $params->get('bootstrap_size', 0);
+    $moduleClass    = !empty($bootstrapSize) ? ' span' . $bootstrapSize : '';
+    $moduleClassSfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUOTES, 'UTF-8');
     
-    // Определяем базовый класс. Если это сайдбар, можно добавить uk-card
-    $baseClass = 'uk-panel';
-    if (str_contains($moduleClassSfx, 'uk-card')) {
-        $baseClass = ''; // Если класс карты уже передан в суффиксе
+    // Получаем фоновое изображение
+    $bgimage = $params->get('bgimage');
+    $bgStyle = '';
+    if (!empty($bgimage)) {
+        // Формируем атрибут style, если картинка задана
+        $bgStyle = ' style="background-image: url(\'' . htmlspecialchars($bgimage, ENT_QUOTES, 'UTF-8') . '\'); background-size: cover; background-position: center;"';
     }
 
-    if ($module->content) : ?>
-        <<?php echo $moduleTag; ?> class="<?php echo $baseClass; ?> <?php echo $moduleClassSfx; ?>">
+    // Обработка бейджа (badge), если он задан в суффиксе класса (например: "uk-badge-Новинка")
+    $badge = '';
+    $classes = explode(' ', $moduleClassSfx);
+    foreach ($classes as $key => $class) {
+        // Используем современную функцию PHP 8 вместо strpos
+        if (str_starts_with($class, 'uk-badge')) {
+            $badgeText = preg_replace('/^uk-badge-?/', '', $class);
+            $badgeText = str_replace('-', ' ', $badgeText); // Заменяем дефисы на пробелы
+            $badge = "<div class=\"uk-card-badge uk-label\">" . htmlspecialchars($badgeText, ENT_QUOTES, 'UTF-8') . "</div>";
+            unset($classes[$key]);
+        }
+    }
+    $moduleClassSfx = implode(' ', $classes);
 
-            <?php if ($module->showtitle) : ?>
-                <<?php echo $headerTag; ?> class="uk-h4 uk-heading-bullet uk-margin-small-bottom">
-                    <?php echo $module->title; ?>
-                </<?php echo $headerTag; ?>>
-            <?php endif; ?>
+    // Начало вывода модуля (UIkit Card)
+    echo '<' . $moduleTag . ' class="uk-card uk-card-default ' . trim($moduleClassSfx . $moduleClass) . '"' . $bgStyle . '>';
+    
+    // Вывод бейджа, если он есть
+    echo $badge;
 
-            <div class="uk-panel-content">
-                <?php echo $module->content; ?>
-            </div>
+    // Вывод заголовка
+    if ((bool) $module->showtitle) {
+        echo '<div class="uk-card-header">';
+        echo '<' . $headerTag . ' class="' . $headerClass . '">' . $module->title . '</' . $headerTag . '>';
+        echo '</div>';
+    }
 
-        </<?php echo $moduleTag; ?>>
-    <?php endif;
+    // Вывод контента модуля
+    echo '<div class="uk-card-body">';
+    echo $module->content;
+    echo '</div>';
+
+    echo '</' . $moduleTag . '>';
+}
+
+/**
+ * Базовый "чистый" стиль без оберток.
+ * Полезен, когда модуль (например, слайдер или кастомный HTML) 
+ * сам генерирует нужную UIkit-разметку и внешние <div> ему только мешают.
+ */
+function modChrome_blank($module, &$params, &$attribs)
+{
+    echo $module->content;
 }

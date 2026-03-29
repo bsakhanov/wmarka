@@ -1,21 +1,27 @@
 <?php
 /**
- * Файл вывода чистого компонента (версия для печати / модальные окна)
+ * Файл вывода чистого компонента (версия для модальных окон)
  * Joomla 6 + UIkit 3
  */
+declare(strict_types=1);
 
 defined('_JEXEC') or die;
 
-// Инициализация хелпера шаблона (подключает стили и скрипты)
-require_once dirname(__FILE__) . '/php/init.php';
+// Инициализация (подключает автозагрузку классов и WebAssetManager)
+require_once __DIR__ . '/php/init.php';
 
-/** @var \Wmarka\Template\Helper $tpl */
-$doc = $this->doc;
+/** * Подсказки для IDE (PhpStorm / VSCode)
+ * @var \Joomla\CMS\Document\HtmlDocument $this 
+ * @var \Wmarka\Template\Helper $tpl 
+ */
 ?>
-
 <!DOCTYPE html>
 <?php echo $tpl->renderHTML(); ?>
 <head>
+    <jdoc:include type="metas" />
+    <jdoc:include type="styles" />
+    <jdoc:include type="scripts" />
+</head>
     <?php /* Подключаем системные мета-теги и ассеты из joomla.asset.json */ ?>
     <jdoc:include type="head" />
     <meta name="viewport" content="width=device-width, initial-scale=1">

@@ -7,39 +7,59 @@
     {
       "name": "fonts",
       "type": "style",
-      "uri": "media/templates/site/wmarka/css/fonts.css"
+      "uri": "media/templates/site/wmarka/css/fonts.css",
+      "version": "3.0.0"
     },
     {
       "name": "uikit.min",
       "type": "style",
       "uri": "media/templates/site/wmarka/css/uikit.min.css",
-      "dependencies": ["fonts"]
+      "version": "3.25.4",
+      "dependencies": [
+        "template.wmarka.fonts"
+      ]
     },
     {
       "name": "user",
       "type": "style",
       "uri": "media/templates/site/wmarka/css/user.css",
-      "dependencies": ["uikit.min"]
+      "version": "3.0.0",
+      "dependencies": [
+        "template.wmarka.uikit.min"
+      ]
     },
     {
       "name": "uikit.min",
       "type": "script",
       "uri": "media/templates/site/wmarka/js/uikit.min.js",
-      "attributes" : { "defer": true }
+      "version": "3.25.4",
+      "attributes": {
+        "defer": true
+      }
     },
     {
       "name": "uikit-icons.min",
       "type": "script",
       "uri": "media/templates/site/wmarka/js/uikit-icons.min.js",
-      "attributes" : { "defer": true },
-      "dependencies": ["uikit.min"]
+      "version": "3.25.4",
+      "attributes": {
+        "defer": true
+      },
+      "dependencies": [
+        "template.wmarka.uikit.min"
+      ]
     },
     {
       "name": "wmarka-icons-min",
       "type": "script",
       "uri": "media/templates/site/wmarka/js/wmarka-icons-min.js",
-      "attributes" : { "defer": true },
-      "dependencies": ["uikit.min"]
+      "version": "3.0.0",
+      "attributes": {
+        "defer": true
+      },
+      "dependencies": [
+        "template.wmarka.uikit.min"
+      ]
     }
   ]
 }

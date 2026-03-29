@@ -1,168 +1,120 @@
 <?php
-
 /**
  * @package     Joomla.Site
- * @subpackage  com_blank // <-- Убедитесь, что имя компонента верное (латиницей)
- * @since       1.0.0  
- * @copyright   Copyright (C) 2025 Ваше имя или компания. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @subpackage  com_blank
+ * @view        default (Базовая страница)
+ * @version     Joomla 6.x
+ * @PHP         8.3 / 8.4
  */
 
-// Запрет прямого доступа.
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\HTML\HTMLHelper; // Может понадобиться для _('select.option') или других хелперов
+use Joomla\CMS\HTML\HTMLHelper;
 
-// Получаем основные объекты приложения Joomla 5
-$app = Factory::getApplication();
-$document = $app->getDocument();
-// $wa = $document->getWebAssetManager(); // Получаем Web Asset Manager, если нужно загружать JS/CSS/хелперы
+// Подключаем наш арсенал
+JLoader::register('JUImage', JPATH_LIBRARIES . '/juimage/JUImage.php');
+require_once JPATH_THEMES . '/wmarka/php/Seo.php';
 
-// --- Если этот код находится в файле шаблона вида (view.html.php) ---
-// $document = $this->document;
-// $app = Factory::getApplication();
-// $wa = $document->getWebAssetManager();
-// ------------------------------------------------------------------
+// Базовые параметры
+$showPageHeading = $this->params->get('show_page_heading', 1);
+$pageHeading     = $this->params->get('page_heading', 'Новая страница');
 
-// --- Удалено: JHtml::addIncludePath устарело. Используйте WAM, если нужны хелперы. ---
-// JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-// JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
-// Если вам нужны хелперы из вашего компонента, используйте:
-// $wa->useHelper('com_blank.yourhelpername'); // Замените на реальное имя хелпера
+// --- РЕЖИМ ПРОТОТИПИРОВАНИЯ ---
+$isPrototyping  = true; 
+$placeholderUrl = $this->params->get('placeholder_service', 'https://placehold.co/{width}x{height}/EFEFEF/AAAAAA.png?text={text}');
 
-// Получаем и очищаем заголовок и описание документа
-$docTitle = $document->getTitle();
-$docDescription = $document->getDescription(); // Используем латиницу в имени переменной
+// === 1. ПОДГОТОВКА ДАННЫХ И SEO ===
+// В com_blank данные обычно берутся из параметров пункта меню или кастомных полей
+$seoTitle       = $pageHeading;
+$seoDescription = $this->params->get('page_description', '');
+$pageImageSrc   = $this->params->get('page_image', '');
 
-// Устанавливаем заголовок страницы (можно оставить как есть, если нужно обрезать теги)
-$document->setTitle(strip_tags(trim($docTitle)));
+$finalImageSrc  = ''; // Картинка для страницы
+$seoImage       = ''; // Картинка для Open Graph
 
-// --- OpenGraph и Twitter Cards ---
-
-// Путь к изображению по умолчанию (лучше сделать настраиваемым через параметры)
-$templateName = $app->getTemplate();
-$defaultImagePath = Uri::base(true) . '/media/templates/site/' . $templateName . '/images/logotype.jpg';
-$ogImage = htmlspecialchars($defaultImagePath); // Экранируем для безопасности
-
-// Получаем значения из языковых файлов (добавьте значения по умолчанию на случай отсутствия констант)
-$ogLang = Text::_('OG_LANG', 'ru_RU'); // Пример значения по умолчанию
-$twitterSite = Text::_('SEO_TWITTER_SITE', ''); // Например, @YourTwitterHandle
-$twitterCreator = Text::_('SEO_TWITTER_CREATOR', ''); // Например, @AuthorTwitterHandle
-$articleAuthor = Text::_('SEO_DESCRIPTION_AUTHOR', '');
-$facebookAdmins = Text::_('SEO_FACEBOOK_ID', '');
-$facebookAppId = Text::_('SEO_YOUR_APP_ID', '');
-$siteName = $app->get('sitename'); // Получаем имя сайта из конфигурации Joomla
-$currentUrl = Uri::current();
-
-// Экранируем динамические данные перед использованием в мета-тегах
-$safeTitle = htmlspecialchars($docTitle, ENT_QUOTES, 'UTF-8');
-$safeDescription = htmlspecialchars($docDescription, ENT_QUOTES, 'UTF-8');
-$safeArticleAuthor = htmlspecialchars($articleAuthor, ENT_QUOTES, 'UTF-8');
-$safeTwitterSite = htmlspecialchars($twitterSite, ENT_QUOTES, 'UTF-8');
-$safeTwitterCreator = htmlspecialchars($twitterCreator, ENT_QUOTES, 'UTF-8');
-
-// Установка мета-тегов с помощью setMetaData
-// Twitter Card
-$document->setMetaData('twitter:card', 'summary_large_image');
-$document->setMetaData('twitter:site', $safeTwitterSite);
-$document->setMetaData('twitter:creator', $safeTwitterCreator);
-$document->setMetaData('twitter:title', $safeTitle);
-$document->setMetaData('twitter:description', $safeDescription);
-$document->setMetaData('twitter:url', $currentUrl);
-$document->setMetaData('twitter:image', $ogImage); // Можно использовать то же изображение
-// $document->setMetaData('twitter:image:alt', 'Описание изображения для Twitter'); // Хорошая практика - добавить alt текст
-
-// Open Graph
-$document->setMetaData('og:title', $safeTitle);
-$document->setMetaData('og:description', $safeDescription);
-$document->setMetaData('og:type', 'website'); // Или 'article', 'product' и т.д. в зависимости от страницы
-$document->setMetaData('og:url', $currentUrl);
-$document->setMetaData('og:image', $ogImage);
-$document->setMetaData('og:image:secure_url', $ogImage); // Если сайт работает по HTTPS (что рекомендуется)
-// $document->setMetaData('og:image:type', 'image/jpeg'); // Можно указать тип MIME
-// $document->setMetaData('og:image:width', '1200'); // Можно указать размеры
-// $document->setMetaData('og:image:height', '630');
-// $document->setMetaData('og:image:alt', 'Описание изображения для Open Graph'); // Хорошая практика - добавить alt текст
-$document->setMetaData('og:locale', $ogLang);
-$document->setMetaData('og:site_name', htmlspecialchars($siteName, ENT_QUOTES, 'UTF-8'));
-
-// Эти теги специфичны, но можно оставить, если они вам нужны
-if (!empty($safeArticleAuthor)) {
-    $document->setMetaData('article:author', $safeArticleAuthor); // Используется для og:type = article
-}
-// $document->setMetaData('article:publisher', htmlspecialchars(Text::_('SEO_DESCRIPTION_PUBLISHER', ''), ENT_QUOTES, 'UTF-8')); // Если нужно
-
-if (!empty($facebookAdmins)) {
-    $document->setMetaData('fb:admins', htmlspecialchars($facebookAdmins, ENT_QUOTES, 'UTF-8'));
-}
-if (!empty($facebookAppId)) {
-    $document->setMetaData('fb:app_id', htmlspecialchars($facebookAppId, ENT_QUOTES, 'UTF-8'));
+if (!empty($pageImageSrc)) {
+    // Картинка для контента (баннер)
+    $finalImageSrc = JUImage::renderThumb($pageImageSrc, 1200, 500);
+    
+    // Картинка для соцсетей
+    $juImg = new JUImage();
+    $ogThumb = $juImg->render($pageImageSrc, ['w' => 1200, 'h' => 630, 'webp' => false, 'zc' => 'C']);
+    if ($ogThumb && !empty($ogThumb->src)) {
+        $seoImage = $ogThumb->src;
+    }
+} elseif ($isPrototyping) {
+    // Плейсхолдер для верстки
+    $finalImageSrc = str_replace(
+        ['{width}', '{height}', '{text}'],
+        [1200, 500, urlencode('Обложка: ' . $pageHeading)],
+        $placeholderUrl
+    );
+    $seoImage = $finalImageSrc;
 }
 
-// --- Гео-теги и Schema.org (Лучше реализовать через JSON-LD) ---
-// Вместо добавления множества отдельных мета-тегов для адреса, телефона и т.д.,
-// рекомендуется использовать разметку Schema.org в формате JSON-LD.
-// Это более современный и поддерживаемый поисковыми системами подход.
-// Пример (добавляется как скрипт в <head>):
-/*
-$schema = [
-    '@context' => 'https://schema.org',
-    '@type' => 'Organization', // Или LocalBusiness, Person и т.д.
-    'name' => $siteName,
-    'url' => Uri::base(),
-    'logo' => $ogImage,
-    'contactPoint' => [
-        '@type' => 'ContactPoint',
-        'telephone' => htmlspecialchars(Text::_('SEO_TEL', ''), ENT_QUOTES, 'UTF-8'),
-        'contactType' => 'Customer Service' // Пример
-    ],
-    'address' => [
-        '@type' => 'PostalAddress',
-        'streetAddress' => htmlspecialchars(Text::_('SEO_STREET_ADDRESS', ''), ENT_QUOTES, 'UTF-8'),
-        'addressLocality' => htmlspecialchars(Text::_('SEO_LOCALITY', ''), ENT_QUOTES, 'UTF-8'),
-        'addressRegion' => htmlspecialchars(Text::_('SEO_REGION', ''), ENT_QUOTES, 'UTF-8'),
-        'postalCode' => htmlspecialchars(Text::_('SEO_POSTALCODE', ''), ENT_QUOTES, 'UTF-8'),
-        'addressCountry' => htmlspecialchars(Text::_('SEO_COUNTRY', ''), ENT_QUOTES, 'UTF-8')
-    ],
-    // 'geo' => [ // Можно добавить геокоординаты, если нужно
-    //     '@type' => 'GeoCoordinates',
-    //     'latitude' => htmlspecialchars(Text::_('SEO_LATITUDE', ''), ENT_QUOTES, 'UTF-8'),
-    //     'longitude' => htmlspecialchars(Text::_('SEO_LONGITUDE', ''), ENT_QUOTES, 'UTF-8')
-    // ]
-];
-$document->addScriptDeclaration(json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT), 'application/ld+json');
-*/
-// Если вы все же хотите использовать старые гео-теги (менее рекомендуется):
-// $document->setMetaData('geo.position', htmlspecialchars(Text::_('SEO_LATITUDE', ''), ENT_QUOTES, 'UTF-8') . ';' . htmlspecialchars(Text::_('SEO_LONGITUDE', ''), ENT_QUOTES, 'UTF-8'));
-// $document->setMetaData('geo.placename', htmlspecialchars(Text::_('SEO_COUNTRY_CITY', ''), ENT_QUOTES, 'UTF-8'));
-// $document->setMetaData('geo.region', htmlspecialchars(Text::_('SEO_COUNTRY', ''), ENT_QUOTES, 'UTF-8') . '-' . htmlspecialchars(Text::_('SEO_REGION', ''), ENT_QUOTES, 'UTF-8'));
-// $document->setMetaData('ICBM', htmlspecialchars(Text::_('SEO_LATITUDE', ''), ENT_QUOTES, 'UTF-8') . ', ' . htmlspecialchars(Text::_('SEO_LONGITUDE', ''), ENT_QUOTES, 'UTF-8'));
+// Запускаем SEO
+WmarkaSeo::setPageMeta($seoTitle, $seoDescription, $seoImage);
 
+// === 2. ПОДГОТОВКА КОНТЕНТА ===
+// Текст страницы (если он задан в параметрах пункта меню)
+$pageContent = HTMLHelper::_('content.prepare', $this->params->get('page_content', ''), '', 'com_blank.default');
 
-// --- DNS Prefetch ---
-// Добавляем через addCustomTag, так как это нестандартные теги <link>
-// Исправлены URL (убрано //http://) и используется https там, где возможно.
-$dnsPrefetchTags = '
-    <link href="//ajax.googleapis.com" rel="dns-prefetch preconnect" />
-    <link href="//www.google-analytics.com" rel="dns-prefetch preconnect" />
-    <link href="//pagead2.googlesyndication.com" rel="dns-prefetch preconnect" />
-    <link href="//static.doubleclick.net" rel="dns-prefetch preconnect" />
-    <link href="//googleusercontent.com" rel="dns-prefetch preconnect" />
-    <link href="//www.youtube.com" rel="dns-prefetch preconnect" />
-    <link href="//graph.facebook.com" rel="dns-prefetch preconnect" />
-    <link href="//maxcdn.bootstrapcdn.com" rel="dns-prefetch preconnect" />
-    <link href="//cdnjs.cloudflare.com" rel="dns-prefetch preconnect" />
-    <link href="//cdn.jsdelivr.net" rel="dns-prefetch preconnect" />
-    <link href="//oss.maxcdn.com" rel="dns-prefetch preconnect" />
-    <link href="//mc.yandex.ru" rel="dns-prefetch preconnect" /> <link href="//informer.yandex.ru" rel="dns-prefetch preconnect" />
-    ';
-// Добавляем блок ссылок в <head>
-$document->addCustomTag($dnsPrefetchTags);
-
-// --- Конец OpenGraph и DNS Prefetch ---
-
-// Другой код вашего шаблона или вида может идти здесь...
+if (empty($pageContent) && $isPrototyping) {
+    $pageContent = '
+        <p class="uk-text-lead">Это вводный абзац (lead). Он автоматически получает больший размер шрифта для привлечения внимания пользователя.</p>
+        <p>Здесь будет располагаться основной контент страницы, выводимый компонентом com_blank. Вы можете сверстать здесь лендинг, сложную форму или кастомный калькулятор, используя сетку UIkit 3.</p>
+        <div class="uk-child-width-1-2@m uk-margin-medium-top" uk-grid>
+            <div>
+                <ul class="uk-list uk-list-check uk-margin-remove-bottom">
+                    <li>Интеграция с JUImage</li>
+                    <li>SEO оптимизация из коробки</li>
+                </ul>
+            </div>
+            <div>
+                <ul class="uk-list uk-list-check uk-margin-remove-bottom">
+                    <li>Адаптивная сетка UIkit</li>
+                    <li>Строгий PHP 8.4</li>
+                </ul>
+            </div>
+        </div>';
+}
 ?>
+
+<div class="com-blank-default uk-container uk-container-small uk-margin-large-bottom uk-margin-large-top">
+
+    <article class="uk-article">
+
+        <?php // Главный заголовок ?>
+        <?php if ($showPageHeading) : ?>
+            <h1 class="uk-article-title uk-margin-medium-bottom">
+                <?php echo $this->escape($pageHeading); ?>
+            </h1>
+        <?php endif; ?>
+
+        <?php // Обложка страницы (Hero Image) ?>
+        <?php if (!empty($finalImageSrc)) : ?>
+            <div class="uk-margin-medium-bottom">
+                <img src="<?php echo $this->escape($finalImageSrc); ?>" 
+                     class="uk-border-rounded uk-box-shadow-small uk-width-1-1" 
+                     loading="lazy" 
+                     alt="<?php echo $this->escape($pageHeading); ?>">
+            </div>
+        <?php endif; ?>
+
+        <?php // Мета-данные (Опционально: дата, автор) ?>
+        <?php if ($isPrototyping) : ?>
+            <p class="uk-article-meta">
+                Опубликовано <time datetime="<?php echo date('c'); ?>"><?php echo date('d.m.Y'); ?></time> 
+                в категории <a href="#">Кастомные страницы</a>.
+            </p>
+        <?php endif; ?>
+
+        <?php // Основной контент страницы ?>
+        <div class="uk-panel uk-text-break uk-margin-medium-top">
+            <?php echo $pageContent; ?>
+        </div>
+
+    </article>
+
+</div>

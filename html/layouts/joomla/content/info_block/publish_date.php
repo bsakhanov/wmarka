@@ -1,29 +1,23 @@
 <?php
-
 /**
  * @package     Joomla.Site
  * @subpackage  Layout
- *
- * @copyright   (C) 2013 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version     WMARKA CLEAN (Publish Date Sublayout)
  */
 
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
-$jsIcons = Factory::getContainer()
-    ->get(Joomla\CMS\Application\SiteApplication::class)
-    ->getTemplate(true)
-    ->params
-    ->get('jsIcons', 'none') != 'none';
+$item = $displayData['item'];
 
+if (!$item->publish_up) {
+    return;
+}
 ?>
-<dd class="uk-flex uk-flex-middle published">
 
-    <time datetime="<?php echo HTMLHelper::_('date', $displayData['item']->publish_up, 'c'); ?>" itemprop="datePublished">
-         <?php echo Text::sprintf(HTMLHelper::_('date', $displayData['item']->publish_up, Text::_('DATE_FORMAT_LC5'))); ?>
-    </time>&nbsp;&nbsp;
-</dd>
+<time datetime="<?php echo Factory::getDate($item->publish_up)->format('c'); ?>" itemprop="datePublished">
+    <?php echo HTMLHelper::_('date', $item->publish_up, Text::_('DATE_FORMAT_LC3')); ?>
+</time>

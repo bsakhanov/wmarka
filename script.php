@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
+
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\File;
 
@@ -9,26 +12,19 @@ class tpl_wmarkaInstallerScript
     /**
      * Выполняется перед установкой или обновлением
      */
-    public function preflight($type, $parent)
+    public function preflight(string $type, InstallerAdapter $parent): bool
     {
-        // Если это обновление (update), нам нужно подготовить почву
-        if ($type == 'update') {
-            $mediaPath = JPATH_ROOT . '/media/templates/site/wmarka';
-            
-            // Удаляем старую папку media в системной директории, 
-            // чтобы Joomla создала её заново из файлов пакета
-            if (Folder::exists($mediaPath)) {
-                Folder::delete($mediaPath);
-            }
-        }
+        // Мы больше не удаляем папку media целиком, чтобы сохранить user.css 
+        // и загруженные пользователем фавиконки. Joomla сама обновит нужные файлы.
+        return true;
     }
 
     /**
      * Выполняется после установки или обновления
      */
-    public function postflight($type, $parent)
+    public function postflight(string $type, InstallerAdapter $parent): void
     {
-        // Здесь можно вывести сообщение пользователю
-        echo '<p>Wmarka Template has been ' . ($type == 'install' ? 'installed' : 'updated') . ' successfully.</p>';
+        $action = $type === 'install' ? 'установлен' : 'обновлен';
+        echo '<div class="alert alert-success"><p>Шаблон <b>Wmarka</b> успешно ' . $action . '. Приятной работы!</p></div>';
     }
 }

@@ -1,45 +1,79 @@
 <?php
-
 /**
  * @package     Joomla.Site
  * @subpackage  com_content
- *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version     Joomla 6 WMARKA Core Edition (UIkit 3 Archive)
  */
 
-\defined('_JEXEC') or die;
+declare(strict_types=1);
 
+defined('_JEXEC') or die;
+
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
+/** @var \Joomla\Component\Content\Site\View\Archive\HtmlView $this */
 ?>
-<div class="com-content-archive archive">
-    <?php if ($this->params->get('show_page_heading')) { ?>
-        <div class="page-header">
-            <h1><?php echo $this->escape($this->params->get('page_heading')); ?></h1>
-        </div>
-    <?php } ?>
+<div class="com-content-archive archive uk-margin-bottom">
 
-    <form id="adminForm" action="<?php echo Route::_('index.php'); ?>" method="post" class="uk-card uk-card-default uk-card-body uk-card-small uk-margin-medium com-content-archive__form">
-        <div class="filter-search uk-grid-small" data-uk-grid>
-            <?php if ($this->params->get('filter_field') !== 'hide') { ?>
-            <div>
-                <label class="filter-search-lbl visually-hidden uk-hidden" for="filter-search"><?php echo Text::_('COM_CONTENT_TITLE_FILTER_LABEL') . '&#160;'; ?></label>
-                <input type="text" name="filter-search" id="filter-search" value="<?php echo $this->escape($this->filter); ?>" class="uk-input uk-form-small uk-width-small inputbox" onchange="document.getElementById('adminForm').submit();" placeholder="<?php echo Text::_('COM_CONTENT_TITLE_FILTER_LABEL'); ?>">
+    <?php /* --- ЗАГОЛОВОК СТРАНИЦЫ --- */ ?>
+    <?php if ($this->params->get('show_page_heading')) : ?>
+        <div class="page-header uk-margin-bottom">
+            <h1 class="uk-heading-bullet">
+                <?php echo $this->escape($this->params->get('page_heading')); ?>
+            </h1>
+        </div>
+    <?php endif; ?>
+
+    <?php /* --- ФОРМА ФИЛЬТРАЦИИ (UIkit 3) --- */ ?>
+    <form id="adminForm" action="<?php echo Route::_('index.php'); ?>" method="post" class="uk-margin-medium-bottom">
+        <div class="uk-flex uk-flex-middle uk-flex-wrap" uk-margin>
+            
+            <?php /* Поиск по тексту */ ?>
+            <div class="uk-margin-small-right">
+                <label class="visually-hidden" for="filter-search"><?php echo Text::_('COM_CONTENT_TITLE_FILTER_LABEL'); ?></label>
+                <div class="uk-inline">
+                    <span class="uk-form-icon" uk-icon="icon: search"></span>
+                    <input type="text" name="filter-search" id="filter-search" value="<?php echo $this->escape($this->filter); ?>" class="uk-input" onchange="document.adminForm.submit();" placeholder="<?php echo Text::_('COM_CONTENT_TITLE_FILTER_LABEL'); ?>">
+                </div>
             </div>
-            <?php } ?>
+            
+            <?php /* Фильтр по месяцу */ ?>
+            <div class="uk-margin-small-right">
+                <label class="visually-hidden" for="month"><?php echo Text::_('JOPTION_SELECT_MONTH'); ?></label>
+                <?php echo $this->form->getInput('month'); ?>
+            </div>
+            
+            <?php /* Фильтр по году */ ?>
+            <div class="uk-margin-small-right">
+                <label class="visually-hidden" for="year"><?php echo Text::_('JOPTION_SELECT_YEAR'); ?></label>
+                <?php echo $this->form->getInput('year'); ?>
+            </div>
+            
+            <?php /* Лимит на страницу */ ?>
+            <?php if ($this->params->get('show_pagination_limit')) : ?>
+                <div class="uk-margin-small-right uk-flex uk-flex-middle">
+                    <span class="uk-text-meta uk-margin-small-right"><?php echo Text::_('JGLOBAL_DISPLAY_NUM'); ?></span>
+                    <?php echo $this->form->getInput('limit'); ?>
+                </div>
+            <?php endif; ?>
 
-            <div><?php echo str_replace('form-select', 'uk-select uk-form-small', $this->form->monthField); ?></div>
-            <div><?php echo str_replace('form-select', 'uk-select uk-form-small', $this->form->yearField); ?></div>
-            <div><?php echo str_replace('form-select', 'uk-select uk-form-small', $this->form->limitField); ?></div>
-
-            <div><button type="submit" class="uk-button-primary uk-button-small" style="vertical-align: top;"><?php echo Text::_('JGLOBAL_FILTER_BUTTON'); ?></button></div>
-
-            <input type="hidden" name="view" value="archive">
-            <input type="hidden" name="option" value="com_content">
-            <input type="hidden" name="limitstart" value="0">
+            <?php /* Кнопка отправки */ ?>
+            <div>
+                <button type="submit" class="uk-button uk-button-primary">
+                    <?php echo Text::_('JGLOBAL_FILTER_BUTTON'); ?>
+                </button>
+            </div>
+            
         </div>
+
+        <input type="hidden" name="view" value="archive">
+        <input type="hidden" name="option" value="com_content">
+        <input type="hidden" name="limitstart" value="0">
     </form>
+
+    <?php /* --- СПИСОК СТАТЕЙ --- */ ?>
     <?php echo $this->loadTemplate('items'); ?>
+
 </div>

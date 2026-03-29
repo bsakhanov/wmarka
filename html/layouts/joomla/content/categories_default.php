@@ -1,38 +1,46 @@
 <?php
-
 /**
  * @package     Joomla.Site
  * @subpackage  Layout
- *
- * @copyright   (C) 2013 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @version     WMARKA ULTRA (Categories List Head)
  */
 
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 
+/** @var object $displayData Данные макета */
+$params = $displayData->params;
 ?>
-<?php if ($displayData->params->get('show_page_heading')) { ?>
-    <h1>
-        <?php echo $displayData->escape($displayData->params->get('page_heading')); ?>
-    </h1>
-<?php } ?>
 
-<?php if ($displayData->params->get('show_base_description')) { ?>
-    <?php // If there is a description in the menu parameters use that;
+<?php /* 1. Заголовок страницы */ ?>
+<?php if ($params->get('show_page_heading')) : ?>
+    <h1 class="uk-heading-bullet uk-margin-medium-bottom">
+        <?php echo $displayData->escape($params->get('page_heading')); ?>
+    </h1>
+<?php endif; ?>
+
+<?php /* 2. Описание базы категорий */ ?>
+<?php if ($params->get('show_base_description')) : ?>
+    <?php 
+    $description = '';
+    $context     = '';
+
+    // Если есть описание в параметрах меню, используем его
+    if ($params->get('categories_description')) {
+        $description = $params->get('categories_description');
+        $context     = $displayData->get('extension') . '.categories';
+    } 
+    // Иначе берем описание родительской категории из БД
+    elseif ($displayData->parent->description) {
+        $description = $displayData->parent->description;
+        $context     = $displayData->parent->extension . '.categories';
+    }
     ?>
-    <?php if ($displayData->params->get('categories_description')) { ?>
-        <div class="category-desc base-desc">
-            <?php echo HTMLHelper::_('content.prepare', $displayData->params->get('categories_description'), '',  $displayData->get('extension') . '.categories'); ?>
+
+    <?php if ($description) : ?>
+        <div class="category-desc base-desc uk-panel uk-margin-medium-bottom uk-text-lead" itemprop="description">
+            <?php echo HTMLHelper::_('content.prepare', $description, '', $context); ?>
         </div>
-    <?php } else { ?>
-        <?php // Otherwise get one from the database if it exists.
-        ?>
-        <?php if ($displayData->parent->description) { ?>
-            <div class="category-desc base-desc">
-                <?php echo HTMLHelper::_('content.prepare', $displayData->parent->description, '', $displayData->parent->extension . '.categories'); ?>
-            </div>
-        <?php } ?>
-    <?php } ?>
-<?php } ?>
+    <?php endif; ?>
+<?php endif; ?>

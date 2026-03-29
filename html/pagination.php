@@ -1,65 +1,63 @@
 <?php
-defined('_JEXEC') or die;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 /**
- * Рендеринг списка страниц (Обертка)
+ * @package     Joomla.Site
+ * @subpackage  Template.wmarka
+ * @version     WMARKA ULTRA (Pure UIkit 3 Pagination)
+ */
+
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
+
+/** * Рендерит основной контейнер пагинации.
+ * Мы используем класс uk-pagination для автоматического построения сетки.
  */
 function pagination_list_render($list): string
 {
-    // Если страниц нет — ничего не выводим
-    if (empty($list['pages'])) {
-        return '';
-    }
-
     $html = '<ul class="uk-pagination uk-flex-center uk-margin-large-top" uk-margin>';
 
-    // Кнопки "В начало" и "Назад"
-    $html .= $list['start']['data'];
-    $html .= $list['previous']['data'];
+    if ($list['start']['active'])    { $html .= $list['start']['data']; }
+    if ($list['previous']['active']) { $html .= $list['previous']['data']; }
 
-    // Номера страниц
     foreach ($list['pages'] as $page) {
         $html .= $page['data'];
     }
 
-    // Кнопки "Вперед" и "В конец"
-    $html .= $list['next']['data'];
-    $html .= $list['end']['data'];
+    if ($list['next']['active']) { $html .= $list['next']['data']; }
+    if ($list['end']['active'])  { $html .= $list['end']['data']; }
 
     $html .= '</ul>';
 
     return $html;
 }
 
-/**
- * Рендеринг активной ссылки (другие страницы)
- */
-function pagination_item_active(&$item): string
+/** * Вспомогательная логика для замены текстовых меток на иконки uikit. */
+function getWmarkaPaginationIcon($text): string
 {
-    // Определяем иконки для навигации
-    $title = $item->text;
-    
-    // Заменяем текст на иконки UIkit для крайних кнопок
-    if (str_contains($item->text, 'JLIB_HTML_PAGINATION_NEXT') || $item->text == '>') {
-        $title = '<span uk-pagination-next></span>';
-    } elseif (str_contains($item->text, 'JLIB_HTML_PAGINATION_PREV') || $item->text == '<') {
-        $title = '<span uk-pagination-previous></span>';
-    }
-
-    return '<li><a href="' . $item->link . '" aria-label="' . htmlspecialchars($item->text) . '">' . $title . '</a></li>';
+    if ($text == Text::_('JLIB_HTML_PAGINATION_START')) return '<span uk-pagination-previous></span><span uk-pagination-previous></span>';
+    if ($text == Text::_('JPREV')) return '<span uk-pagination-previous></span>';
+    if ($text == Text::_('JNEXT')) return '<span uk-pagination-next></span>';
+    if ($text == Text::_('JLIB_HTML_PAGINATION_END'))   return '<span uk-pagination-next></span><span uk-pagination-next></span>';
+    return $text;
 }
 
-/**
- * Рендеринг неактивного элемента (текущая страница или заглушка)
- */
+/** * Рендерит активную ссылку на страницу. */
+function pagination_item_active(&$item): string
+{
+    $display = getWmarkaPaginationIcon($item->text);
+    return '<li><a href="' . $item->link . '">' . $display . '</a></li>';
+}
+
+/** * Рендерит текущую страницу или неактивный элемент. */
 function pagination_item_inactive(&$item): string
 {
-    // Если это текущая страница
-    if ($item->active) {
-        return '<li class="uk-active"><span>' . $item->text . '</span></li>';
+    $display = getWmarkaPaginationIcon($item->text);
+
+    // Текущая активная страница помечается классом uk-active.
+    if ($item->text == (int) $item->text || $item->active) {
+        return '<li class="uk-active"><span>' . $display . '</span></li>';
     }
 
-    // Если это отключенные стрелки (например, "Назад" на первой странице)
-    return '<li class="uk-disabled"><span>' . $item->text . '</span></li>';
+    // Отключенные кнопки навигации получают класс uk-disabled.
+    return '<li class="uk-disabled"><span>' . $display . '</span></li>';
 }

@@ -1,124 +1,93 @@
 <?php
-
 /**
  * @package     Joomla.Site
  * @subpackage  mod_articles
- *
- * @copyright   (C) 2024 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Layout\LayoutHelper;
-
-if ($params->get('articles_layout') == 1) {
-    $gridCols = 'grid-cols-' . $params->get('layout_columns');
-}
 
 ?>
-<ul class="mod-articles-items<?php echo ($params->get('articles_layout') == 1 ? ' mod-articles-grid ' . $gridCols : ''); ?> mod-list">
+<div class="uk-grid uk-grid-small uk-child-width-1-1" uk-grid>
     <?php foreach ($items as $item) : ?>
         <?php
         $displayInfo = $item->displayHits || $item->displayAuthorName || $item->displayCategoryTitle || $item->displayDate;
+        $images = json_decode($item->images);
+        $introImage = $images->image_intro ?? '';
         ?>
-        <li>
-            <article class="mod-articles-item" itemscope itemtype="https://schema.org/Article">
-
-                <?php if ($params->get('item_title') || $displayInfo || $params->get('show_tags') || $params->get('show_introtext') || $params->get('show_readmore')) : ?>
-                    <div class="mod-articles-item-content">
-
-                        <?php if ($params->get('item_title')) : ?>
-                            <?php $item_heading = $params->get('item_heading', 'h4'); ?>
-                            <<?php echo $item_heading; ?> class="mod-articles-title" itemprop="name">
-                                <?php if ($params->get('link_titles') == 1) : ?>
-                                    <?php $attributes = ['class' => 'mod-articles-link ' . $item->active, 'itemprop' => 'url']; ?>
-                                    <?php $link = htmlspecialchars($item->link, ENT_COMPAT, 'UTF-8', false); ?>
-                                    <?php $title = htmlspecialchars($item->title, ENT_COMPAT, 'UTF-8', false); ?>
-                                    <?php echo HTMLHelper::_('link', $link, $title, $attributes); ?>
-                                <?php else : ?>
-                                    <?php echo $item->title; ?>
-                                <?php endif; ?>
-                            </<?php echo $item_heading; ?>>
-                        <?php endif; ?>
-
-                        <?php echo $item->event->afterDisplayTitle; ?>
-
-                        <?php if ($displayInfo) : ?>
-                            <?php $listClass = ($params->get('info_layout') == 1) ? 'list-inline' : 'list-unstyled'; ?>
-                            <dl class="<?php echo $listClass; ?>">
-                                <dt class="article-info-term">
-                                    <span class="visually-hidden">
-                                        <?php echo Text::_('MOD_ARTICLES_INFO'); ?>
-                                    </span>
-                                </dt>
-
-                                <?php if ($item->displayAuthorName) : ?>
-                                    <dd class="mod-articles-writtenby <?php echo ($params->get('info_layout') == 1 ? 'list-inline-item' : ''); ?>">
-                                        <?php echo LayoutHelper::render('joomla.icon.iconclass', ['icon' => 'icon-user icon-fw']); ?>
-                                        <?php echo $item->displayAuthorName; ?>
-                                    </dd>
-                                <?php endif; ?>
-
-                                <?php if ($item->displayCategoryTitle) : ?>
-                                    <dd class="mod-articles-category <?php echo ($params->get('info_layout') == 1 ? 'list-inline-item' : ''); ?>">
-                                        <?php echo LayoutHelper::render('joomla.icon.iconclass', ['icon' => 'icon-folder-open icon-fw']); ?>
-                                        <?php if ($item->displayCategoryLink) : ?>
-                                            <a href="<?php echo $item->displayCategoryLink; ?>">
-                                                <?php echo $item->displayCategoryTitle; ?>
-                                            </a>
-                                        <?php else : ?>
-                                            <?php echo $item->displayCategoryTitle; ?>
-                                        <?php endif; ?>
-                                    </dd>
-                                <?php endif; ?>
-
-                                <?php if ($item->displayDate) : ?>
-                                    <dd class="mod-articles-date <?php echo ($params->get('info_layout') == 1 ? 'list-inline-item' : ''); ?>">
-                                        <?php echo LayoutHelper::render('joomla.icon.iconclass', ['icon' => 'icon-calendar icon-fw']); ?>
-                                        <?php echo $item->displayDate; ?>
-                                    </dd>
-                                <?php endif; ?>
-
-                                <?php if ($item->displayHits) : ?>
-                                    <dd class="mod-articles-hits <?php echo ($params->get('info_layout') == 1 ? 'list-inline-item' : ''); ?>">
-                                        <?php echo LayoutHelper::render('joomla.icon.iconclass', ['icon' => 'icon-eye icon-fw']); ?>
-                                        <?php echo $item->displayHits; ?>
-                                    </dd>
-                                <?php endif; ?>
-                            </dl>
-                        <?php endif; ?>
-
-                        <?php if (in_array($params->get('img_intro_full'), ['intro', 'full']) && !empty($item->imageSrc)) : ?>
-                            <?php echo LayoutHelper::render('joomla.content.' . $params->get('img_intro_full') . '_image', $item); ?>
-                        <?php endif; ?>
-
-                        <?php if ($params->get('show_tags', 0) && $item->tags->itemTags) : ?>
-                            <div class="mod-articles-tags">
-                                <?php echo LayoutHelper::render('joomla.content.tags', $item->tags->itemTags); ?>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php echo $item->event->beforeDisplayContent; ?>
-
-                        <?php if ($params->get('show_introtext', 1)) : ?>
-                            <?php echo $item->displayIntrotext; ?>
-                        <?php endif; ?>
-
-                        <?php echo $item->event->afterDisplayContent; ?>
-
-                        <?php if ($params->get('show_readmore')) : ?>
-                            <?php if ($params->get('show_readmore_title', '') !== '') : ?>
-                                <?php $item->params->set('show_readmore_title', $params->get('show_readmore_title')); ?>
-                                <?php $item->params->set('readmore_limit', $params->get('readmore_limit')); ?>
-                            <?php endif; ?>
-                            <?php echo LayoutHelper::render('joomla.content.readmore', ['item' => $item, 'params' => $item->params, 'link' => $item->link]); ?>
-                        <?php endif; ?>
+        <div>
+            <article class="uk-card uk-card-default uk-card-small uk-card-hover uk-display-block uk-link-toggle uk-transition-toggle" itemscope itemtype="https://schema.org/Article">
+                
+                <?php if ($params->get('image') && !empty($introImage)) : ?>
+                    <div class="uk-card-media-top uk-inline-clip">
+                        <a href="<?php echo $item->link; ?>" title="<?php echo $typograph($item->title); ?>">
+                            <img src="<?php echo $introImage; ?>" 
+                                 alt="<?php echo $typograph($item->title); ?>" 
+                                 class="uk-transition-scale-up uk-transition-opaque"
+                                 loading="lazy">
+                        </a>
                     </div>
                 <?php endif; ?>
+
+                <div class="uk-card-body">
+                    <?php if ($params->get('item_title')) : ?>
+                        <h5 class="uk-h5 uk-margin-remove-bottom uk-text-bold" itemprop="headline">
+                            <a href="<?php echo $item->link; ?>" class="uk-link-reset">
+                                <?php echo $typograph($item->title); ?>
+                            </a>
+                        </h5>
+                    <?php endif; ?>
+
+                    <?php if ($displayInfo) : ?>
+                        <div class="uk-article-meta uk-margin-small-top uk-text-meta uk-flex uk-flex-middle uk-flex-wrap">
+                            <?php if ($item->displayDate) : ?>
+                                <time class="uk-margin-small-right" datetime="<?php echo HTMLHelper::_('date', $item->publish_up, 'c'); ?>" itemprop="datePublished">
+                                    <span uk-icon="icon: clock; ratio: 0.7" class="uk-margin-small-right"></span>
+                                    <?php echo HTMLHelper::_('date', $item->publish_up, Text::_('DATE_FORMAT_LC3')); ?>
+                                </time>
+                            <?php endif; ?>
+                            
+                            <?php if ($item->displayCategoryTitle) : ?>
+                                <span class="uk-text-primary uk-text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">
+                                    <?php echo $typograph($item->category_title); ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php /* ВЫВОД МЕТОК (ТЕГОВ) */ ?>
+                    <?php if ($params->get('show_tags', 1) && !empty($item->tags->itemTags)) : ?>
+                        <div class="uk-margin-small-top uk-flex uk-flex-wrap" style="gap: 5px;">
+                            <?php foreach ($item->tags->itemTags as $tag) : ?>
+                                <span class="uk-text-meta uk-text-muted" style="font-size: 0.7rem;">
+                                    <span class="uk-text-primary">#</span><?php echo $typograph($tag->title); ?>
+                                </span>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($params->get('show_introtext')) : ?>
+                        <div class="uk-margin-small-top uk-text-small uk-text-muted" itemprop="description">
+                            <?php 
+                                $cleanText = strip_tags($item->displayIntrotext);
+                                echo $typograph(\Joomla\CMS\String\StringHelper::truncate($cleanText, 110)); 
+                            ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($params->get('show_readmore')) : ?>
+                        <div class="uk-margin-small-top">
+                            <a class="uk-button uk-button-text uk-text-primary uk-text-capitalize" href="<?php echo $item->link; ?>">
+                                <?php echo Text::_('MOD_ARTICLES_CATEGORY_READ_MORE'); ?>
+                                <span uk-icon="icon: arrow-right; ratio: 0.8"></span>
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <meta itemprop="url" content="<?php echo $item->link; ?>" />
             </article>
-        </li>
+        </div>
     <?php endforeach; ?>
-</ul>
+</div>
