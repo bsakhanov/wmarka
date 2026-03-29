@@ -18,3 +18,41 @@ h1, h2, h3, h4, h5, h6, .uk-h1, .uk-h2, .uk-h3, .uk-h4, .uk-h5, .uk-h6 {
 b, strong {
     font-weight: 700; /* Используем Bold */
 }
+/* Эффект для казахстанских обложек (Intro Image) */
+.uk-card-media-top img, 
+.intro-image img {
+    filter: sepia(20%) contrast(110%); /* Теплый, благородный тон */
+    transition: transform 0.5s ease;
+    border-radius: 4px;
+}
+
+/* Эффект при наведении на карточку */
+.uk-card:hover .uk-card-media-top img {
+    transform: scale(1.03);
+    filter: sepia(0%) contrast(100%); /* При наведении фото становится "живым" */
+}
+/* Оформление разделителя склеенных постов */
+.thread-sep {
+    border: 0;
+    height: 1px;
+    /* Мягкий градиент в стиле UIkit */
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
+    margin: 40px 0;
+    position: relative;
+    overflow: visible;
+    display: block;
+}
+/* Вставка иконки UIkit "more" через SVG */
+.thread-sep::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 20px;
+    background-color: #fff; /* Цвет фона под иконкой, чтобы перекрыть линию */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle fill='%23999' cx='3' cy='10' r='1.5'/%3E%3Ccircle fill='%23999' cx='10' cy='10' r='1.5'/%3E%3Ccircle fill='%23999' cx='17' cy='10' r='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+}
