@@ -290,8 +290,10 @@ final class Ui
         $list = Text::_('TPL_WMARKA_VIEW_LIST');
 
         // Иконки — встроенный SVG: кнопки видны даже без набора uikit-icons и при любом оптимизаторе
-        $svgGrid = '<span class="uk-icon"><svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="2" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="2" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="11" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="11" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></span>';
-        $svgList = '<span class="uk-icon"><svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="3" height="3" fill="currentColor"/><rect x="2" y="8.5" width="3" height="3" fill="currentColor"/><rect x="2" y="14" width="3" height="3" fill="currentColor"/><path d="M8 4.5h10M8 10h10M8 15.5h10" stroke="currentColor" stroke-width="1.3"/></svg></span>';
+        // Иконки «сетка» и «список» — геометрия из набора UIkit (grid, list), вписанная прямо
+        // в разметку: вид тот же, что у uk-icon, но кнопки не зависят от загрузки uikit-icons.js
+        $svgGrid = '<span class="uk-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><rect width="3" height="3" x="2" y="2"/><rect width="3" height="3" x="8" y="2"/><rect width="3" height="3" x="14" y="2"/><rect width="3" height="3" x="2" y="8"/><rect width="3" height="3" x="8" y="8"/><rect width="3" height="3" x="14" y="8"/><rect width="3" height="3" x="2" y="14"/><rect width="3" height="3" x="8" y="14"/><rect width="3" height="3" x="14" y="14"/></svg></span>';
+        $svgList = '<span class="uk-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><rect width="12" height="1" x="6" y="4"/><rect width="12" height="1" x="6" y="9"/><rect width="12" height="1" x="6" y="14"/><rect width="2" height="1" x="2" y="4"/><rect width="2" height="1" x="2" y="9"/><rect width="2" height="1" x="2" y="14"/></svg></span>';
 
         return '<div class="uk-button-group" role="group" aria-label="' . self::esc(Text::_('TPL_WMARKA_VIEW_SWITCH')) . '">'
             . '<button type="button" class="uk-button uk-button-default uk-button-small' . ($default === 'grid' ? ' uk-active' : '') . '" data-wm-set-view="grid" aria-label="' . self::esc($grid) . '" title="' . self::esc($grid) . '">' . $svgGrid . '</button>'
