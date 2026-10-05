@@ -1,0 +1,14 @@
+/*
+ * wmarka_vestnik — дочерний шаблон демо-сайта «Вестник».
+ *
+ * Joomla подключает этот файл вместо родительского media/templates/site/wmarka/css/user.css:
+ * относительный путь ассета template.user («user.css») ищется сначала в медиапапке дочернего
+ * шаблона, потом у родителя. Родитель при обновлении не трогает ни этот файл, ни его.
+ */
+
+/* Фирменный акцент «Вестника»: глиф цитаты и метка-маркер заголовков секций */
+[data-wm-content] blockquote::before { color: rgba(30, 135, 240, .22); }
+.uk-heading-bullet::before { border-left-color: #1e87f0; border-left-width: 4px; }
+
+/* Логотип в шапке чуть крупнее на широких экранах */
+@media (min-width: 960px) { .uk-navbar .uk-logo img { width: 190px; height: auto; } }

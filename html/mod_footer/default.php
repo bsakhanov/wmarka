@@ -1,18 +1,15 @@
 <?php
-
 /**
- * @package     Joomla.Site
- * @subpackage  mod_footer
+ * WMARKA — строка копирайта модуля «Подвал».
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @var string $lineone
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
-
 ?>
-<div class="mod-footer">
-    <div class="footer2"><?php echo Text::_('TPL_WMARKA_COPYRIGHT_TEXT'); ?></div>
+<div class="uk-text-small">
+    <p class="uk-margin-remove"><?php echo $lineone; ?></p>
+    <p class="uk-margin-remove uk-text-meta"><?php echo Text::_('MOD_FOOTER_LINE2'); ?></p>
 </div>

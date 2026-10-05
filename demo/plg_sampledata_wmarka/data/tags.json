@@ -1,0 +1,100 @@
+[
+ {
+  "key": "main",
+  "alias": "glavnoe",
+  "title": "Главное",
+  "image": "%IMG%/forum.jpg",
+  "description": "<p>Самое важное за день.</p>"
+ },
+ {
+  "key": "city",
+  "alias": "gorod",
+  "title": "Город",
+  "image": "%IMG%/city.jpg",
+  "description": "<p>Жизнь столицы: улицы, парки, службы.</p>"
+ },
+ {
+  "key": "transport",
+  "alias": "transport",
+  "title": "Транспорт",
+  "image": "%IMG%/bus.jpg",
+  "description": "<p>Автобусы, дороги, электромобили.</p>"
+ },
+ {
+  "key": "ecology",
+  "alias": "ekologiya",
+  "title": "Экология",
+  "image": "%IMG%/park.jpg",
+  "description": "<p>Деревья, воздух, вода и отходы.</p>"
+ },
+ {
+  "key": "education",
+  "alias": "obrazovanie",
+  "title": "Образование",
+  "image": "%IMG%/books.jpg",
+  "description": "<p>Школы, университеты, библиотеки.</p>"
+ },
+ {
+  "key": "youth",
+  "alias": "molodezh",
+  "title": "Молодёжь",
+  "image": "%IMG%/field.jpg",
+  "description": "<p>Студенты, юные спортсмены, молодые учёные.</p>"
+ },
+ {
+  "key": "startups",
+  "alias": "startapy",
+  "title": "Стартапы",
+  "image": "%IMG%/code.jpg",
+  "description": "<p>Молодые технологические компании.</p>"
+ },
+ {
+  "key": "ai",
+  "alias": "ii",
+  "title": "Искусственный интеллект",
+  "image": "%IMG%/robot.jpg",
+  "description": "<p>Нейросети и машинное обучение в жизни города.</p>"
+ },
+ {
+  "key": "res",
+  "alias": "vie",
+  "title": "ВИЭ",
+  "image": "%IMG%/wind.jpg",
+  "description": "<p>Солнце и ветер в энергосистеме.</p>"
+ },
+ {
+  "key": "oilgas",
+  "alias": "neftegaz",
+  "title": "Нефтегаз",
+  "image": "%IMG%/refinery.jpg",
+  "description": "<p>Нефть, газ, переработка.</p>"
+ },
+ {
+  "key": "photo",
+  "alias": "foto",
+  "title": "Фото",
+  "image": "%IMG%/photo-steppe.jpg",
+  "description": "<p>Фоторепортажи и выставки.</p>"
+ },
+ {
+  "key": "analytics",
+  "alias": "analitika",
+  "title": "Аналитика",
+  "image": "%IMG%/timeline.jpg",
+  "description": "<p>Разборы и цифры.</p>"
+ },
+ {
+  "key": "reference",
+  "alias": "spravochnik",
+  "title": "Справочник",
+  "image": "%IMG%/column.jpg",
+  "description": "<p>Статьи-пояснения.</p>"
+ },
+ {
+  "key": "video",
+  "alias": "video",
+  "title": "Видео",
+  "image": "%IMG%/video-1.jpg",
+  "description": "<p>Видеоновости и видеорепортажи.</p>"
+ }
+]

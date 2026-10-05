@@ -1,97 +1,79 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  Layout
- * @version     WMARKA ULTRA CLEAN (No redundant classes + UIkit 3)
+ * WMARKA — служебная строка материала: автор · рубрика · дата · просмотры · время чтения.
+ * Одна строка uk-article-meta вместо списка ядра.
+ *
+ * @var array $displayData ['item', 'params', 'position']
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\Component\Content\Site\Helper\RouteHelper;
+use Wmarka\Template\Config;
+use Wmarka\Template\Ui;
 
-$params        = $displayData['params'];
-$item          = $displayData['item'];
-$blockPosition = $params->get('info_block_position', 0);
+require_once JPATH_THEMES . '/wmarka/php/autoload.php';
 
-// Логика отображения
-$showBlock1 = (
-    $displayData['position'] === 'above' && ($blockPosition == 0 || $blockPosition == 2)
-    || $displayData['position'] === 'below' && ($blockPosition == 1)
-);
+$item   = $displayData['item'];
+$params = $displayData['params'];
+$parts  = [];
 
-$showBlock2 = (
-    $displayData['position'] === 'above' && ($blockPosition == 0)
-    || $displayData['position'] === 'below' && ($blockPosition == 1 || $blockPosition == 2)
-);
+if ($params->get('show_author') && !empty($item->author)) {
+    $author = $item->created_by_alias ?: $item->author;
+    $author = '<span itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">' . Ui::esc($author) . '</span></span>';
 
-if (!$showBlock1 && !$showBlock2) return;
+    if (!empty($item->contact_link) && $params->get('link_author')) {
+        $author = '<a href="' . $item->contact_link . '">' . $author . '</a>';
+    }
+
+    $parts[] = $author;
+}
+
+if ($params->get('show_parent_category') && !empty($item->parent_id) && !empty($item->parent_title) && (int) $item->parent_id > 1) {
+    $title   = Ui::esc($item->parent_title);
+    $parts[] = $params->get('link_parent_category') && !empty($item->parent_route)
+        ? '<a class="uk-link-muted" href="' . Route::_(RouteHelper::getCategoryRoute($item->parent_route, $item->parent_language ?? '*')) . '">' . $title . '</a>'
+        : $title;
+}
+
+if ($params->get('show_category') && !empty($item->category_title) && empty($displayData['nocategory'])) {
+    $title   = Ui::esc($item->category_title);
+    $parts[] = $params->get('link_category') && !empty($item->catslug)
+        ? '<a class="uk-link-muted" href="' . Route::_(RouteHelper::getCategoryRoute($item->catslug, $item->category_language ?? '*')) . '" itemprop="genre">' . $title . '</a>'
+        : '<span itemprop="genre">' . $title . '</span>';
+}
+
+$dates = [
+    'show_publish_date' => ['publish_up', 'datePublished'],
+    'show_create_date'  => ['created', 'dateCreated'],
+    'show_modify_date'  => ['modified', 'dateModified'],
+];
+
+foreach ($dates as $flag => [$field, $prop]) {
+    if ($params->get($flag) && Ui::validDate($item->$field ?? null)) {
+        $label   = $flag === 'show_modify_date' ? Text::_('TPL_WMARKA_UPDATED') . ' ' : '';
+        $parts[] = $label . '<time datetime="' . Ui::iso($item->$field) . '" itemprop="' . $prop . '">' . Ui::newsDate($item->$field, 'full') . '</time>';
+    }
+}
+
+if ($params->get('show_hits') && isset($item->hits)) {
+    $parts[] = Ui::icon('eye', 0.75, 'uk-margin-xsmall-right') . (int) $item->hits;
+}
+
+if (($displayData['position'] ?? 'above') === 'above' && Config::bool('read_time', true) && !empty($item->text) && ($displayData['readtime'] ?? true)) {
+    $parts[] = Ui::icon('clock', 0.75, 'uk-margin-xsmall-right') . Ui::minutes(Ui::readMinutes($item->text));
+}
+
+if (!empty($displayData['item']->associations) && !empty($params->get('show_associations'))) {
+    // ассоциации выводятся отдельным макетом joomla.content.associations
+}
+
+if (!$parts) {
+    return;
+}
 ?>
-
-<div class="article-info-container uk-margin-small-bottom">
-    <ul class="uk-subnav uk-subnav-divider uk-flex-middle uk-text-meta uk-margin-remove-top">
-
-        <?php /* БЛОК 1 */ ?>
-        <?php if ($showBlock1) : ?>
-            <?php if ($params->get('show_author') && !empty($item->author)) : ?>
-                <li class="uk-flex uk-flex-middle">
-                    <span uk-icon="icon: user; ratio: 0.8" class="uk-margin-xsmall-right"></span>
-                    <?php echo $this->sublayout('author', $displayData); ?>
-                </li>
-            <?php endif; ?>
-
-            <?php if ($params->get('show_parent_category') && !empty($item->parent_id)) : ?>
-                <li class="uk-flex uk-flex-middle">
-                    <span uk-icon="icon: folder; ratio: 0.8" class="uk-margin-xsmall-right"></span>
-                    <?php echo $this->sublayout('parent_category', $displayData); ?>
-                </li>
-            <?php endif; ?>
-
-            <?php if ($params->get('show_category')) : ?>
-                <li class="uk-flex uk-flex-middle">
-                    <?php if (!$params->get('show_parent_category')) : ?>
-                        <span uk-icon="icon: folder; ratio: 0.8" class="uk-margin-xsmall-right"></span>
-                    <?php endif; ?>
-                    <?php echo $this->sublayout('category', $displayData); ?>
-                </li>
-            <?php endif; ?>
-
-            <?php if ($params->get('show_associations')) : ?>
-                <li class="uk-flex uk-flex-middle">
-                    <?php echo $this->sublayout('associations', $displayData); ?>
-                </li>
-            <?php endif; ?>
-
-            <?php if ($params->get('show_publish_date')) : ?>
-                <li class="uk-flex uk-flex-middle">
-                    <span uk-icon="icon: calendar; ratio: 0.8" class="uk-margin-xsmall-right"></span>
-                    <?php echo $this->sublayout('publish_date', $displayData); ?>
-                </li>
-            <?php endif; ?>
-        <?php endif; ?>
-
-        <?php /* БЛОК 2 */ ?>
-        <?php if ($showBlock2) : ?>
-            <?php if ($params->get('show_create_date')) : ?>
-                <li class="uk-flex uk-flex-middle">
-                    <span uk-icon="icon: clock; ratio: 0.8" class="uk-margin-xsmall-right"></span>
-                    <?php echo $this->sublayout('create_date', $displayData); ?>
-                </li>
-            <?php endif; ?>
-
-            <?php if ($params->get('show_modify_date')) : ?>
-                <li class="uk-flex uk-flex-middle">
-                    <span uk-icon="icon: history; ratio: 0.8" class="uk-margin-xsmall-right"></span>
-                    <?php echo $this->sublayout('modify_date', $displayData); ?>
-                </li>
-            <?php endif; ?>
-
-            <?php if ($params->get('show_hits')) : ?>
-                <li class="uk-flex uk-flex-middle">
-                    <span uk-icon="icon: bolt; ratio: 0.8" class="uk-margin-xsmall-right"></span>
-                    <?php echo $this->sublayout('hits', $displayData); ?>
-                </li>
-            <?php endif; ?>
-        <?php endif; ?>
-
-    </ul>
+<div class="uk-article-meta uk-margin-small-top uk-margin-small-bottom">
+    <?php echo implode(' · ', $parts); ?>
 </div>

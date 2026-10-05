@@ -1,185 +1,67 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_tags (Страница одного тега)
- * @version     Joomla 6.x
- * @PHP         8.3 / 8.4
+ * WMARKA — страница метки: заголовок, картинка и описание метки, затем
+ * материалы карточками (сетка / список / масонри — опции WMARKA пункта меню).
+ * Работает и без пункта меню: любая новая метка выглядит так же.
+ *
+ * @var \Joomla\Component\Tags\Site\View\Tag\HtmlView $this
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\Registry\Registry;
+use Wmarka\Template\Image;
+use Wmarka\Template\Seo;
+use Wmarka\Template\Ui;
 
-// Подключаем JUImage и наш SEO-хелпер
-JLoader::register('JUImage', JPATH_LIBRARIES . '/juimage/JUImage.php');
-require_once JPATH_THEMES . '/wmarka/php/Seo.php';
+require_once JPATH_THEMES . '/wmarka/php/autoload.php';
 
-$app      = Factory::getApplication();
-$document = $app->getDocument();
-$juImg    = new JUImage();
+$htag   = $this->params->get('show_page_heading') ? 'h2' : 'h1';
+$single = \count($this->item) === 1;
+$tag    = $single ? $this->item[0] : null;
+$images = $tag ? (json_decode((string) $tag->images, true) ?: []) : [];
+$image  = ($single && $this->params->get('tag_list_show_tag_image', 1)) ? Image::thumb($images['image_fulltext'] ?? ($images['image_intro'] ?? ''), 'full', false) : [];
 
-HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers');
-
-$regexImageSrc = '/#joomlaImage?([^\" >]+)/';
-
-// --- 1. Базовый Title ---
-$pageTitle = '';
-if (!empty($this->tags_title)) {
-    $shortenedTagTitle = preg_replace("/^(\s*(\S+\s+){0,7}\S+).*/s", '$1', $this->tags_title);
-    $pageTitle = strip_tags($shortenedTagTitle);
-}
-
-$showPageHeading = $this->params->get('show_page_heading', 0);
-$pageHeading     = $this->params->get('page_heading', '');
-$showTagTitle    = $this->params->get('show_tag_title', 1);
-
-$tagHeadingTag   = ($showPageHeading && !empty($pageHeading)) ? 'h2' : 'h1';
-$tagHeadingClass = ($tagHeadingTag === 'h1') ? 'uk-heading-small' : 'uk-h2';
-
-$isSingleTag = (count($this->item) === 1);
-
-// === 2. ИНТЕГРАЦИЯ SEO (Сбор данных для Seo.php) ===
-$seoTitle       = $pageTitle ?: ($pageHeading ?: 'Теги');
-$seoDescription = '';
-$seoImage       = '';
-
-if ($isSingleTag && !empty($this->item[0])) {
-    $tagItem = $this->item[0];
-    
-    // Получаем описание тега (чистим от HTML для мета-тегов в Seo.php)
-    $seoDescription = $tagItem->description ?? '';
-    
-    // Получаем картинку
-    $images = new Registry($tagItem->images ?? '');
-    $introImage = $images->get('image_intro');
-    
-    if (!empty($introImage)) {
-        $cleanImagePath = preg_replace($regexImageSrc, '', $introImage);
-        
-        // Генерируем специальный размер для Open Graph (1200x630)
-        // OG-картинки лучше делать в JPG, так как не все мессенджеры понимают WebP
-        $ogThumb = $juImg->render($cleanImagePath, [
-            'w'     => 1200, 
-            'h'     => 630,
-            'zc'    => 'C',
-            'webp'  => false // Для соцсетей надежнее отдавать обычный формат
-        ]);
-        
-        if ($ogThumb && !empty($ogThumb->src)) {
-            $seoImage = $ogThumb->src; // Передаем путь к сгенерированной OG-картинке
-        }
-    }
-}
-
-// Вызываем наш хелпер!
-WmarkaSeo::setPageMeta($seoTitle, $seoDescription, $seoImage);
+Seo::page([
+    'description' => $tag ? strip_tags((string) $tag->description) : '',
+    'image'       => $images['image_intro'] ?? ($images['image_fulltext'] ?? ''),
+]);
 ?>
-
-<div class="com-tags-tag category-list uk-margin-bottom">
-
-    <?php // 1. Вывод главного заголовка страницы ?>
-    <?php if ($showPageHeading && !empty($pageHeading)) : ?>
-        <h1 class="uk-heading-small uk-margin-bottom">
-            <?php echo $this->escape($pageHeading); ?>
-        </h1>
+<div class="com-tags-tag tag-category" itemscope itemtype="https://schema.org/CollectionPage">
+    <?php if ($this->params->get('show_page_heading')) : ?>
+        <h1 class="uk-heading-small"><?php echo $this->escape($this->params->get('page_heading')); ?></h1>
     <?php endif; ?>
 
-    <?php // 2. Вывод названия самого тега ?>
-    <?php if ($showTagTitle) : ?>
-        <<?php echo $tagHeadingTag; ?> class="<?php echo $tagHeadingClass; ?> uk-margin-bottom">
-            <?php echo HTMLHelper::_('content.prepare', $this->tags_title, '', 'com_tags.tag'); ?>
-        </<?php echo $tagHeadingTag; ?>>
+    <?php if ($this->params->get('show_tag_title', 1)) : ?>
+        <<?php echo $htag; ?> class="<?php echo $htag === 'h1' ? 'uk-heading-small' : 'uk-h2'; ?>" itemprop="name">
+            <?php echo HTMLHelper::_('content.prepare', Ui::quotes($this->tags_title), '', 'com_tags.tag'); ?>
+        </<?php echo $htag; ?>>
     <?php endif; ?>
 
-    <?php 
-    // 3. БЛОК ОПИСАНИЯ И ИЗОБРАЖЕНИЯ КОНКРЕТНОГО ТЕГА (Твоя логика)
-    if ($isSingleTag && !empty($this->item[0]) && ($this->params->get('tag_list_show_tag_image', 1) || $this->params->get('tag_list_show_tag_description', 1))) : 
-        $tagItem = $this->item[0];
-        // Безопасный парсинг JSON вместо json_decode
-        $images  = new Registry($tagItem->images ?? ''); 
-        $introImage = $images->get('image_intro');
-    ?>
-        <div class="tag-description uk-margin-medium-bottom">
-            
-            <?php // Изображение тега (Hero Banner) с адаптивным srcset ?>
-            <?php if ($this->params->get('tag_list_show_tag_image', 1) && !empty($introImage)) : ?>
-                <?php
-                // Очищаем путь к картинке
-                $cleanImagePath = preg_replace($regexImageSrc, '', $introImage);
-                
-                // Выносим общие параметры JUImage в массив, чтобы не дублировать код
-                $juParams = [
-                    'q'         => 65,
-                    'zc'        => 'C',
-                    'far'       => 'C',
-                    'webp'      => true,
-                    'webp_q'    => 60,
-                    'webp_maxq' => 65,
-                    'cache'     => 'img'
-                ];
-
-                // 1. Генерируем мобильную версию (до 767px)
-                $thumbMobile = $juImg->render($cleanImagePath, array_merge($juParams, [
-                    'w' => 768, 
-                    'h' => 500
-                ]));
-
-                // 2. Генерируем десктопную версию (от 768px)
-                $thumbDesktop = $juImg->render($cleanImagePath, array_merge($juParams, [
-                    'w' => 1920, 
-                    'h' => 720
-                ]));
-                ?>
-                
-                <?php if ($thumbDesktop && !empty($thumbDesktop->webp)) : ?>
-                    <div class="uk-cover-container uk-height-medium uk-border-rounded uk-margin-bottom uk-overflow-hidden">
-                        <picture>
-                            <?php if ($thumbMobile) : ?>
-                                <source media="(max-width: 767px)" type="image/webp" srcset="<?php echo $this->escape($thumbMobile->webp); ?>">
-                                <?php if (!empty($thumbMobile->src)) : ?>
-                                    <source media="(max-width: 767px)" srcset="<?php echo $this->escape($thumbMobile->src); ?>">
-                                <?php endif; ?>
-                            <?php endif; ?>
-                            
-                            <source media="(min-width: 768px)" type="image/webp" srcset="<?php echo $this->escape($thumbDesktop->webp); ?>">
-                            
-                            <img src="<?php echo $this->escape($thumbDesktop->src ?? $thumbDesktop->webp); ?>" 
-                                 alt="<?php echo $this->escape($images->get('image_intro_alt', $tagItem->title)); ?>"
-                                 loading="lazy" 
-                                 itemprop="thumbnailUrl"
-                                 uk-cover>
-                        </picture>
-                    </div>
-                <?php endif; ?>
+    <?php if ($image || ($single && $this->params->get('tag_list_show_tag_description', 1) && $tag->description)) : ?>
+        <div class="uk-grid-medium uk-margin-medium-bottom" uk-grid>
+            <?php if ($image) : ?>
+                <div class="uk-width-1-3@m"><?php echo Image::img($image, (string) ($images['image_fulltext_alt'] ?? ''), ['class' => 'uk-width-1-1']); ?></div>
             <?php endif; ?>
-
-            <?php // Описание тега ?>
-            <?php if ($this->params->get('tag_list_show_tag_description', 1) && !empty($tagItem->description)) : ?>
-                <div class="uk-text-break" itemprop="description">
-                    <?php echo HTMLHelper::_('content.prepare', $tagItem->description, '', 'com_tags.tag'); ?>
-                </div>
+            <?php if ($single && $this->params->get('tag_list_show_tag_description', 1) && $tag->description) : ?>
+                <div class="uk-width-expand@m uk-text-lead" itemprop="description"><?php echo HTMLHelper::_('content.prepare', $tag->description, '', 'com_tags.tag'); ?></div>
             <?php endif; ?>
-
         </div>
     <?php endif; ?>
 
-    <?php // 4. Загрузка шаблона для списка элементов ?>
+    <?php if ($this->params->get('show_description_image', 1) == 1 && $this->params->get('tag_list_image')) : ?>
+        <?php echo \Joomla\CMS\HTML\HTMLHelper::_('image', $this->params->get('tag_list_image'), $this->params->get('tag_list_image_alt_empty') ? '' : (string) $this->params->get('tag_list_image_alt'), ['class' => 'uk-margin-bottom']); ?>
+    <?php endif; ?>
+    <?php if ($this->params->get('tag_list_description', '') > '') : ?>
+        <div class="uk-margin-medium-bottom"><?php echo HTMLHelper::_('content.prepare', $this->params->get('tag_list_description'), '', 'com_tags.tag'); ?></div>
+    <?php endif; ?>
+
     <?php echo $this->loadTemplate('items'); ?>
 
-    <?php // 5. Пагинация ?>
-    <?php if ($this->params->get('show_pagination') && $this->pagination->pagesTotal > 1) : ?>
-        <div class="uk-margin-medium-top uk-flex uk-flex-between uk-flex-middle uk-flex-wrap">
-            <div class="uk-pagination-container">
-                <?php echo $this->pagination->getPagesLinks(['pagination' => 'uk-pagination']); ?>
-            </div>
-            <?php if ($this->params->get('show_pagination_results', 1)) : ?>
-                <div class="uk-text-meta uk-margin-small-top uk-margin-remove-top@s">
-                    <?php echo $this->pagination->getPagesCounter(); ?>
-                </div>
-            <?php endif; ?>
-        </div>
+    <?php if (($this->params->def('show_pagination', 1) == 1 || $this->params->get('show_pagination') == 2) && $this->pagination->pagesTotal > 1) : ?>
+        <?php echo $this->pagination->getPagesLinks(); ?>
+        <?php if ($this->params->def('show_pagination_results', 1)) : ?>
+            <p class="uk-text-meta uk-text-center"><?php echo $this->pagination->getPagesCounter(); ?></p>
+        <?php endif; ?>
     <?php endif; ?>
-
 </div>

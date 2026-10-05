@@ -1,230 +1,409 @@
 <?php
+/**
+ * WMARKA — SEO-движок: canonical, title, description, OpenGraph, Twitter,
+ * единый JSON-LD @graph.
+ *
+ * Оверрайды компонентов работают раньше шаблона и передают данные через
+ * статический мост: Seo::page([...]), Seo::addListItem(), Seo::addNode().
+ * Данные организации берутся из настроек шаблона (вкладка «SEO»), при пустых
+ * полях — из языковых констант 3.0.x (мягкая миграция).
+ * Выключается одним переключателем, если на сайте стоит SEO-расширение.
+ */
+
 declare(strict_types=1);
 
 namespace Wmarka\Template;
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Router\Route;
 use Joomla\CMS\Document\HtmlDocument;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
-class Seo
+final class Seo
 {
+    /** @var array<string, mixed> данные страницы от оверрайдов */
+    private static array $page = [];
+
+    /** @var array<int, array{name:string,url:string}> */
+    private static array $list = [];
+
+    /** @var array<int, array> дополнительные узлы @graph */
+    private static array $nodes = [];
+
     private HtmlDocument $doc;
-    private \Joomla\CMS\Application\SiteApplication $app;
+
     private string $option;
+
     private string $view;
+
+    private string $canonical = '';
+
+    /** Мост для оверрайдов: title, description, image, type, published, modified, author, section */
+    public static function page(array $data): void
+    {
+        foreach ($data as $key => $value) {
+            if ($value !== null && $value !== '') {
+                self::$page[$key] = $value;
+            }
+        }
+    }
+
+    /** Совместимость с 3.0.x/4.0.x */
+    public static function setPageMeta(string $title = '', string $description = '', string $image = ''): void
+    {
+        self::page(['title' => $title, 'description' => $description, 'image' => $image]);
+    }
+
+    public static function addListItem(string $name, string $url): void
+    {
+        if ($name !== '' && $url !== '' && \count(self::$list) < 50) {
+            self::$list[] = ['name' => strip_tags($name), 'url' => $url];
+        }
+    }
+
+    public static function addNode(array $node): void
+    {
+        if ($node) {
+            self::$nodes[] = $node;
+        }
+    }
 
     public function __construct(HtmlDocument $doc)
     {
         $this->doc    = $doc;
-        $this->app    = Factory::getApplication();
-        $this->option = (string) $this->app->input->get('option', '');
-        $this->view   = (string) $this->app->input->get('view', '');
+        $input        = Factory::getApplication()->getInput();
+        $this->option = (string) $input->getCmd('option', '');
+        $this->view   = (string) $input->getCmd('view', '');
     }
 
     public function render(): void
     {
-        $this->setCanonical();
-        $this->processMeta();
-        $this->setOpenGraph();
-        $this->setTwitterCard();
-        $this->setJsonLd();
+        if (Config::bool('seo_canonical', true)) {
+            $this->canonical();
+        }
+
+        $this->meta();
+
+        if (Config::bool('seo_og', true)) {
+            $this->openGraph();
+        }
+
+        if (Config::bool('seo_jsonld', true)) {
+            $this->jsonLd();
+        }
     }
 
-    /**
-     * Продвинутый Canonical: Защита от дублей URL
-     */
-    private function setCanonical(): void
+    private static function origin(): string
     {
-        $id     = $this->app->input->getInt('id');
-        $itemid = $this->app->input->getInt('Itemid');
-        $start  = $this->app->input->getInt('start');
-
-        // Строим чистую ссылку на основе сущности
-        $link = 'index.php?option=' . $this->option . '&view=' . $this->view;
-        if ($id) $link .= '&id=' . $id;
-        if ($itemid) $link .= '&Itemid=' . $itemid;
-
-        $canonicalRelative = Route::_($link);
-        $canonical = Uri::root() . ltrim($canonicalRelative, '/');
-
-        // Убираем возможный index.php (если SEF барахлит)
-        $canonical = str_replace('/index.php', '', $canonical);
-
-        // Учет пагинации (Google рекомендует отдельные Canonical для страниц списка)
-        if ($start > 0) {
-            $canonical .= (str_contains($canonical, '?') ? '&' : '?') . 'start=' . $start;
-        }
-
-        $this->doc->addHeadLink($canonical, 'canonical');
+        return Uri::getInstance()->toString(['scheme', 'host', 'port']);
     }
 
-    /**
-     * Обработка Title и автогенерация Description
-     */
-    private function processMeta(): void
+    private static function absolute(string $path): string
     {
-        // 1. Формирование многосоставного Title
-        $title    = $this->doc->getTitle();
-        $siteName = $this->app->get('sitename');
-        $catTitle = $this->app->get('seo_category_title', '');
-
-        $cleanTitle = htmlspecialchars(strip_tags($title), ENT_QUOTES, 'UTF-8');
-        $fullTitle  = $cleanTitle;
-
-        if ($catTitle !== '') {
-            $fullTitle .= ' | ' . $catTitle;
+        if ($path === '' || preg_match('#^(https?:)?//#i', $path)) {
+            return $path;
         }
-        if (!str_contains($fullTitle, $siteName)) {
-            $fullTitle .= ' | ' . $siteName;
-        }
-        
-        // Замена компьютерных кавычек на елочки
-        $fullTitle = preg_replace('/"([^"]+)"/u', '«$1»', $fullTitle) ?? $fullTitle;
-        $this->doc->setTitle($fullTitle);
 
-        // 2. Автогенерация Description (если пустой)
-        $metaDesc = $this->doc->getDescription();
-        if (empty($metaDesc)) {
-            $fallbackText = (string) $this->app->get('seo_fallback_text', '');
-            if ($fallbackText !== '') {
-                $cleanText = strip_tags($fallbackText);
-                $cleanText = preg_replace('/{.+?}/', '', $cleanText) ?? $cleanText; // Удаляем шорткоды Joomla
-                $cleanText = trim(preg_replace('/\s+/', ' ', $cleanText) ?? '');
-                
-                $metaDesc = mb_strlen($cleanText) > 160 ? mb_substr($cleanText, 0, 157) . '...' : $cleanText;
+        return str_starts_with($path, '/') ? self::origin() . $path : Uri::root() . ltrim($path, '/');
+    }
+
+    private function isHome(): bool
+    {
+        $app    = Factory::getApplication();
+        $menu   = $app->getMenu();
+        $active = $menu->getActive();
+
+        return $active !== null
+            && ($active === $menu->getDefault($app->getLanguage()->getTag()) || $active === $menu->getDefault('*'));
+    }
+
+    /** Canonical без дублей: один URL на сущность, независимо от пункта меню */
+    private function canonical(): void
+    {
+        $head = $this->doc->getHeadData();
+
+        foreach ($head['links'] as $url => $info) {
+            if (($info['relation'] ?? '') === 'canonical') {
+                unset($head['links'][$url]);
             }
         }
-        
-        if (!empty($metaDesc)) {
-            $metaDesc = preg_replace('/"([^"]+)"/u', '«$1»', $metaDesc) ?? $metaDesc;
-            $this->doc->setDescription($metaDesc);
+
+        $this->doc->setHeadData($head);
+        $app = Factory::getApplication();
+
+        if ($this->isHome()) {
+            $this->canonical = Uri::root();
+        } elseif ($this->option === '' || $this->view === '') {
+            $uri = clone Uri::getInstance();
+            $uri->setQuery('');
+            $this->canonical = $uri->toString(['scheme', 'host', 'port', 'path']);
+        } else {
+            $link = 'index.php?option=' . $this->option . '&view=' . $this->view;
+
+            if ($this->option === 'com_tags') {
+                $ids = array_values(array_filter(array_map('intval', (array) $app->getInput()->get('id', [], 'array'))));
+                sort($ids);
+
+                foreach ($ids as $i => $id) {
+                    $link .= '&id[' . $i . ']=' . $id;
+                }
+            } elseif ($this->option === 'com_finder') {
+                $link .= '';
+            } elseif ($id = $app->getInput()->getInt('id')) {
+                $link .= '&id=' . $id;
+            }
+
+            $layout = $app->getInput()->getCmd('layout', '');
+
+            if ($layout !== '' && $this->option === 'com_content' && $this->view === 'category' && $layout === 'blog') {
+                $link .= '&layout=blog';
+            }
+
+            $canonical = self::origin() . Route::_($link);
+            $start     = $app->getInput()->getInt('start');
+
+            if ($start > 0) {
+                $canonical .= (str_contains($canonical, '?') ? '&' : '?') . 'start=' . $start;
+            }
+
+            $this->canonical = $canonical;
+        }
+
+        $this->doc->addHeadLink(htmlspecialchars($this->canonical, ENT_QUOTES, 'UTF-8'), 'canonical');
+    }
+
+    /** Title (без дублей), description (автогенерация из текста) */
+    private function meta(): void
+    {
+        $title = trim(strip_tags((string) (self::$page['title'] ?? $this->doc->getTitle())));
+        $site  = Config::sitename();
+
+        if (Config::str('seo_title', 'joomla') === 'suffix' && $site !== '' && !str_contains($title, $site)) {
+            $title .= ' ' . (Config::str('seo_title_sep', '—') ?: '—') . ' ' . $site;
+        }
+
+        $this->doc->setTitle(Ui::quotes(html_entity_decode($title, ENT_QUOTES, 'UTF-8')));
+
+        if (trim((string) $this->doc->getDescription()) === '' && !empty(self::$page['description'])) {
+            $text = strip_tags((string) self::$page['description']);
+            $text = preg_replace('/\{[^}]+\}/', '', $text) ?? $text;
+            $text = trim(preg_replace('/\s+/u', ' ', html_entity_decode($text, ENT_QUOTES, 'UTF-8')) ?? '');
+
+            if ($text !== '') {
+                $this->doc->setDescription(mb_strlen($text) > 160 ? rtrim(mb_substr($text, 0, 157)) . '…' : $text);
+            }
         }
     }
 
-    private function setOpenGraph(): void
+    private function ogImage(): string
     {
-        $this->doc->setMetaData('og:title', $this->doc->getTitle(), 'property');
-        $type = ($this->option === 'com_content' && $this->view === 'article') ? 'article' : 'website';
+        $image = (string) (self::$page['image'] ?? '');
+
+        if ($image !== '' && !preg_match('#^(https?:)?//#i', $image)) {
+            $image = Image::og($image);
+        }
+
+        if ($image === '') {
+            $default = Config::text('seo_og_image', ['TPL_WMARKA_SEO_OG_IMAGE_DEFAULT']);
+            $clean   = Image::clean($default);
+            $image   = $clean !== '' ? (Image::og($clean) ?: self::absolute($clean)) : '';
+        }
+
+        return $image;
+    }
+
+    private function openGraph(): void
+    {
+        $title = $this->doc->getTitle();
+        $desc  = (string) $this->doc->getDescription();
+        $url   = $this->canonical ?: Uri::getInstance()->toString(['scheme', 'host', 'port', 'path']);
+        $type  = (self::$page['type'] ?? '') === 'article' ? 'article' : 'website';
+        $parts = explode('-', (string) $this->doc->language);
+
         $this->doc->setMetaData('og:type', $type, 'property');
-        $this->doc->setMetaData('og:url', Uri::getInstance()->toString(), 'property');
-        $this->doc->setMetaData('og:site_name', Text::_('TPL_WMARKA_SEO_OG_SITE_NAME'), 'property');
-        
-        $img = $this->app->get('current_item_image') ?: Text::_('TPL_WMARKA_SEO_OG_IMAGE_DEFAULT');
-        $this->doc->setMetaData('og:image', Uri::root() . ltrim((string)$img, '/'), 'property');
-    }
+        $this->doc->setMetaData('og:title', $title, 'property');
+        $this->doc->setMetaData('og:url', $url, 'property');
+        $this->doc->setMetaData('og:site_name', Config::text('seo_og_site_name', ['TPL_WMARKA_SEO_OG_SITE_NAME'], Config::siteTitle()), 'property');
+        $this->doc->setMetaData('og:locale', strtolower($parts[0]) . (isset($parts[1]) ? '_' . strtoupper($parts[1]) : ''), 'property');
 
-    private function setTwitterCard(): void
-    {
+        if ($desc !== '') {
+            $this->doc->setMetaData('og:description', $desc, 'property');
+            $this->doc->setMetaData('twitter:description', $desc);
+        }
+
+        if ($image = $this->ogImage()) {
+            $this->doc->setMetaData('og:image', $image, 'property');
+            $this->doc->setMetaData('twitter:image', $image);
+        }
+
+        if ($type === 'article' && !empty(self::$page['published'])) {
+            $this->doc->setMetaData('article:published_time', (string) self::$page['published'], 'property');
+        }
+
         $this->doc->setMetaData('twitter:card', 'summary_large_image');
-        $this->doc->setMetaData('twitter:site', Text::_('TPL_WMARKA_SEO_TWITTER_SITE'));
-        $this->doc->setMetaData('twitter:title', $this->doc->getTitle());
-    }
+        $this->doc->setMetaData('twitter:title', $title);
 
-    private function setJsonLd(): void
-    {
-        $scripts = [];
-        $scripts[] = $this->getOrgData();
-        $scripts[] = $this->getBreadcrumbData();
-
-        if ($this->option === 'com_content' && $this->view === 'article') {
-            $scripts[] = $this->getArticleData();
-        } elseif ($this->option === 'com_contact' && $this->view === 'contact') {
-            $scripts[] = $this->getContactData();
-        }
-
-        foreach ($scripts as $data) {
-            if (!empty($data)) {
-                $this->doc->addScriptDeclaration(
-                    json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-                    'application/ld+json'
-                );
-            }
+        if ($twitter = Config::text('seo_twitter', ['TPL_WMARKA_SEO_TWITTER_SITE'])) {
+            $this->doc->setMetaData('twitter:site', $twitter);
         }
     }
 
-    private function getOrgData(): array
+    private function organization(): array
     {
-        return [
-            '@context' => 'https://schema.org',
-            '@type'    => Text::_('TPL_WMARKA_SEO_ORG_TYPE'),
-            'name'     => Text::_('TPL_WMARKA_SEO_ORG_NAME'),
-            'url'      => Uri::root(),
-            'logo'     => Uri::root() . Text::_('TPL_WMARKA_SEO_ORG_LOGO'),
-            'sameAs'   => array_values(array_filter([
-                Text::_('TPL_WMARKA_SEO_SOCIAL_INST'),
-                Text::_('TPL_WMARKA_SEO_SOCIAL_FB')
-            ]))
-        ];
-    }
-
-    private function getBreadcrumbData(): array
-    {
-        $pathway = $this->app->getPathway()->getPathway();
-        if (empty($pathway)) return [];
-
-        $items = [
-            [
-                '@type'    => 'ListItem',
-                'position' => 1,
-                'name'     => 'Главная',
-                'item'     => Uri::root()
-            ]
+        $root = Uri::root();
+        $type = Config::text('seo_org_type', ['TPL_WMARKA_SEO_ORG_TYPE'], 'Organization');
+        $node = [
+            '@type' => preg_match('/^[A-Za-z]+$/', $type) ? $type : 'Organization',
+            '@id'   => $root . '#organization',
+            'name'  => Config::text('seo_org_name', ['TPL_WMARKA_SEO_ORG_NAME'], Config::siteTitle()),
+            'url'   => $root,
         ];
 
-        foreach ($pathway as $idx => $node) {
-            $items[] = [
-                '@type'    => 'ListItem',
-                'position' => $idx + 2,
-                'name'     => $node->name,
-                'item'     => Uri::root() . ltrim(Route::_($node->link), '/')
-            ];
+        $logo = Image::clean(Config::text('seo_org_logo', ['TPL_WMARKA_SEO_ORG_LOGO'], Config::str('logo_image')));
+
+        if ($logo !== '') {
+            $node['logo'] = self::absolute($logo);
         }
 
-        return [
-            '@context'        => 'https://schema.org',
-            '@type'           => 'BreadcrumbList',
-            'itemListElement' => $items
-        ];
-    }
+        $contacts = Helper::contacts();
 
-    private function getArticleData(): array
-    {
-        $img = $this->app->get('current_item_image') ?: Text::_('TPL_WMARKA_SEO_OG_IMAGE_DEFAULT');
-        return [
-            '@context'      => 'https://schema.org',
-            '@type'         => 'NewsArticle',
-            'headline'      => $this->doc->getTitle(),
-            'image'         => [Uri::root() . ltrim((string)$img, '/')],
-            'datePublished' => $this->app->get('current_item_publish_date', date('c')),
-            'author'        => [
-                '@type' => 'Organization',
-                'name'  => Text::_('TPL_WMARKA_SEO_ORG_NAME')
-            ]
-        ];
-    }
+        if (!empty($contacts['phone'])) {
+            $node['telephone'] = $contacts['phone']['value'];
+        }
 
-    private function getContactData(): array
-    {
-        return [
-            '@context'  => 'https://schema.org',
-            '@type'     => 'Place',
-            'address'   => [
+        if (!empty($contacts['email'])) {
+            $node['email'] = $contacts['email']['value'];
+        }
+
+        $street = Config::text('seo_street', ['TPL_WMARKA_SEO_STREET']);
+        $city   = Config::text('seo_city', ['TPL_WMARKA_SEO_CITY']);
+
+        if ($street !== '' || $city !== '') {
+            $node['address'] = array_filter([
                 '@type'           => 'PostalAddress',
-                'streetAddress'   => Text::_('TPL_WMARKA_SEO_STREET'),
-                'addressLocality' => Text::_('TPL_WMARKA_SEO_CITY'),
-                'addressCountry'  => Text::_('TPL_WMARKA_SEO_COUNTRY')
+                'streetAddress'   => $street,
+                'addressLocality' => $city,
+                'postalCode'      => Config::text('seo_postal', ['TPL_WMARKA_SEO_POSTAL']),
+                'addressCountry'  => Config::text('seo_country', ['TPL_WMARKA_SEO_COUNTRY']),
+            ]);
+        }
+
+        $lat = Config::text('seo_lat', ['TPL_WMARKA_SEO_LAT']);
+        $lng = Config::text('seo_lng', ['TPL_WMARKA_SEO_LONG']);
+
+        if (is_numeric($lat) && is_numeric($lng)) {
+            $node['geo'] = ['@type' => 'GeoCoordinates', 'latitude' => (float) $lat, 'longitude' => (float) $lng];
+        }
+
+        $same = preg_split('/[\r\n]+/', Config::str('seo_social')) ?: [];
+
+        foreach (['TPL_WMARKA_SEO_SOCIAL_INST', 'TPL_WMARKA_SEO_SOCIAL_FB'] as $legacy) {
+            $same[] = Config::text('', [$legacy]);
+        }
+
+        $same = array_values(array_unique(array_filter(array_map('trim', $same), static fn ($v) => preg_match('#^https?://#', $v))));
+
+        if ($same) {
+            $node['sameAs'] = $same;
+        }
+
+        return $node;
+    }
+
+    private function jsonLd(): void
+    {
+        $app   = Factory::getApplication();
+        $root  = Uri::root();
+        $graph = [$this->organization()];
+
+        $graph[] = [
+            '@type'     => 'WebSite',
+            '@id'       => $root . '#website',
+            'url'       => $root,
+            'name'      => Config::siteTitle(),
+            'publisher' => ['@id' => $root . '#organization'],
+            'potentialAction' => [
+                '@type'       => 'SearchAction',
+                'target'      => ['@type' => 'EntryPoint', 'urlTemplate' => self::origin() . Route::_('index.php?option=com_finder&view=search') . (str_contains(Route::_('index.php?option=com_finder&view=search'), '?') ? '&' : '?') . 'q={search_term_string}'],
+                'query-input' => 'required name=search_term_string',
             ],
-            'geo'       => [
-                '@type'     => 'GeoCoordinates',
-                'latitude'  => Text::_('TPL_WMARKA_SEO_LAT'),
-                'longitude' => Text::_('TPL_WMARKA_SEO_LONG')
-            ],
-            'telephone' => Text::_('TPL_WMARKA_SEO_TEL')
         ];
+
+        // Крошки: единственный источник BreadcrumbList на странице
+        $pathway = $app->getPathway()->getPathway();
+
+        if ($pathway && !$this->isHome()) {
+            $items = [['@type' => 'ListItem', 'position' => 1, 'name' => $app->getLanguage()->_('TPL_WMARKA_HOME'), 'item' => $root]];
+
+            foreach (array_values($pathway) as $i => $node) {
+                $entry = ['@type' => 'ListItem', 'position' => $i + 2, 'name' => trim(strip_tags((string) $node->name))];
+
+                if (!empty($node->link)) {
+                    $entry['item'] = self::absolute(Route::_($node->link));
+                }
+
+                $items[] = $entry;
+            }
+
+            $graph[] = ['@type' => 'BreadcrumbList', 'itemListElement' => $items];
+        }
+
+        if ((self::$page['type'] ?? '') === 'article') {
+            $article = [
+                '@type'            => Config::str('seo_article_type', 'Article'),
+                'headline'         => mb_substr(strip_tags((string) (self::$page['headline'] ?? $this->doc->getTitle())), 0, 110),
+                'mainEntityOfPage' => $this->canonical ?: Uri::current(),
+                'publisher'        => ['@id' => $root . '#organization'],
+            ];
+
+            if ($image = $this->ogImage()) {
+                $article['image'] = [$image];
+            }
+
+            foreach (['published' => 'datePublished', 'modified' => 'dateModified', 'section' => 'articleSection'] as $key => $prop) {
+                if (!empty(self::$page[$key])) {
+                    $article[$prop] = (string) self::$page[$key];
+                }
+            }
+
+            $article['author'] = !empty(self::$page['author'])
+                ? ['@type' => 'Person', 'name' => (string) self::$page['author']]
+                : ['@id' => $root . '#organization'];
+
+            if ($desc = (string) $this->doc->getDescription()) {
+                $article['description'] = $desc;
+            }
+
+            $graph[] = $article;
+        } elseif (\in_array($this->option, ['com_tags', 'com_content'], true) && \in_array($this->view, ['tag', 'tags', 'category', 'categories', 'featured'], true)) {
+            $graph[] = array_filter([
+                '@type'       => 'CollectionPage',
+                'name'        => $this->doc->getTitle(),
+                'url'         => $this->canonical,
+                'description' => (string) $this->doc->getDescription(),
+            ]);
+        }
+
+        if (self::$list) {
+            $elements = [];
+
+            foreach (self::$list as $i => $item) {
+                $elements[] = ['@type' => 'ListItem', 'position' => $i + 1, 'name' => $item['name'], 'url' => self::absolute($item['url'])];
+            }
+
+            $graph[] = ['@type' => 'ItemList', 'numberOfItems' => \count($elements), 'itemListElement' => $elements];
+        }
+
+        foreach (self::$nodes as $node) {
+            $graph[] = $node;
+        }
+
+        $json = json_encode(['@context' => 'https://schema.org', '@graph' => array_values(array_filter($graph))], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG);
+
+        if ($json) {
+            $this->doc->getWebAssetManager()->addInlineScript($json, ['name' => 'inline.wmarka.jsonld'], ['type' => 'application/ld+json']);
+        }
     }
 }

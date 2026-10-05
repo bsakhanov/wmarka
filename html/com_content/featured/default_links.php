@@ -1,26 +1,22 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_content
+ * WMARKA — ссылки «Ещё материалы» для избранного.
+ *
+ * @var \Joomla\Component\Content\Site\View\Featured\HtmlView $this
  */
 
-declare(strict_types=1);
+\defined('_JEXEC') or die;
 
-defined('_JEXEC') or die;
-
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\Component\Content\Site\Helper\RouteHelper;
-?>
+use Wmarka\Template\Ui;
 
-<div class="uk-card uk-card-default uk-card-body uk-card-small uk-border-rounded">
-    <h4 class="uk-card-title uk-margin-small-bottom">Ещё статьи</h4>
-    <ul class="uk-list uk-list-bullet uk-list-collapse">
-        <?php foreach ($this->link_items as $item) : ?>
-            <li>
-                <a class="uk-link-muted" href="<?php echo Route::_(RouteHelper::getArticleRoute($item->slug, $item->catid, $item->language)); ?>">
-                    <?php echo $this->escape($item->title); ?>
-                </a>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-</div>
+require_once JPATH_THEMES . '/wmarka/php/autoload.php';
+?>
+<h3 class="uk-h4"><?php echo Text::_('COM_CONTENT_MORE_ARTICLES'); ?></h3>
+<ul class="uk-list uk-list-divider">
+    <?php foreach ($this->link_items as $item) : ?>
+        <li><a class="uk-link-heading" href="<?php echo Route::_(RouteHelper::getArticleRoute($item->slug, $item->catid, $item->language)); ?>"><?php echo Ui::title($item->title); ?></a></li>
+    <?php endforeach; ?>
+</ul>

@@ -1,67 +1,66 @@
 <?php
 /**
- * Верхняя панель (Toolbar)
- * Joomla 6 + UIkit 3
+ * WMARKA — верхняя полоса: модули toolbar / toolbar-left слева,
+ * контакты из настроек, toolbar-right и переключатель языков справа.
+ *
+ * @var \Wmarka\Template\Helper $this
  */
-declare(strict_types=1);
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Router\Route;
+use Wmarka\Template\Config;
+use Wmarka\Template\Helper;
+use Wmarka\Template\Ui;
 
-// 1. Получаем данные из нашего языкового файла
-$phoneDisplay = Text::_('TPL_WMARKA_SEO_TEL_DISPLAY');
-$phoneClean   = Text::_('TPL_WMARKA_SEO_TEL');
-$whatsapp     = Text::_('TPL_WMARKA_SEO_TEL_WHATSAPP');
-$waMessage    = Text::_('TPL_WMARKA_SEO_TEL_WHATSAPP_MESSAGE');
+if (!Config::bool('toolbar_show', true)) {
+    return;
+}
 
-// 2. УСЛОВИЕ: Проверяем, существует ли перевод и не пустой ли он
-// (Если константа не переведена, Joomla возвращает само имя константы)
-$hasPhone    = ($phoneDisplay !== 'TPL_WMARKA_SEO_TEL_DISPLAY' && trim($phoneDisplay) !== '');
-$hasWhatsapp = ($whatsapp !== 'TPL_WMARKA_SEO_TEL_WHATSAPP' && trim($whatsapp) !== '');
+$contacts = Config::bool('toolbar_contacts', true) ? Helper::contacts() : [];
+$left     = $this->count('toolbar') || $this->count('toolbar-left');
+$right    = $this->count('toolbar-right') || $this->count('lang');
+
+if (!$left && !$right && !$contacts) {
+    return;
+}
+
+$style   = Config::str('toolbar_style', 'secondary');
+$visible = Config::bool('toolbar_mobile', false) ? '' : ' uk-visible@' . Config::bp();
+$light   = \in_array($style, ['secondary', 'primary'], true) ? ' uk-light' : '';
+$inline  = array_intersect_key($contacts, array_flip(['address', 'hours', 'phone', 'phone2', 'email']));
+$icons   = array_intersect_key($contacts, array_flip(['whatsapp', 'telegram']));
 ?>
-
-<?php /* Выводим секцию только если есть хотя бы какая-то контактная информация */ ?>
-<?php if ($hasPhone || $hasWhatsapp) : ?>
-<div id="section-toolbar" class="uk-section-xsmall uk-background-secondary uk-light uk-visible@m">
-    <div class="uk-container">
-        <div class="uk-flex uk-flex-between uk-flex-middle">
-            
-            <?php /* Левая часть тулбара (например, меню или слоган) */ ?>
-            <div class="uk-text-meta">
-                <jdoc:include type="modules" name="toolbar" style="none" />
-            </div>
-
-            <?php /* Правая часть тулбара: Условный вывод телефонов */ ?>
-            <div class="uk-flex uk-flex-middle">
-                
-                <?php /* Обычный телефонный звонок (tel:) */ ?>
-                <?php if ($hasPhone) : ?>
-                    <a href="tel:<?php echo htmlspecialchars((string) $phoneClean, ENT_QUOTES, 'UTF-8'); ?>" 
-                       class="uk-link-reset uk-text-bold uk-flex uk-flex-middle uk-margin-right transition-hover">
-                        <span uk-icon="icon: receiver; ratio: 0.8" class="uk-margin-small-right"></span>
-                        <?php echo htmlspecialchars((string) $phoneDisplay, ENT_QUOTES, 'UTF-8'); ?>
-                    </a>
+<div id="toolbar" class="uk-section uk-section-<?php echo $style; ?> uk-section-xsmall uk-padding-remove-vertical<?php echo $light . $visible; ?>">
+    <div class="<?php echo Config::container(); ?>">
+        <div class="uk-flex uk-flex-middle uk-flex-between uk-flex-wrap uk-text-small" style="min-height: 40px">
+            <div class="uk-flex uk-flex-middle uk-flex-wrap">
+                <?php if ($left) : ?>
+                    <?php echo $this->modules('toolbar', 'none'); ?>
+                    <?php echo $this->modules('toolbar-left', 'none'); ?>
                 <?php endif; ?>
-
-                <?php /* Прямая ссылка на WhatsApp */ ?>
-                <?php if ($hasWhatsapp) : ?>
-                    <a href="https://wa.me/<?php echo htmlspecialchars((string) $whatsapp, ENT_QUOTES, 'UTF-8'); ?>?text=<?php echo urlencode((string) $waMessage); ?>" 
-                       target="_blank" 
-                       rel="noopener noreferrer"
-                       class="uk-icon-button uk-button-primary uk-preserve-color" 
-                       uk-icon="whatsapp"
-                       title="<?php echo Text::_('TPL_WMARKA_SEO_WHATSAPP_LABEL'); ?>"
-                       uk-tooltip>
-                    </a>
-                <?php endif; ?>
-
+                <?php foreach (['address', 'hours'] as $key) : ?>
+                    <?php if (isset($inline[$key])) : ?>
+                        <span class="uk-margin-right uk-flex uk-flex-middle"><?php echo Ui::icon(Helper::contactIcon($key), 0.8, 'uk-margin-xsmall-right'); ?>
+                        <?php if ($inline[$key]['href'] !== '') : ?><a class="uk-link-reset" href="<?php echo Ui::esc($inline[$key]['href']); ?>" target="_blank" rel="noopener"><?php echo Ui::esc($inline[$key]['label']); ?></a><?php else : ?><?php echo Ui::esc($inline[$key]['label']); ?><?php endif; ?></span>
+                    <?php endif; ?>
+                <?php endforeach; ?>
             </div>
-            
+            <div class="uk-flex uk-flex-middle uk-flex-wrap">
+                <?php foreach (['phone', 'phone2', 'email'] as $key) : ?>
+                    <?php if (isset($inline[$key])) : ?>
+                        <a class="uk-link-reset uk-margin-right uk-flex uk-flex-middle" href="<?php echo Ui::esc($inline[$key]['href']); ?>"><?php echo Ui::icon(Helper::contactIcon($key), 0.8, 'uk-margin-xsmall-right'); ?><?php echo Ui::esc($inline[$key]['label']); ?></a>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+                <?php if ($icons) : ?>
+                    <ul class="uk-iconnav uk-margin-right">
+                        <?php foreach ($icons as $key => $c) : ?>
+                            <li><a href="<?php echo Ui::esc($c['href']); ?>" target="_blank" rel="noopener" uk-icon="icon: <?php echo Helper::contactIcon($key); ?>; ratio: 0.9" aria-label="<?php echo Ui::esc($c['label']); ?>" title="<?php echo Ui::esc($c['label']); ?>"></a></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+                <?php echo $this->modules('toolbar-right', 'none'); ?>
+                <?php echo $this->modules('lang', 'none'); ?>
+            </div>
         </div>
     </div>
 </div>
-<?php endif; ?>

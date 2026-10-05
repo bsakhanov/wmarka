@@ -1,52 +1,32 @@
 <?php
-
 /**
- * @package     Joomla.Site
- * @subpackage  com_contact
+ * WMARKA — профиль пользователя контакта (плагин «Профиль пользователя»).
  *
- * @copyright   (C) 2009 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @var \Joomla\Component\Contact\Site\View\Contact\HtmlView $this
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\String\PunycodeHelper;
 
-/** @var \Joomla\Component\Contact\Site\View\Contact\HtmlView $this */
+if (!PluginHelper::isEnabled('user', 'profile')) {
+    return;
+}
 ?>
-<?php if (PluginHelper::isEnabled('user', 'profile')) :
-    $fields = $this->item->profile->getFieldset('profile'); ?>
-    <div class="com-contact__profile contact-profile" id="users-profile-custom">
-        <dl class="dl-horizontal">
-            <?php foreach ($fields as $profile) :
-                if ($profile->value) :
-                    echo '<dt>' . $profile->label . '</dt>';
-                    $profile->text = htmlspecialchars($profile->value, ENT_COMPAT, 'UTF-8');
-
-                    switch ($profile->id) :
-                        case 'profile_website':
-                            $v_http = substr($profile->value, 0, 4);
-
-                            if ($v_http === 'http') :
-                                echo '<dd><a href="' . $profile->text . '">' . $this->escape(PunycodeHelper::urlToUTF8($profile->text)) . '</a></dd>';
-                            else :
-                                echo '<dd><a href="http://' . $profile->text . '">' . $this->escape(PunycodeHelper::urlToUTF8($profile->text)) . '</a></dd>';
-                            endif;
-                            break;
-
-                        case 'profile_dob':
-                            echo '<dd>' . HTMLHelper::_('date', $profile->text, Text::_('DATE_FORMAT_LC4'), false) . '</dd>';
-                            break;
-
-                        default:
-                            echo '<dd>' . $profile->text . '</dd>';
-                            break;
-                    endswitch;
-                endif;
-            endforeach; ?>
-        </dl>
-    </div>
-<?php endif; ?>
+<dl class="uk-description-list uk-description-list-divider">
+    <?php foreach ($this->item->profile->getFieldset('profile') as $profile) : ?>
+        <?php if (!$profile->value) { continue; } ?>
+        <?php $text = htmlspecialchars($profile->value, ENT_COMPAT, 'UTF-8'); ?>
+        <dt><?php echo $profile->label; ?></dt>
+        <?php if ($profile->id === 'profile_website') : ?>
+            <dd><a href="<?php echo str_starts_with($profile->value, 'http') ? $text : 'http://' . $text; ?>" rel="noopener"><?php echo $this->escape(PunycodeHelper::urlToUTF8($text)); ?></a></dd>
+        <?php elseif ($profile->id === 'profile_dob') : ?>
+            <dd><?php echo HTMLHelper::_('date', $text, Text::_('DATE_FORMAT_LC4'), false); ?></dd>
+        <?php else : ?>
+            <dd><?php echo $text; ?></dd>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</dl>

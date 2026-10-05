@@ -1,54 +1,64 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  mod_articles
+ * WMARKA — «Материалы» (mod_articles, Joomla 5.2+).
+ * Сетка/список по настройкам модуля; картинка — всегда интро-миниатюра
+ * (опция «Изображение: вступительное/полное» выбирает источник, но не размер).
+ * Макеты: default, wm-media (миниатюра слева), wm-cards, wm-slider.
+ *
+ * @var \Joomla\Registry\Registry $params
+ * @var array $list
+ * @var bool  $grouped
+ * @var object $module
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Language\Text;
+use Wmarka\Template\Card;
+use Wmarka\Template\Ui;
 
-if (!$list) {
+require_once JPATH_THEMES . '/wmarka/php/autoload.php';
+
+if (empty($list)) {
     return;
 }
 
-/**
- * Простой типограф для очистки текста
- */
-$typograph = function($text) {
-    if (empty($text)) return '';
-    
-    // Убираем лишние пробелы и невидимые символы
-    $text = preg_replace('/[ \t]+/', ' ', $text);
-    $text = trim($text);
-    
-    // Заменяем кавычки на елочки (простая регулярка для русского/казахского)
-    $text = preg_replace('/"(.*?)"/u', '«$1»', $text);
-    
-    // Заменяем дефисы на тире в нужных местах
-    $text = str_replace(' - ', ' — ', $text);
-    
-    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+$image   = $params->get('img_intro_full', 'none') !== 'none';
+$style   = $params->get('title_only', 0) ? 'list' : ((int) $params->get('articles_layout', 0) === 1 ? 'cards' : ($image ? 'cards' : 'list'));
+$style   = Card::styleFromLayout($params, $style);
+$columns = (int) $params->get('articles_layout', 0) === 1 ? (int) $params->get('layout_columns', 3) : 1;
+$columns = $style === 'slider' ? max(2, $columns) : $columns;
+$heading = Ui::htag($params->get('item_heading', 'h4'), 'h4');
+
+$render = static function (array $items) use ($params, $style, $columns, $heading, $image, $module): string {
+    $cards = [];
+
+    foreach ($items as $item) {
+        $card = Card::module($item, $params, ['image' => $image || \in_array($style, ['media', 'slider'], true)]);
+
+        if (!$params->get('item_title', 1)) {
+            $card['title'] = '';
+        }
+
+        if ($params->get('show_readmore') && (!empty($item->fulltext) || !empty($item->introTextTruncated))) {
+            $card['readmore'] = '<a class="uk-button uk-button-text" href="' . $item->link . '">' . Text::_('TPL_WMARKA_READ_MORE') . '</a>';
+        }
+
+        $card['events'] = [
+            'afterTitle' => $item->event->afterDisplayTitle ?? '',
+            'before'     => $item->event->beforeDisplayContent ?? '',
+            'after'      => $item->event->afterDisplayContent ?? '',
+        ];
+        $cards[] = $card;
+    }
+
+    return Card::items($cards, $style, ['columns' => $columns, 'heading' => $heading, 'compact' => (string) ($module->position ?? '') === 'mega' || str_starts_with((string) ($module->position ?? ''), 'sidebar')]);
 };
 
-$layoutSuffix = $params->get('title_only', 0) ? '_titles' : '_items';
-?>
-
-<div class="mod-articles-uikit">
-    <?php if ($grouped) : ?>
-        <?php foreach ($list as $groupName => $items) : ?>
-            <div class="uk-margin-medium-bottom">
-                <h5 class="uk-heading-bullet uk-text-uppercase uk-text-bold uk-margin-small-bottom">
-                    <?php echo $typograph(Text::_($groupName)); ?>
-                </h5>
-                <?php require ModuleHelper::getLayoutPath('mod_articles', $params->get('layout', 'default') . $layoutSuffix); ?>
-            </div>
-        <?php endforeach; ?>
-    <?php else : ?>
-        <?php 
-            $items = $list; 
-            require ModuleHelper::getLayoutPath('mod_articles', $params->get('layout', 'default') . $layoutSuffix); 
-        ?>
-    <?php endif; ?>
-</div>
+if ($grouped) {
+    foreach ($list as $group => $items) {
+        echo '<h4 class="uk-heading-line uk-text-small"><span>' . Text::_($group) . '</span></h4>' . $render($items);
+    }
+} else {
+    echo $render($list);
+}

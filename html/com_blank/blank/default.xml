@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_BLANK" option="COM_BLANK">
+		<message><![CDATA[COM_BLANK_DESC]]></message>
+	</layout>
+	<fields name="request">
+		<fieldset name="request"></fieldset>
+	</fields>
+	<fields name="params">
+		<fieldset name="wmarka" label="TPL_WMARKA_MENU_OPTIONS">
+			<field name="wm_blank_note" type="note" label="TPL_WMARKA_BLANK_NOTE" description="TPL_WMARKA_BLANK_NOTE_DESC" class="alert alert-info w-100" />
+			<field name="wm_blank_lead" type="textarea" label="TPL_WMARKA_BLANK_LEAD" rows="3" filter="string" default="" />
+			<field name="wm_blank_image" type="media" label="TPL_WMARKA_BLANK_IMAGE" default="" preview="tooltip" />
+			<field name="wm_blank_text" type="editor" label="TPL_WMARKA_BLANK_TEXT" filter="safehtml" buttons="true" default="" />
+			<field name="wm_blank_width" type="list" label="TPL_WMARKA_BLANK_WIDTH" default="small">
+				<option value="xsmall">TPL_WMARKA_BLANK_WIDTH_XSMALL</option>
+				<option value="small">TPL_WMARKA_BLANK_WIDTH_SMALL</option>
+				<option value="large">TPL_WMARKA_BLANK_WIDTH_LARGE</option>
+				<option value="1-1">TPL_WMARKA_BLANK_WIDTH_FULL</option>
+			</field>
+			<field name="wm_blank_center" type="radio" label="TPL_WMARKA_BLANK_CENTER" layout="joomla.form.field.radio.switcher" default="0" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+		</fieldset>
+	</fields>
+</metadata>

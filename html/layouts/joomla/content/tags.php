@@ -1,12 +1,12 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  Layout
- * @version     WMARKA UIKIT BUTTONS (Exact Syntax Fix)
- * @author      Joomla-6_Uikit-3 Partner
+ * WMARKA — метки материала: строка приглушённых #хэштегов (uk-subnav).
+ * Учитывает уровни доступа меток.
+ *
+ * @var array $displayData массив меток (itemTags)
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
@@ -16,25 +16,19 @@ if (empty($displayData)) {
     return;
 }
 
-// Получаем права доступа пользователя
-$authorised = Factory::getUser()->getAuthorisedViewLevels();
-?>
+$levels = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels();
+$links  = [];
 
-<p uk-margin class="wmarka-tags-container ">
-    <?php foreach ($displayData as $i => $tag) : ?>
-        <?php 
-        // 1. Проверка прав доступа
-        if (!in_array($tag->access, $authorised)) continue; 
+foreach ((array) $displayData as $tag) {
+    if (!\in_array((int) ($tag->access ?? 1), $levels, true)) {
+        continue;
+    }
 
-        // 2. Исключаем технический тег 'эксклюзив' (если нужно)
-        if (mb_strtolower(trim($tag->title)) === 'эксклюзив') continue; 
-        ?>
+    // Плашки только классами UIkit: маленькая кнопка с закруглением uk-border-pill
+    $links[] = '<a class="uk-button uk-button-default uk-button-small uk-border-pill uk-margin-xsmall-right" href="' . Route::_(RouteHelper::getComponentTagRoute($tag->tag_id . ':' . $tag->alias, $tag->language)) . '" rel="tag">#'
+        . htmlspecialchars($tag->title, ENT_QUOTES, 'UTF-8') . '</a>';
+}
 
-        <a class="uk-button uk-button-default uk-button-small uk-border-rounded" 
-           href="<?php echo Route::_(RouteHelper::getComponentTagRoute($tag->tag_id . ':' . $tag->alias, $tag->language)); ?>">
-            <span uk-icon="icon: tag; ratio: 0.7" class="uk-margin-xsmall-right"></span>
-            <?php echo $this->escape($tag->title); ?>
-        </a>
-
-    <?php endforeach; ?>
-</p>
+if ($links) {
+    echo '<div class="uk-margin-small" uk-margin data-wm-tags>' . implode('', $links) . '</div>';
+}

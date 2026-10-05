@@ -1,0 +1,76 @@
+[
+ {
+  "key": "news",
+  "alias": "news",
+  "title": "Новости",
+  "description": "<p>Новости демо-сайта «Вестник» по рубрикам. Все события вымышлены.</p>"
+ },
+ {
+  "key": "economy",
+  "alias": "ekonomika",
+  "title": "Экономика",
+  "parent": "news",
+  "description": "<p>Цены, бизнес, бюджет и деньги горожан.</p>"
+ },
+ {
+  "key": "energy",
+  "alias": "energetika",
+  "title": "Энергетика",
+  "parent": "news",
+  "description": "<p>Электростанции, топливо, возобновляемые источники.</p>"
+ },
+ {
+  "key": "society",
+  "alias": "obshchestvo",
+  "title": "Общество",
+  "parent": "news",
+  "description": "<p>Город, транспорт, экология и люди.</p>"
+ },
+ {
+  "key": "tech",
+  "alias": "tekhnologii",
+  "title": "Технологии",
+  "parent": "news",
+  "description": "<p>Цифровые сервисы, роботы, стартапы.</p>"
+ },
+ {
+  "key": "science",
+  "alias": "nauka",
+  "title": "Наука",
+  "parent": "news",
+  "description": "<p>Открытия, лаборатории, исследования.</p>"
+ },
+ {
+  "key": "culture",
+  "alias": "kultura",
+  "title": "Культура",
+  "parent": "news",
+  "description": "<p>Выставки, театр, книги и фестивали.</p>"
+ },
+ {
+  "key": "sport",
+  "alias": "sport",
+  "title": "Спорт",
+  "parent": "news",
+  "description": "<p>Соревнования, сборные и любительский спорт.</p>"
+ },
+ {
+  "key": "reference",
+  "alias": "reference",
+  "title": "Справочник",
+  "description": "<p>Термины нефтепереработки простыми словами: откуда взялось слово, как устроен процесс и зачем он нужен.</p>"
+ },
+ {
+  "key": "template",
+  "alias": "template",
+  "title": "Шаблон",
+  "description": "<p>Страницы о шаблоне wmarka: возможности, оформление текста, скачивание.</p>"
+ },
+ {
+  "key": "authors",
+  "alias": "authors",
+  "title": "Авторы",
+  "extension": "com_contact",
+  "description": "<p>Редакция демо-сайта. Имена и контакты вымышлены.</p>"
+ }
+]

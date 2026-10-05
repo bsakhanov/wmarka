@@ -1,104 +1,61 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_tags
- * @version     Joomla 6.x
- * @PHP         8.3 / 8.4
+ * WMARKA — материалы метки карточками. Работают опции ядра пункта меню и
+ * компонента «Метки»: изображение материала, описание и его длина
+ * («Максимум символов»; 0 — лимит анонса из настроек шаблона), дата и её формат,
+ * фильтр и «Кол-во на странице». Вид — вкладка «Опции WMARKA».
+ * Миниатюра — тот же интро-файл, что в блоге и модулях.
+ *
+ * @var \Joomla\Component\Tags\Site\View\Tag\HtmlView $this
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\Registry\Registry; // Используем для элегантной работы с JSON
 use Joomla\Component\Tags\Site\Helper\RouteHelper;
+use Wmarka\Template\Card;
+use Wmarka\Template\Config;
+use Wmarka\Template\Seo;
+use Wmarka\Template\Ui;
 
-// Базовые проверки и переменные
-if (empty($this->items)) {
-    return;
-}
+require_once JPATH_THEMES . '/wmarka/php/autoload.php';
 
-$user = Factory::getUser();
-$authorisedViewLevels = $user->getAuthorisedViewLevels();
+$wmView   = $this->params->get('wm_view', Config::str('blog_view', 'grid')) === 'list' ? 'list' : 'grid';
+$wmSwitch = (bool) $this->params->get('wm_switch', 1);
+$cols     = max(1, min(6, (int) $this->params->get('wm_columns', 3)));
+$masonry  = (bool) $this->params->get('wm_masonry', 1);
+$gutter   = Ui::gutter((string) $this->params->get('wm_gutter', 'medium'));
+$limit    = (int) $this->params->get('tag_list_item_maximum_characters', 0) ?: Ui::introLimit($this->params);
 
-// Регулярное выражение для поиска картинки в тексте (твой старый паттерн)
-$regexImageSrc = '/src="([^"]+)"/i'; // Я немного упростил регулярку для надежного поиска src="..."
-?>
+require __DIR__ . '/_filterbar.php';
 
-<div class="com-tags__items uk-margin-top">
-    <div class="uk-grid-match uk-child-width-1-1 uk-child-width-1-2@s uk-child-width-1-3@m" uk-grid>
+if (empty($this->items)) : ?>
+    <div class="uk-alert-primary" uk-alert><p><?php echo Text::_('COM_TAGS_NO_ITEMS'); ?></p></div>
+<?php return; endif; ?>
 
-        <?php foreach ($this->items as $item) : ?>
+<div data-wm-switch="tag" data-wm-view="<?php echo $wmView; ?>">
+    <div <?php echo Ui::switchAttr($wmView, Ui::columns($cols), 'uk-child-width-1-1', $gutter . ($masonry ? '' : ' uk-grid-match')); ?> uk-grid<?php echo $masonry ? '="masonry: pack"' : ''; ?>>
+        <?php $wmMedia = (string) $this->params->get('wm_media', 'top'); ?>
+        <?php foreach (array_values($this->items) as $wmI => $item) : ?>
             <?php
-            // --- 1. ПОДГОТОВКА ДАННЫХ ДЛЯ JLAYOUT ---
-            
-            // Получаем JSON из core_images (компонент тегов)
-            $jsonImages = $item->core_images ?? '';
-            $images     = new Registry($jsonImages);
-            
-            // Если вступительное изображение пустое, пытаемся найти его в тексте статьи
-            if (empty($images->get('image_intro')) && !empty($item->core_body)) {
-                if (preg_match($regexImageSrc, $item->core_body, $matches)) {
-                    // Если нашли, записываем в реестр
-                    $images->set('image_intro', $matches[1]);
-                    // Ставим alt по умолчанию (заголовок)
-                    $images->set('image_intro_alt', $item->core_title ?? $item->title); 
-                }
-            }
-
-            // Создаем свойство images, которое ожидает макет joomla.content.intro_image
-            // Конвертируем наш реестр обратно в JSON-строку
-            $item->images = $images->toString();
+            $link = Route::_(RouteHelper::getItemRoute($item->content_item_id, $item->core_alias, $item->core_catid, $item->core_language, $item->type_alias, $item->router));
+            Seo::addListItem((string) $item->core_title, $link);
+            $card = Card::tagItem($item, $link, [
+                'date'        => (string) $this->params->get('tag_list_show_date', '0'),
+                'dateFormat'  => (string) $this->params->get('date_format', ''),
+                'description' => (bool) $this->params->get('tag_list_show_item_description', 1),
+                'limit'       => $limit,
+                'image'       => (bool) $this->params->get('tag_list_show_item_image', 1),
+                'view'        => $wmView,
+                'switch'      => $wmSwitch,
+                'hover'       => true,
+                'heading'     => 'h3',
+                'media'       => $wmMedia === 'alternate' ? ($wmI % 2 ? 'right' : 'left') : $wmMedia,
+                'sizes'       => \Wmarka\Template\Image::sizes($cols),
+            ]);
             ?>
-
-            <div class="uk-width-1-1">
-                <article class="uk-card uk-card-default uk-card-hover uk-height-1-1" itemscope itemtype="https://schema.org/Article">
-
-                    <?php echo LayoutHelper::render('joomla.content.intro_image', $item); ?>
-
-                    <div class="uk-card-body">
-                        <h3 class="uk-card-title uk-margin-small-bottom" itemprop="headline">
-                            <a href="<?php echo Route::_(RouteHelper::getItemRoute($item->content_item_id, $item->core_alias, $item->core_catid, $item->core_language, $item->type_alias, $item->router)); ?>" class="uk-link-heading">
-                                <?php echo $this->escape($item->core_title); ?>
-                            </a>
-                        </h3>
-
-                        <?php if ($item->core_publish_up && $item->core_publish_up !== '0000-00-00 00:00:00') : ?>
-                            <div class="uk-text-meta uk-margin-small-bottom">
-                                <span uk-icon="icon: calendar; ratio: 0.8"></span>
-                                <time datetime="<?php echo HTMLHelper::_('date', $item->core_publish_up, 'c'); ?>" itemprop="datePublished">
-                                    <?php echo HTMLHelper::_('date', $item->core_publish_up, Text::_('DATE_FORMAT_LC3')); ?>
-                                </time>
-                            </div>
-                        <?php endif; ?>
-
-                        <div class="uk-text-muted uk-text-small" itemprop="articleBody">
-                            <?php 
-                                $introText = HTMLHelper::_('string.truncate', strip_tags($item->core_body), 150, true, false);
-                                echo $introText; 
-                            ?>
-                        </div>
-                    </div>
-
-                </article>
-            </div>
+            <div><?php echo Card::render($card); ?></div>
         <?php endforeach; ?>
-
     </div>
-
-    <?php if ($this->pagination->pagesTotal > 1 && $this->params->get('show_pagination')) : ?>
-        <div class="pagination-wrapper uk-margin-medium-top uk-flex uk-flex-between uk-flex-middle">
-            <div class="uk-pagination-container">
-                <?php echo $this->pagination->getPagesLinks(['pagination' => 'uk-pagination']); ?>
-            </div>
-            <?php if ($this->params->get('show_pagination_results', 1)) : ?>
-                <div class="uk-text-meta">
-                    <?php echo $this->pagination->getPagesCounter(); ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
-
 </div>

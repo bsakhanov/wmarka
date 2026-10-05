@@ -1,0 +1,5 @@
+/* WMARKA — локальный Noto Sans SemiCondensed (подмножество: кириллица, латиница). Подключается настройкой «Шрифт». */
+@font-face{font-family:"Noto Sans SemiCondensed";src:url(../fonts/subset-NotoSansSemiCondensed-Regular.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Noto Sans SemiCondensed";src:url(../fonts/subset-NotoSansSemiCondensed-SemiBold.woff2) format("woff2");font-weight:500 600;font-style:normal;font-display:swap}
+@font-face{font-family:"Noto Sans SemiCondensed";src:url(../fonts/subset-NotoSansSemiCondensed-Bold.woff2) format("woff2");font-weight:700;font-style:normal;font-display:swap}
+html,.uk-h1,.uk-h2,.uk-h3,.uk-h4,.uk-h5,.uk-h6,h1,h2,h3,h4,h5,h6,.uk-heading-small,.uk-heading-medium,.uk-heading-large,.uk-article-title,.uk-card-title,.uk-logo,.uk-navbar-item,.uk-navbar-nav>li>a,.uk-navbar-toggle{font-family:"Noto Sans SemiCondensed",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}

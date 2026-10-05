@@ -1,0 +1,112 @@
+{
+ "template": {
+  "site_title": "Вестник",
+  "site_slogan": "новостной демо-сайт шаблона wmarka",
+  "logo_mode": "image",
+  "logo_slogan": 1,
+  "toolbar_show": 1,
+  "toolbar_contacts": 1,
+  "toolbar_style": "secondary",
+  "navbar_sticky": 1,
+  "navbar_style": "white",
+  "search_show": 1,
+  "search_itemid": "%MENUID:search%",
+  "cta_text": "",
+  "cta_link": "%MENU:m-download%",
+  "contact_phone": "+77172000000",
+  "contact_phone_label": "+7 (7172) 00-00-00",
+  "contact_email": "news@example.kz",
+  "contact_whatsapp": "77000000000",
+  "contact_telegram": "@example",
+  "contact_address": "Астана, ул. Примерная, 1",
+  "footer_style": "secondary",
+  "footer_contacts": 1,
+  "copyright_text": "Webmarka Kazakhstan",
+  "copyright_year": 2016,
+  "blog_view": "grid",
+  "intro_limit": 180,
+  "card_media_width": "1-3",
+  "read_time": 1,
+  "blocks_gutter": "large",
+  "seo_org_type": "NewsMediaOrganization",
+  "seo_org_name": "Вестник (демо)",
+  "seo_city": "Астана",
+  "seo_country": "KZ",
+  "seo_og_image": "%IMG%/og.jpg",
+  "seo_article_type": "NewsArticle",
+  "logo_image": "%IMG%/logo.svg",
+  "logo_footer": "%IMG%/logo-white.svg",
+  "logo_width": 170,
+  "logo_alt": "Вестник",
+  "favicons": 1,
+  "favicon_folder": "%IMG%",
+  "theme_color": "#1e87f0",
+  "img_intro_w": 720,
+  "img_intro_h": 405,
+  "img_full_w": 1200,
+  "img_full_h": 675,
+  "img_placeholder_file": "%IMG%/placeholder.jpg",
+  "date_style": "relative",
+  "card_tags": "hash",
+  "blocks_alternate": 1,
+  "video_tag": "video",
+  "photo_tag": "foto",
+  "share_buttons": 1,
+  "article_author_box": 1,
+  "article_tags_bottom": 1
+ },
+ "style_template": "wmarka_vestnik",
+ "styles": {
+  "positions": {
+   "title": "Wmarka_vestnik — позиции модулей",
+   "params": {
+    "header_layout": "stacked",
+    "toolbar_mobile": 1,
+    "blocks_alternate": 0,
+    "footer_contacts": 0
+   }
+  }
+ },
+ "components": {
+  "com_content": {
+   "show_author": 1,
+   "show_readmore_title": 0,
+   "float_intro": "none",
+   "float_fulltext": "none",
+   "show_icons": 0,
+   "show_print_icon": 0,
+   "show_email_icon": 0,
+   "show_create_date": 0,
+   "show_modify_date": 0,
+   "show_publish_date": 1,
+   "show_hits": 1,
+   "show_tags": 1,
+   "info_block_position": 0,
+   "link_author": 1,
+   "show_readmore": 0,
+   "show_category": 1,
+   "link_category": 1
+  },
+  "com_tags": {
+   "tag_list_show_item_image": 1,
+   "tag_list_show_item_description": 1,
+   "tag_list_item_maximum_characters": 0,
+   "tag_list_show_date": "published",
+   "all_tags_show_tag_image": 1,
+   "all_tags_show_tag_description": 1,
+   "tag_columns": 3
+  },
+  "com_contact": {
+   "contact_icons": 0,
+   "show_email_form": 1,
+   "show_image_heading": 1,
+   "show_articles": 1,
+   "articles_display_num": 20
+  }
+ },
+ "plugins": {
+  "content/pagenavigation": {
+   "display": 1
+  }
+ }
+}

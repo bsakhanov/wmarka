@@ -1,46 +1,29 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  mod_login
- * @version     WMARKA ULTRA (UIkit 3 Logout View)
+ * WMARKA — модуль входа для вошедшего пользователя: приветствие, профиль, выход.
+ *
+ * @var \Joomla\Registry\Registry $params
+ * @var object $module
+ * @var object $user
+ * @var string $return
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-
-$user = Joomla\CMS\Factory::getApplication()->getIdentity();
 ?>
-
-<div class="login-status-container uk-text-center" itemscope itemtype="https://schema.org/Person">
-    
-    <div class="uk-margin-small-bottom">
-        <span uk-icon="icon: user; ratio: 2" class="uk-text-muted"></span>
-    </div>
-
-    <div class="uk-text-lead uk-text-bold" itemprop="name">
-        <?php echo Text::sprintf('MOD_LOGIN_HINAME', htmlspecialchars($user->get('name'), ENT_QUOTES, 'UTF-8')); ?>
-    </div>
-
-    <?php if ($params->get('posttext')) : ?>
-        <div class="uk-margin-small uk-text-meta">
-            <?php echo $params->get('posttext'); ?>
-        </div>
+<form class="uk-form-stacked" action="<?php echo Route::_('index.php', true); ?>" method="post" id="login-form-<?php echo (int) $module->id; ?>">
+    <?php if ($params->get('greeting', 1)) : ?>
+        <p class="uk-margin-small"><?php echo Text::sprintf('MOD_LOGIN_HINAME', htmlspecialchars($params->get('name', 0) ? $user->username : $user->name, ENT_COMPAT, 'UTF-8')); ?></p>
     <?php endif; ?>
-
-    <form action="<?php echo Route::_('index.php', true); ?>" method="post" id="login-form-<?php echo $module->id; ?>">
-        <div class="uk-margin-top">
-            <button type="submit" name="Submit" class="uk-button uk-button-danger uk-button-small uk-border-rounded">
-                <span uk-icon="icon: sign-out; ratio: 0.8" class="uk-margin-small-right"></span>
-                <?php echo Text::_('JLOGOUT'); ?>
-            </button>
-        </div>
-        
-        <input type="hidden" name="option" value="com_users">
-        <input type="hidden" name="task" value="user.logout">
-        <input type="hidden" name="return" value="<?php echo $return; ?>">
-        <?php echo HTMLHelper::_('form.token'); ?>
-    </form>
-</div>
+    <?php if ($params->get('profilelink', 0)) : ?>
+        <p class="uk-margin-small"><a href="<?php echo Route::_('index.php?option=com_users&view=profile'); ?>"><?php echo Text::_('MOD_LOGIN_PROFILE'); ?></a></p>
+    <?php endif; ?>
+    <button type="submit" name="Submit" class="uk-button uk-button-default uk-width-1-1"><?php echo Text::_('JLOGOUT'); ?></button>
+    <input type="hidden" name="option" value="com_users">
+    <input type="hidden" name="task" value="user.logout">
+    <input type="hidden" name="return" value="<?php echo $return; ?>">
+    <?php echo HTMLHelper::_('form.token'); ?>
+</form>

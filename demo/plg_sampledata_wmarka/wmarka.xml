@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="sampledata" method="upgrade">
+	<name>PLG_SAMPLEDATA_WMARKA</name>
+	<author>Webmarka</author>
+	<creationDate>2026-10</creationDate>
+	<copyright>(C) 2026 Webmarka</copyright>
+	<license>GNU General Public License version 2 or later</license>
+	<authorUrl>https://webmarka.kz</authorUrl>
+	<version>4.0.9</version>
+	<description>PLG_SAMPLEDATA_WMARKA_XML_DESCRIPTION</description>
+	<namespace path="src">Webmarka\Plugin\Sampledata\Wmarka</namespace>
+	<files>
+		<folder plugin="wmarka">services</folder>
+		<folder>src</folder>
+		<folder>data</folder>
+		<folder>language</folder>
+	</files>
+	<media destination="plg_sampledata_wmarka" folder="media">
+		<folder>photos</folder>
+	</media>
+	<languages>
+		<language tag="ru-RU">language/ru-RU/plg_sampledata_wmarka.ini</language>
+		<language tag="ru-RU">language/ru-RU/plg_sampledata_wmarka.sys.ini</language>
+		<language tag="en-GB">language/en-GB/plg_sampledata_wmarka.ini</language>
+		<language tag="en-GB">language/en-GB/plg_sampledata_wmarka.sys.ini</language>
+	</languages>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field name="registry" type="textarea" label="PLG_SAMPLEDATA_WMARKA_REGISTRY_LABEL" description="PLG_SAMPLEDATA_WMARKA_REGISTRY_DESC" rows="6" readonly="true" filter="raw" />
+			</fieldset>
+		</fields>
+	</config>
+</extension>

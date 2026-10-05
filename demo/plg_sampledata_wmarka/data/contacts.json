@@ -1,0 +1,112 @@
+[
+ {
+  "key": "editorial",
+  "category": "authors",
+  "alias": "editorial",
+  "name": "Редакция «Вестника»",
+  "position": "Новости, письма читателей",
+  "featured": 1,
+  "ordering": 1,
+  "address": "ул. Примерная, 1",
+  "suburb": "Астана",
+  "country": "Казахстан",
+  "telephone": "+7 (7172) 00-00-00",
+  "email": "news@example.kz",
+  "misc": "<p>Пишите о событиях вашего района — лучшие истории попадут в ленту.</p><p><em>Демо-сайт: адреса и телефоны вымышлены.</em></p>",
+  "params": {
+   "show_email_form": "1",
+   "show_links": "0",
+   "show_articles": "0",
+   "show_position": "1",
+   "show_email": "1",
+   "show_telephone": "1",
+   "show_street_address": "1",
+   "show_suburb": "1",
+   "show_country": "1"
+  }
+ },
+ {
+  "key": "author-2",
+  "category": "authors",
+  "alias": "author-2",
+  "name": "Айгерим Сапарова",
+  "position": "Редактор отдела экономики",
+  "ordering": 2,
+  "image": "%IMG%/portrait-1.jpg",
+  "suburb": "Астана",
+  "email": "author2@example.kz",
+  "user": "u1",
+  "misc": "<p>Автор демо-сайта. Имя и биография вымышлены. Ниже — все материалы автора.</p>",
+  "params": {
+   "show_articles": "1",
+   "show_position": "1",
+   "show_email": "0",
+   "show_email_form": "0",
+   "show_links": "0",
+   "show_suburb": "1"
+  }
+ },
+ {
+  "key": "author-3",
+  "category": "authors",
+  "alias": "author-3",
+  "name": "Данияр Ахметов",
+  "position": "Обозреватель технологий и спорта",
+  "ordering": 3,
+  "image": "%IMG%/portrait-2.jpg",
+  "suburb": "Астана",
+  "email": "author3@example.kz",
+  "user": "u2",
+  "misc": "<p>Автор демо-сайта. Имя и биография вымышлены. Ниже — все материалы автора.</p>",
+  "params": {
+   "show_articles": "1",
+   "show_position": "1",
+   "show_email": "0",
+   "show_email_form": "0",
+   "show_links": "0",
+   "show_suburb": "1"
+  }
+ },
+ {
+  "key": "author-4",
+  "category": "authors",
+  "alias": "author-4",
+  "name": "Мария Ким",
+  "position": "Корреспондент отдела «Общество»",
+  "ordering": 4,
+  "image": "%IMG%/portrait-3.jpg",
+  "suburb": "Астана",
+  "email": "author4@example.kz",
+  "user": "u3",
+  "misc": "<p>Автор демо-сайта. Имя и биография вымышлены. Ниже — все материалы автора.</p>",
+  "params": {
+   "show_articles": "1",
+   "show_position": "1",
+   "show_email": "0",
+   "show_email_form": "0",
+   "show_links": "0",
+   "show_suburb": "1"
+  }
+ },
+ {
+  "key": "author-5",
+  "category": "authors",
+  "alias": "author-5",
+  "name": "Ерлан Жумабаев",
+  "position": "Научный обозреватель, фотограф",
+  "ordering": 5,
+  "image": "%IMG%/portrait-4.jpg",
+  "suburb": "Астана",
+  "email": "author5@example.kz",
+  "user": "u4",
+  "misc": "<p>Автор демо-сайта. Имя и биография вымышлены. Ниже — все материалы автора.</p>",
+  "params": {
+   "show_articles": "1",
+   "show_position": "1",
+   "show_email": "0",
+   "show_email_form": "0",
+   "show_links": "0",
+   "show_suburb": "1"
+  }
+ }
+]

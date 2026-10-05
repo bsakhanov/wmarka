@@ -1,0 +1,26 @@
+[
+ {
+  "key": "u1",
+  "name": "Айгерим Сапарова",
+  "username": "author1",
+  "email": "author1@example.kz"
+ },
+ {
+  "key": "u2",
+  "name": "Данияр Ахметов",
+  "username": "author2",
+  "email": "author2@example.kz"
+ },
+ {
+  "key": "u3",
+  "name": "Мария Ким",
+  "username": "author3",
+  "email": "author3@example.kz"
+ },
+ {
+  "key": "u4",
+  "name": "Ерлан Жумабаев",
+  "username": "author4",
+  "email": "author4@example.kz"
+ }
+]

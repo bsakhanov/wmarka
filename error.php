@@ -1,98 +1,71 @@
 <?php
 /**
- * Страница системных ошибок для шаблона Wmarka
- * Joomla 6 + UIkit 3
+ * WMARKA — страница ошибки (404, 403, 500): крупный код, пояснение, поиск,
+ * ссылка на главную; меню навбара — если опубликовано.
+ *
+ * @var \Joomla\CMS\Document\ErrorDocument $this
  */
-declare(strict_types=1);
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
-/** @var \Joomla\CMS\Document\ErrorDocument $this */
+require_once __DIR__ . '/php/autoload.php';
 
-$app      = Factory::getApplication();
-$config   = Factory::getConfig();
-$sitename = $config->get('sitename', 'Wmarka');
-$tplPath  = Uri::root(true) . '/media/templates/site/' . $this->template;
+// Строки родителя wmarka: у дочернего шаблона своих языковых файлов нет
+\Joomla\CMS\Factory::getApplication()->getLanguage()->load('tpl_wmarka', JPATH_BASE)
+    || \Joomla\CMS\Factory::getApplication()->getLanguage()->load('tpl_wmarka', JPATH_THEMES . '/wmarka');
 
-// Логика отображения отладки
-$errorLevelStr = $config->get('error_reporting', 'default');
-$isShowFile    = in_array($errorLevelStr, ['maximum', 'development'], true);
-$isBacktrace   = ($errorLevelStr === 'development');
+$app  = Factory::getApplication();
+$code = (int) $this->error->getCode();
+$code = $code >= 400 && $code < 600 ? $code : 500;
+$wa   = $this->getWebAssetManager();
 
-$errorCode = $this->error->getCode();
-$errorMsg  = $this->error->getMessage();
-$errorFile = str_replace(JPATH_ROOT, 'JROOT', $this->error->getFile());
+foreach (['style' => ['template.wmarka.uikit', 'template.wmarka.nocaps', 'template.user'], 'script' => ['template.wmarka.uikit', 'template.wmarka.icons']] as $type => $names) {
+    foreach ($names as $name) {
+        if ($wa->getRegistry()->exists($type, $name)) {
+            $type === 'style' ? $wa->useStyle($name) : $wa->useScript($name);
+        }
+    }
+}
+
+$this->setMetaData('viewport', 'width=device-width, initial-scale=1');
+$this->setMetaData('robots', 'noindex, follow');
+$this->setTitle($code . ' — ' . $app->get('sitename'));
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $this->language; ?>" dir="<?php echo $this->direction; ?>">
+<html lang="<?php echo htmlspecialchars($this->language, ENT_QUOTES, 'UTF-8'); ?>" dir="<?php echo $this->direction; ?>">
 <head>
-    <meta charset="utf-8" />
-    <title><?php echo $errorCode; ?> — <?php echo htmlspecialchars($errorMsg, ENT_QUOTES, 'UTF-8'); ?></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-
-    <?php /* ФАВИКОНЫ */ ?>
-    <link rel="icon" type="image/svg+xml" href="<?php echo $tplPath; ?>/images/logo.svg">
-
-    <?php /* СТИЛИ И СКРИПТЫ (Аварийный режим без WebAssetManager) */ ?>
-    <link rel="stylesheet" href="<?php echo $tplPath; ?>/css/uikit.min.css">
-    <link rel="stylesheet" href="<?php echo $tplPath; ?>/css/user.css">
-    <script src="<?php echo $tplPath; ?>/js/uikit.min.js" defer></script>
-    <script src="<?php echo $tplPath; ?>/js/uikit-icons.min.js" defer></script>
+    <jdoc:include type="metas" />
+    <jdoc:include type="styles" />
+    <jdoc:include type="scripts" />
 </head>
-
-<body class="uk-background-muted uk-flex uk-flex-column" style="min-height: 100vh;">
-
-    <header class="uk-section uk-section-default uk-section-xsmall uk-box-shadow-small">
-        <div class="uk-container">
-            <div class="uk-flex uk-flex-middle uk-flex-between">
-                <div class="uk-logo uk-h4 uk-margin-remove uk-text-bold uk-text-uppercase">
-                    <?php echo htmlspecialchars($sitename, ENT_QUOTES, 'UTF-8'); ?>
+<body id="top" class="site-wmarka error-<?php echo $code; ?>">
+    <?php if ($this->countModules('navbar-right') || $this->countModules('navbar-left')) : ?>
+        <nav class="uk-navbar-container">
+            <div class="uk-container">
+                <div uk-navbar>
+                    <div class="uk-navbar-left"><a class="uk-navbar-item uk-logo" href="<?php echo Uri::base(true); ?>/"><?php echo htmlspecialchars($app->get('sitename'), ENT_QUOTES, 'UTF-8'); ?></a><jdoc:include type="modules" name="navbar-left" style="navbar" /></div>
+                    <div class="uk-navbar-right"><jdoc:include type="modules" name="navbar-right" style="navbar" /></div>
                 </div>
-                <a href="<?php echo Uri::root(); ?>" class="uk-button uk-button-text">
-                    <span uk-icon="home"></span> <?php echo Text::_('JERROR_LAYOUT_GO_TO_THE_HOME_PAGE'); ?>
-                </a>
             </div>
-        </div>
-    </header>
-
-    <main class="uk-section uk-section-large uk-flex-auto">
-        <div class="uk-container uk-container-small">
-            <div class="uk-card uk-card-default uk-card-body uk-box-shadow-xlarge uk-border-rounded uk-text-center">
-                
-                <h1 class="uk-heading-2xlarge uk-margin-remove uk-text-primary"><?php echo $errorCode; ?></h1>
-                
-                <p class="uk-h2 uk-margin-small-top uk-text-bold">
-                    <?php echo ($errorCode == 404) ? Text::_('JERROR_LAYOUT_PAGE_NOT_FOUND') : Text::_('JERROR_LAYOUT_REQUESTED_RESOURCE_WAS_NOT_FOUND'); ?>
-                </p>
-
-                <p class="uk-text-lead uk-text-muted">
-                    <?php echo htmlspecialchars($errorMsg, ENT_QUOTES, 'UTF-8'); ?>
-                </p>
-
-                <?php if ($isShowFile) : ?>
-                    <div class="uk-alert-danger uk-text-left uk-margin-top" uk-alert>
-                        <p class="uk-text-bold uk-margin-remove"><?php echo Text::_('JERROR_LAYOUT_PLEASE_CONTACT_THE_SYSTEM_ADMINISTRATOR'); ?></p>
-                        <code class="uk-display-block uk-margin-small-top">
-                            <?php echo htmlspecialchars($errorFile, ENT_QUOTES, 'UTF-8'); ?> : <?php echo $this->error->getLine(); ?>
-                        </code>
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <?php if ($isBacktrace) : ?>
-                <div class="uk-margin-large-top">
-                    <div class="uk-card uk-card-secondary uk-card-body uk-border-rounded">
-                        <h3 class="uk-card-title">Technical Details</h3>
-                        <div class="uk-overflow-auto">
-                            <?php echo $this->renderBacktrace(); ?>
-                        </div>
-                    </div>
-                </div>
+        </nav>
+    <?php endif; ?>
+    <main class="uk-section uk-section-large">
+        <div class="uk-container uk-container-small uk-text-center">
+            <p class="uk-heading-2xlarge uk-text-muted uk-margin-remove"><?php echo $code; ?></p>
+            <h1 class="uk-h2 uk-margin-small-top"><?php echo $code === 404 ? Text::_('TPL_WMARKA_ERROR_TITLE') : htmlspecialchars($this->error->getMessage(), ENT_QUOTES, 'UTF-8'); ?></h1>
+            <p class="uk-text-lead"><?php echo Text::_('TPL_WMARKA_ERROR_TEXT'); ?></p>
+            <form class="uk-search uk-search-default uk-width-large@s uk-margin" action="<?php echo Route::_('index.php?option=com_finder&view=search'); ?>" method="get" role="search">
+                <span uk-search-icon></span>
+                <input class="uk-search-input" type="search" name="q" placeholder="<?php echo htmlspecialchars(Text::_('TPL_WMARKA_ERROR_SEARCH'), ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo htmlspecialchars(Text::_('TPL_WMARKA_ERROR_SEARCH'), ENT_QUOTES, 'UTF-8'); ?>">
+            </form>
+            <p><a class="uk-button uk-button-primary" href="<?php echo Uri::base(true); ?>/"><?php echo Text::_('TPL_WMARKA_ERROR_HOME'); ?></a></p>
+            <?php if ($this->debug) : ?>
+                <div class="uk-text-left uk-margin-large-top uk-text-small"><?php echo $this->renderBacktrace(); ?></div>
             <?php endif; ?>
         </div>
     </main>

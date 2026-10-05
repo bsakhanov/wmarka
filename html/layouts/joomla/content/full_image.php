@@ -1,93 +1,72 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  Layout
- * @version     WMARKA FULL IMAGE (PHP 8.4 Fixed + Ultra Logic)
- * @author      Partner Programmer & Beibit Sakhanov
+ * WMARKA — изображение полной статьи.
+ *
+ * Источник: image_fulltext → image_intro (если разрешено в настройках) →
+ * первая картинка текста → заглушка. Профиль full; на узких экранах
+ * подставляется интро-миниатюра (тот же файл, что в карточках), если
+ * у статьи одна и та же картинка — лишний мобильный размер не режется.
+ * Подпись — figcaption под фото.
+ *
+ * @var object $displayData материал
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-use Joomla\CMS\Uri\Uri;
+use Wmarka\Template\Config;
+use Wmarka\Template\Image;
+use Wmarka\Template\Ui;
 
-// Универсальное извлечение объекта (как в твоем intro_image)
-$item = is_array($displayData) ? ($displayData['item'] ?? null) : $displayData;
-if (!$item) return;
+require_once JPATH_THEMES . '/wmarka/php/autoload.php';
 
-// Декодируем изображения в массив (true)
-$images = json_decode($item->images, true) ?: [];
+$item = \is_array($displayData) ? ($displayData['item'] ?? null) : $displayData;
 
-$defaultImageFallback = 'media/templates/site/wmarka/images/zamena.jpg';
-$baseUrl = Uri::base(true) . '/';
-
-// Размеры для полного изображения
-$w = 900; 
-$h = 600;
-$mobW = 390;
-$mobH = 260;
-
-$imageToRender = $defaultImageFallback;
-$imageAlt      = $item->title;
-
-/**
- * Логика выбора изображения: 
- * Для полнотекстового макета сначала ищем image_fulltext, 
- * если нет - берем image_intro (как в твоем рабочем примере).
- */
-if (!empty($images['image_fulltext'])) {
-    $imageToRender = preg_replace('/#joomlaImage?([^\'" >]+)/', '', $images['image_fulltext']);
-    $imageAlt      = ($images['image_fulltext_caption'] ?? '') ?: $item->title;
-} elseif (!empty($images['image_intro'])) {
-    $imageToRender = preg_replace('/#joomlaImage?([^\'" >]+)/', '', $images['image_intro']);
-    $imageAlt      = ($images['image_intro_caption'] ?? '') ?: $item->title;
+if (!\is_object($item) || !Config::bool('article_image', true)) {
+    return;
 }
 
-// Проверка физического наличия
-if (!file_exists(JPATH_ROOT . '/' . ltrim($imageToRender, '/'))) {
-    $imageToRender = $defaultImageFallback;
+$source = Image::source($item, 'full');
+$full   = Image::thumb($source['src'], 'full', Config::bool('article_placeholder', false));
+
+if (!$full) {
+    return;
 }
 
-// Подключаем JUImage
-require_once(JPATH_SITE . '/libraries/juimage/vendor/autoload.php');
-$juImg = new JUImage\Image();
+$intro    = Image::source($item, 'intro');
+$mobile   = ($intro['src'] !== '' && $intro['src'] === $source['src']) ? Image::thumb($intro['src'], 'intro', false) : [];
+$caption  = $source['caption'];
 
-/** * ПАРАМЕТРЫ КАК В ТВОЕМ INTRO_IMAGE:
- * Используем раздельный вызов: render($path, $options)
- */
-$options = [
-    'w'     => $w, 
-    'h'     => $h, 
-    'q'     => '65', 
-    'f'     => 'webp', 
-    'cache' => 'img',   // Кропы в /img/
-    'fit'   => 'cover'  // Метод обрезки
-];
-
-// Генерация кропов (передаем ПУТЬ СТРОКОЙ первым аргументом)
-$thumbD = $juImg->render((string)$imageToRender, $options);
-$thumbM = $juImg->render((string)$imageToRender, array_merge($options, ['w' => $mobW, 'h' => $mobH]));
+// Обтекание (ядро: «Обтекание изображения полного текста» материала или компонента)
+$images = json_decode((string) ($item->images ?? ''), true) ?: [];
+$float  = (string) (($images['float_fulltext'] ?? '') ?: (\is_object($item->params ?? null) ? $item->params->get('float_fulltext', '') : ''));
+$align  = match ($float) {
+    'left', 'float-start'  => ' uk-align-left@m uk-width-1-2@m uk-margin-remove-top',
+    'right', 'float-end'   => ' uk-align-right@m uk-width-1-2@m uk-margin-remove-top',
+    default                => '',
+};
 ?>
+<?php
+// Одинаковые пропорции профилей → srcset «интро 720w, полное 1200w»: браузер сам берёт
+// нужный файл по ширине экрана и плотности пикселей. Разные пропорции → <picture>
+// с отдельным источником для телефона (художественная подмена кадра).
+$sameRatio = $mobile && $mobile['height'] && $full['height'] && abs($mobile['width'] / $mobile['height'] - $full['width'] / $full['height']) <= 0.02;
 
-<figure class="article-full-image uk-margin-remove" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
-    <picture>
-        <?php /* Мобильная версия */ ?>
-        <source srcset="<?php echo $baseUrl . ltrim((string)$thumbM, '/'); ?>" media="(max-width: 640px)">
-        
-        <?php /* Основное изображение */ ?>
-        <img src="<?php echo $baseUrl . ltrim((string)$thumbD, '/'); ?>" 
-             width="<?php echo $w; ?>" 
-             height="<?php echo $h; ?>" 
-             alt="<?php echo htmlspecialchars((string)$imageAlt, ENT_QUOTES, 'UTF-8'); ?>" 
-             class="uk-border-rounded uk-box-shadow-medium"
-             fetchpriority="high" 
-             loading="eager"
-             itemprop="url">
-    </picture>
+if ($sameRatio && Config::bool('img_srcset', true) && $mobile['src'] !== $full['src'] && $mobile['width'] < $full['width']) {
+    $full['srcset'] = $mobile['src'] . ' ' . $mobile['width'] . 'w, ' . $full['src'] . ' ' . $full['width'] . 'w';
+}
 
-    <?php if (!empty($images['image_fulltext_caption']) || !empty($images['image_intro_caption'])) : ?>
-        <figcaption class="uk-text-meta uk-margin-small uk-text-center">
-            <span uk-icon="icon: camera; ratio: 0.7" class="uk-margin-xsmall-right"></span> 
-            <?php echo htmlspecialchars((string)($images['image_fulltext_caption'] ?: $images['image_intro_caption']), ENT_COMPAT, 'UTF-8'); ?>
-        </figcaption>
+$wide = $align === '' ? '(min-width: 1200px) 1200px, 100vw' : '(min-width: 960px) 50vw, 100vw';
+?>
+<figure class="uk-margin-medium-bottom<?php echo $align; ?>">
+    <?php if (!empty($full['srcset']) || !$mobile || $mobile['src'] === $full['src']) : ?>
+        <?php echo Image::img($full, $source['alt'], ['class' => 'uk-width-1-1', 'loading' => 'eager', 'fetchpriority' => 'high', 'sizes' => $wide]); ?>
+    <?php else : ?>
+        <picture>
+            <source media="(max-width: 639px)" srcset="<?php echo Ui::esc($mobile['src']); ?>"<?php echo $mobile['width'] ? ' width="' . (int) $mobile['width'] . '" height="' . (int) $mobile['height'] . '"' : ''; ?>>
+            <?php echo Image::img($full, $source['alt'], ['class' => 'uk-width-1-1', 'loading' => 'eager', 'fetchpriority' => 'high']); ?>
+        </picture>
+    <?php endif; ?>
+    <?php if ($caption !== '') : ?>
+        <figcaption class="uk-text-meta uk-margin-small-top"><?php echo Ui::esc($caption); ?></figcaption>
     <?php endif; ?>
 </figure>

@@ -1,0 +1,1371 @@
+[
+ {
+  "key": "navbar",
+  "title": "Главное меню",
+  "module": "mod_menu",
+  "position": "navbar-right",
+  "params": {
+   "menutype": "mainmenu",
+   "startLevel": 1,
+   "endLevel": 2,
+   "showAllChildren": 1
+  }
+ },
+ {
+  "key": "login",
+  "title": "Вход",
+  "module": "mod_login",
+  "position": "login",
+  "params": {
+   "greeting": 1,
+   "name": 0
+  }
+ },
+ {
+  "key": "toolbar",
+  "title": "Тулбар: демо",
+  "module": "mod_custom",
+  "position": "toolbar-left",
+  "content": "<span>Демо-сайт шаблона wmarka · все новости вымышлены</span>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "mega-top",
+  "title": "Мегаменю: главная новость",
+  "module": "mod_articles",
+  "position": "mega",
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "news"
+   ],
+   "count": 1,
+   "show_featured": "only",
+   "article_ordering": "a.publish_up",
+   "article_ordering_direction": "DESC",
+   "show_child_category_articles": 1,
+   "levels": 2,
+   "layout": "_:wm-cards",
+   "articles_layout": 1,
+   "layout_columns": 1,
+   "img_intro_full": "intro",
+   "show_introtext": 0,
+   "introtext_limit": 120,
+   "show_date": 1,
+   "show_date_field": "publish_up",
+   "show_date_format": "d.m.Y",
+   "show_category": 1,
+   "show_tags": 0,
+   "item_heading": "h3",
+   "header_tag": "h2",
+   "header_class": ""
+  }
+ },
+ {
+  "key": "side-tags",
+  "title": "Темы",
+  "module": "mod_tags_popular",
+  "position": "sidebar-b",
+  "assign": {
+   "except": [
+    "home",
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "ordering": 2,
+  "params": {
+   "maximum": 14,
+   "display_count": 1,
+   "layout": "_:cloud",
+   "timeframe": "alltime"
+  }
+ },
+ {
+  "key": "side-banner",
+  "title": "Шаблон wmarka",
+  "module": "mod_custom",
+  "position": "sidebar-b",
+  "assign": {
+   "except": [
+    "home",
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "ordering": 3,
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-primary"
+  },
+  "content": "<p>Этот сайт сделан на бесплатном шаблоне wmarka для Joomla 5 и 6.</p><a class=\"uk-button uk-button-default uk-button-small\" href=\"%MENU:m-download%\">Скачать</a>"
+ },
+ {
+  "key": "related",
+  "title": "Читайте также",
+  "module": "mod_related_items",
+  "position": "main-bottom",
+  "assign": {
+   "except": [
+    "home",
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "params": {
+   "maximum": 3,
+   "showDate": 0,
+   "layout": "_:wm-cards"
+  }
+ },
+ {
+  "key": "f-about",
+  "title": "О «Вестнике»",
+  "module": "mod_custom",
+  "position": "footer-left",
+  "showtitle": 1,
+  "params": {
+   "prepare_content": 0
+  },
+  "content": "<p>Новостной демо-сайт стартового шаблона <a href=\"https://github.com/bsakhanov/wmarka\">wmarka</a> для Joomla 5 и 6.</p><p>Все новости, имена и контакты вымышлены; справочные статьи — настоящие.</p>"
+ },
+ {
+  "key": "f-rubrics",
+  "title": "Рубрики",
+  "module": "mod_custom",
+  "position": "footer-center",
+  "showtitle": 1,
+  "params": {
+   "prepare_content": 0
+  },
+  "content": "<ul class=\"uk-list uk-list-collapse\"><li><a href=\"%MENU:rub-economy%\">Экономика</a></li><li><a href=\"%MENU:rub-energy%\">Энергетика</a></li><li><a href=\"%MENU:rub-society%\">Общество</a></li><li><a href=\"%MENU:rub-tech%\">Технологии</a></li><li><a href=\"%MENU:rub-science%\">Наука</a></li><li><a href=\"%MENU:rub-culture%\">Культура</a></li><li><a href=\"%MENU:rub-sport%\">Спорт</a></li></ul>"
+ },
+ {
+  "key": "pos-toolbar",
+  "title": "Позиция toolbar",
+  "module": "mod_custom",
+  "position": "toolbar",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<span class=\"uk-label uk-label-warning\">toolbar</span> <span class=\"uk-margin-small-left\">Сегодня в «Вестнике» 25 новостей</span>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-toolbar-left",
+  "title": "Позиция toolbar-left",
+  "module": "mod_custom",
+  "position": "toolbar-left",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<span class=\"uk-label uk-label-warning\">toolbar-left</span> <span class=\"uk-margin-small-left\">Астана, +5 °C</span>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-toolbar-right",
+  "title": "Позиция toolbar-right",
+  "module": "mod_custom",
+  "position": "toolbar-right",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<span class=\"uk-label uk-label-warning\">toolbar-right</span> <a class=\"uk-icon-link uk-margin-small-left\" href=\"#\" uk-icon=\"telegram\"></a> <a class=\"uk-icon-link uk-margin-xsmall-left\" href=\"#\" uk-icon=\"youtube\"></a> <a class=\"uk-icon-link uk-margin-xsmall-left\" href=\"#\" uk-icon=\"instagram\"></a>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-lang",
+  "title": "Позиция lang",
+  "module": "mod_custom",
+  "position": "lang",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<span class=\"uk-label uk-label-warning\">lang</span> <span class=\"uk-margin-small-left\">RU · KZ · EN</span>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-head-banner",
+  "title": "Позиция head-banner",
+  "module": "mod_custom",
+  "position": "head-banner",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-background-primary uk-light\"><div class=\"uk-container uk-padding-small\"><div class=\"uk-flex uk-flex-middle uk-flex-between uk-flex-wrap\"><div><span class=\"uk-label uk-label-warning\">head-banner</span> <span class=\"uk-margin-small-left\">Объявление над шапкой во всю ширину: важная новость, акция, техническое сообщение</span></div><a class=\"uk-button uk-button-default uk-button-small\" href=\"#\">Подробнее</a></div></div></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-logo",
+  "title": "Позиция logo",
+  "module": "mod_custom",
+  "position": "logo",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-flex uk-flex-middle\"><img src=\"%R%/%IMG%/logo.svg\" width=\"170\" height=\"40\" alt=\"Вестник\"> <span class=\"uk-margin-small-left\"><span class=\"uk-label uk-label-warning\">logo</span></span></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-headbar",
+  "title": "Позиция headbar",
+  "module": "mod_custom",
+  "position": "headbar",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-flex uk-flex-middle\"><span class=\"uk-label uk-label-warning\">headbar</span><span class=\"uk-margin-small-left uk-text-small\">Редакция: +7 (7172) 00-00-00</span><a class=\"uk-button uk-button-primary uk-button-small uk-margin-small-left\" href=\"#\">Подписаться</a></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-navbar-left",
+  "title": "Позиция navbar-left",
+  "module": "mod_custom",
+  "position": "navbar-left",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-navbar-item\"><span class=\"uk-label uk-label-warning\">navbar-left</span></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-navbar-center",
+  "title": "Позиция navbar-center",
+  "module": "mod_custom",
+  "position": "navbar-center",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-navbar-item\"><span class=\"uk-label uk-label-warning\">navbar-center</span></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-iconnav",
+  "title": "Позиция iconnav",
+  "module": "mod_custom",
+  "position": "iconnav",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-navbar-item\"><span class=\"uk-label uk-label-warning\">iconnav</span></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-login",
+  "title": "Позиция login",
+  "module": "mod_custom",
+  "position": "login",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<span class=\"uk-label\">login</span><p class=\"uk-text-small uk-margin-small-top\">Окно под иконкой пользователя: сюда ставят форму входа mod_login.</p>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-offcanvas-menu",
+  "title": "Позиция offcanvas-menu",
+  "module": "mod_custom",
+  "position": "offcanvas-menu",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-card uk-card-secondary uk-card-small uk-card-body\"><span class=\"uk-label uk-label-warning\">offcanvas-menu</span><p class=\"uk-text-small uk-margin-small-top\">Мобильная панель: меню. Откройте бургер на узком экране.</p></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-offcanvas",
+  "title": "Позиция offcanvas",
+  "module": "mod_custom",
+  "position": "offcanvas",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-card uk-card-secondary uk-card-small uk-card-body\"><span class=\"uk-label uk-label-warning\">offcanvas</span><p class=\"uk-text-small uk-margin-small-top\">Мобильная панель: модули под меню — контакты, кнопки, баннер.</p></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-breadcrumb",
+  "title": "Позиция breadcrumb",
+  "module": "mod_custom",
+  "position": "breadcrumb",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-flex uk-flex-middle\"><span class=\"uk-label\">breadcrumb</span><ul class=\"uk-breadcrumb uk-margin-remove uk-margin-small-left\"><li><a href=\"%R%/\">Главная</a></li><li><span>Позиции модулей</span></li></ul></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-adver-top",
+  "title": "Позиция adver-top",
+  "module": "mod_custom",
+  "position": "adver-top",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<a class=\"uk-display-block uk-background-cover uk-light uk-padding uk-text-center\" data-src=\"%R%/%IMG%/city.jpg\" uk-img href=\"#\"><span class=\"uk-label uk-label-warning\">adver-top</span><p class=\"uk-h3 uk-margin-small-top uk-margin-remove-bottom\">Рекламный баннер 970 × 90 под шапкой</p></a>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-slider",
+  "title": "Позиция slider",
+  "module": "mod_custom",
+  "position": "slider",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-position-relative uk-visible-toggle uk-light\" tabindex=\"-1\" uk-slideshow=\"ratio: 21:7; min-height: 320; animation: push; autoplay: true\"><ul class=\"uk-slideshow-items\"><li><img src=\"%R%/%IMG%/solar.jpg\" alt=\"\" uk-cover><div class=\"uk-overlay uk-overlay-primary uk-position-bottom uk-light\"><div class=\"uk-container\"><p class=\"uk-text-meta uk-margin-remove\">Энергетика</p><h2 class=\"uk-margin-small-top uk-margin-remove-bottom\">Солнечные панели на крыше школы</h2></div></div></li><li><img src=\"%R%/%IMG%/marathon.jpg\" alt=\"\" uk-cover><div class=\"uk-overlay uk-overlay-primary uk-position-bottom uk-light\"><div class=\"uk-container\"><p class=\"uk-text-meta uk-margin-remove\">Спорт</p><h2 class=\"uk-margin-small-top uk-margin-remove-bottom\">Городской марафон: маршрут и перекрытия</h2></div></div></li><li><img src=\"%R%/%IMG%/forum.jpg\" alt=\"\" uk-cover><div class=\"uk-overlay uk-overlay-primary uk-position-bottom uk-light\"><div class=\"uk-container\"><p class=\"uk-text-meta uk-margin-remove\">Культура</p><h2 class=\"uk-margin-small-top uk-margin-remove-bottom\">Фестиваль уличного театра</h2></div></div></li></ul><div class=\"uk-position-top-left uk-position-medium\"><span class=\"uk-label uk-label-warning\">slider</span></div><a class=\"uk-position-center-left uk-position-small uk-hidden-hover\" href=\"#\" uk-slidenav-previous uk-slideshow-item=\"previous\"></a><a class=\"uk-position-center-right uk-position-small uk-hidden-hover\" href=\"#\" uk-slidenav-next uk-slideshow-item=\"next\"></a><ul class=\"uk-slideshow-nav uk-dotnav uk-flex-center uk-position-bottom-center uk-position-small\"></ul></div>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-blank"
+  }
+ },
+ {
+  "key": "pos-block-a",
+  "title": "Позиция block-a",
+  "module": "mod_custom",
+  "position": "block-a",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<section class=\"uk-section uk-section-default\"><div class=\"uk-container\"><div class=\"uk-margin-medium-bottom\"><span class=\"uk-label\">block-a</span><h2 class=\"uk-h2 uk-margin-small-top uk-margin-remove-bottom\">Возможности шаблона</h2><p class=\"uk-text-lead uk-margin-small-top uk-margin-remove-bottom\">Полноширинная секция: модуль mod_custom со стилем blank, шаблон не добавляет своей обёртки.</p></div><div class=\"uk-grid-medium uk-child-width-1-2@s uk-child-width-1-4@m uk-grid-match\" uk-grid><div><div class=\"uk-card uk-card-default uk-card-body uk-card-hover uk-height-1-1\"><span class=\"uk-text-primary\" uk-icon=\"icon: thumbnails; ratio: 2\"></span><h3 class=\"uk-h4 uk-margin-small-top\">Карточки</h3><p class=\"uk-text-small uk-margin-remove\">Компонент Card UIkit во всех списках материалов.</p></div></div><div><div class=\"uk-card uk-card-default uk-card-body uk-card-hover uk-height-1-1\"><span class=\"uk-text-primary\" uk-icon=\"icon: image; ratio: 2\"></span><h3 class=\"uk-h4 uk-margin-small-top\">Одно превью</h3><p class=\"uk-text-small uk-margin-remove\">Один файл на картинку и srcset без лишних размеров.</p></div></div><div><div class=\"uk-card uk-card-default uk-card-body uk-card-hover uk-height-1-1\"><span class=\"uk-text-primary\" uk-icon=\"icon: menu; ratio: 2\"></span><h3 class=\"uk-h4 uk-margin-small-top\">Мегаменю</h3><p class=\"uk-text-small uk-margin-remove\">Колонки из подпунктов или из вспомогательного меню.</p></div></div><div><div class=\"uk-card uk-card-default uk-card-body uk-card-hover uk-height-1-1\"><span class=\"uk-text-primary\" uk-icon=\"icon: code; ratio: 2\"></span><h3 class=\"uk-h4 uk-margin-small-top\">Микроразметка</h3><p class=\"uk-text-small uk-margin-remove\">Schema.org, canonical и OpenGraph из коробки.</p></div></div></div></div></section>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-blank"
+  }
+ },
+ {
+  "key": "pos-block-b",
+  "title": "Позиция block-b",
+  "module": "mod_custom",
+  "position": "block-b",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<section class=\"uk-section uk-section-muted\"><div class=\"uk-container\"><div class=\"uk-grid-large uk-flex-middle\" uk-grid><div class=\"uk-width-1-2@m\"><img class=\"uk-border-rounded uk-box-shadow-medium\" src=\"%R%/%IMG%/park.jpg\" width=\"1600\" height=\"1067\" alt=\"\" loading=\"lazy\"></div><div class=\"uk-width-1-2@m\"><div class=\"uk-margin-medium-bottom\"><span class=\"uk-label\">block-b</span><h2 class=\"uk-h2 uk-margin-small-top uk-margin-remove-bottom\">Картинка и текст</h2><p class=\"uk-text-lead uk-margin-small-top uk-margin-remove-bottom\">Классическая секция «две колонки»: на телефоне картинка встаёт над текстом.</p></div><ul class=\"uk-list uk-list-bullet\"><li>сетка uk-grid с колонками uk-width-1-2@m;</li><li>выравнивание по центру uk-flex-middle;</li><li>тень и скругление утилитами UIkit.</li></ul><a class=\"uk-button uk-button-primary\" href=\"#\">Читать дальше</a></div></div></div></section>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-blank"
+  }
+ },
+ {
+  "key": "pos-main-top",
+  "title": "Позиция main-top",
+  "module": "mod_custom",
+  "position": "main-top",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-alert-primary\" uk-alert><span class=\"uk-label\">main-top</span> <span class=\"uk-margin-small-left\">Над компонентом, в колонке контента: объявление раздела, фильтр, баннер.</span></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-main-bottom",
+  "title": "Позиция main-bottom",
+  "module": "mod_custom",
+  "position": "main-bottom",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-card uk-card-default uk-card-body\"><div class=\"uk-flex uk-flex-middle uk-flex-between uk-flex-wrap\"><div><span class=\"uk-label\">main-bottom</span> <span class=\"uk-margin-small-left\">Под компонентом: «Читайте также», подписка, комментарии.</span></div><a class=\"uk-button uk-button-default uk-button-small\" href=\"#\">Подписаться</a></div></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-block-c",
+  "title": "Позиция block-c",
+  "module": "mod_custom",
+  "position": "block-c",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<section class=\"uk-section uk-section-secondary uk-light\"><div class=\"uk-container\"><div class=\"uk-margin-medium-bottom\"><span class=\"uk-label uk-label-warning\">block-c</span><h2 class=\"uk-h2 uk-margin-small-top uk-margin-remove-bottom\">Цифры</h2><p class=\"uk-text-lead uk-margin-small-top uk-margin-remove-bottom\">Секция со статистикой на тёмном фоне.</p></div><div class=\"uk-grid-large uk-child-width-1-2@s uk-child-width-1-4@m uk-text-center\" uk-grid><div><p class=\"uk-heading-medium uk-margin-remove\">25</p><p class=\"uk-text-meta uk-margin-small-top\">новостей в демо</p></div><div><p class=\"uk-heading-medium uk-margin-remove\">14</p><p class=\"uk-text-meta uk-margin-small-top\">меток</p></div><div><p class=\"uk-heading-medium uk-margin-remove\">7</p><p class=\"uk-text-meta uk-margin-small-top\">рубрик</p></div><div><p class=\"uk-heading-medium uk-margin-remove\">40</p><p class=\"uk-text-meta uk-margin-small-top\">позиций и вариантов вывода</p></div></div></div></section>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-blank"
+  }
+ },
+ {
+  "key": "pos-block-d-1",
+  "title": "Позиция block-d",
+  "module": "mod_custom",
+  "position": "block-d",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-card uk-card-default uk-card-body uk-card-hover\"><span class=\"uk-text-primary\" uk-icon=\"icon: home; ratio: 1.6\"></span><h3 class=\"uk-h4 uk-margin-small-top\">Первый модуль</h3><p class=\"uk-text-small uk-margin-remove\"><span class=\"uk-label\">block-d</span> Модули без стиля blank: шаблон ставит их в сетку, колонок — по числу модулей.</p></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-block-d-2",
+  "title": "Позиция block-d",
+  "module": "mod_custom",
+  "position": "block-d",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 2,
+  "content": "<div class=\"uk-card uk-card-default uk-card-body uk-card-hover\"><span class=\"uk-text-primary\" uk-icon=\"icon: bolt; ratio: 1.6\"></span><h3 class=\"uk-h4 uk-margin-small-top\">Второй модуль</h3><p class=\"uk-text-small uk-margin-remove\"><span class=\"uk-label\">block-d</span> Модули без стиля blank: шаблон ставит их в сетку, колонок — по числу модулей.</p></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-block-d-3",
+  "title": "Позиция block-d",
+  "module": "mod_custom",
+  "position": "block-d",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 3,
+  "content": "<div class=\"uk-card uk-card-default uk-card-body uk-card-hover\"><span class=\"uk-text-primary\" uk-icon=\"icon: star; ratio: 1.6\"></span><h3 class=\"uk-h4 uk-margin-small-top\">Третий модуль</h3><p class=\"uk-text-small uk-margin-remove\"><span class=\"uk-label\">block-d</span> Модули без стиля blank: шаблон ставит их в сетку, колонок — по числу модулей.</p></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-block-d-4",
+  "title": "Позиция block-d",
+  "module": "mod_custom",
+  "position": "block-d",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 4,
+  "content": "<div class=\"uk-card uk-card-default uk-card-body uk-card-hover\"><span class=\"uk-text-primary\" uk-icon=\"icon: heart; ratio: 1.6\"></span><h3 class=\"uk-h4 uk-margin-small-top\">Четвёртый модуль</h3><p class=\"uk-text-small uk-margin-remove\"><span class=\"uk-label\">block-d</span> Модули без стиля blank: шаблон ставит их в сетку, колонок — по числу модулей.</p></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-block-e",
+  "title": "Позиция block-e",
+  "module": "mod_custom",
+  "position": "block-e",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<section class=\"uk-section uk-section-muted\"><div class=\"uk-container\"><div class=\"uk-margin-medium-bottom\"><span class=\"uk-label\">block-e</span><h2 class=\"uk-h2 uk-margin-small-top uk-margin-remove-bottom\">Отзывы</h2><p class=\"uk-text-lead uk-margin-small-top uk-margin-remove-bottom\">Карусель uk-slider с карточками-цитатами.</p></div><div uk-slider=\"finite: true\"><ul class=\"uk-slider-items uk-grid-small\"><li class=\"uk-width-1-1 uk-width-1-2@m\"><div class=\"uk-card uk-card-default uk-card-body uk-margin-small-right\"><blockquote class=\"uk-margin-remove\"><p>Шаблон собрали так, что редактор меняет главную, не трогая код.</p></blockquote><div class=\"uk-flex uk-flex-middle uk-margin-top\"><img class=\"uk-border-circle\" src=\"%R%/%IMG%/portrait-1.jpg\" width=\"44\" height=\"44\" alt=\"\"><span class=\"uk-margin-small-left uk-text-small\">Айгерим Сапарова</span></div></div></li><li class=\"uk-width-1-1 uk-width-1-2@m\"><div class=\"uk-card uk-card-default uk-card-body uk-margin-small-right\"><blockquote class=\"uk-margin-remove\"><p>Карточки, метки, авторы — всё штатное Joomla, просто аккуратно оформленное.</p></blockquote><div class=\"uk-flex uk-flex-middle uk-margin-top\"><img class=\"uk-border-circle\" src=\"%R%/%IMG%/portrait-2.jpg\" width=\"44\" height=\"44\" alt=\"\"><span class=\"uk-margin-small-left uk-text-small\">Данияр Ахметов</span></div></div></li><li class=\"uk-width-1-1 uk-width-1-2@m\"><div class=\"uk-card uk-card-default uk-card-body uk-margin-small-right\"><blockquote class=\"uk-margin-remove\"><p>Позиции можно включать и выключать, и вёрстка не разваливается.</p></blockquote><div class=\"uk-flex uk-flex-middle uk-margin-top\"><img class=\"uk-border-circle\" src=\"%R%/%IMG%/portrait-3.jpg\" width=\"44\" height=\"44\" alt=\"\"><span class=\"uk-margin-small-left uk-text-small\">Мария Ким</span></div></div></li></ul><ul class=\"uk-slider-nav uk-dotnav uk-flex-center uk-margin\"></ul></div></div></section>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-blank"
+  }
+ },
+ {
+  "key": "pos-block-f",
+  "title": "Позиция block-f",
+  "module": "mod_custom",
+  "position": "block-f",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<section class=\"uk-section uk-section-primary uk-light\"><div class=\"uk-container uk-text-center\"><span class=\"uk-label uk-label-warning\">block-f</span><h2 class=\"uk-heading-small uk-margin-small-top\">Призыв к действию</h2><p class=\"uk-text-lead uk-width-2-3@m uk-margin-auto\">Полоса во всю ширину с кнопками: подписка, скачивание, регистрация.</p><p class=\"uk-margin-medium-top\"><a class=\"uk-button uk-button-default uk-margin-small-right\" href=\"#\">Подписаться</a><a class=\"uk-button uk-button-text\" href=\"#\">Подробнее</a></p></div></section>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-blank"
+  }
+ },
+ {
+  "key": "pos-block-g",
+  "title": "Позиция block-g",
+  "module": "mod_custom",
+  "position": "block-g",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<section class=\"uk-section uk-section-default\"><div class=\"uk-container\"><div class=\"uk-margin-medium-bottom\"><span class=\"uk-label\">block-g</span><h2 class=\"uk-h2 uk-margin-small-top uk-margin-remove-bottom\">Партнёры</h2><p class=\"uk-text-lead uk-margin-small-top uk-margin-remove-bottom\">Ряд логотипов: шесть ячеек на широком экране, три на планшете.</p></div><div class=\"uk-grid-small uk-child-width-1-3@s uk-child-width-1-6@m\" uk-grid><div><div class=\"uk-card uk-card-default uk-card-small uk-card-body uk-text-center uk-text-muted\"><span uk-icon=\"icon: world; ratio: 1.4\"></span><p class=\"uk-margin-small-top uk-margin-remove-bottom uk-text-small\">Партнёр 1</p></div></div><div><div class=\"uk-card uk-card-default uk-card-small uk-card-body uk-text-center uk-text-muted\"><span uk-icon=\"icon: bolt; ratio: 1.4\"></span><p class=\"uk-margin-small-top uk-margin-remove-bottom uk-text-small\">Партнёр 2</p></div></div><div><div class=\"uk-card uk-card-default uk-card-small uk-card-body uk-text-center uk-text-muted\"><span uk-icon=\"icon: star; ratio: 1.4\"></span><p class=\"uk-margin-small-top uk-margin-remove-bottom uk-text-small\">Партнёр 3</p></div></div><div><div class=\"uk-card uk-card-default uk-card-small uk-card-body uk-text-center uk-text-muted\"><span uk-icon=\"icon: heart; ratio: 1.4\"></span><p class=\"uk-margin-small-top uk-margin-remove-bottom uk-text-small\">Партнёр 4</p></div></div><div><div class=\"uk-card uk-card-default uk-card-small uk-card-body uk-text-center uk-text-muted\"><span uk-icon=\"icon: bookmark; ratio: 1.4\"></span><p class=\"uk-margin-small-top uk-margin-remove-bottom uk-text-small\">Партнёр 5</p></div></div><div><div class=\"uk-card uk-card-default uk-card-small uk-card-body uk-text-center uk-text-muted\"><span uk-icon=\"icon: happy; ratio: 1.4\"></span><p class=\"uk-margin-small-top uk-margin-remove-bottom uk-text-small\">Партнёр 6</p></div></div></div></div></section>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-blank"
+  }
+ },
+ {
+  "key": "pos-block-h",
+  "title": "Позиция block-h",
+  "module": "mod_custom",
+  "position": "block-h",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<section class=\"uk-section uk-section-muted\"><div class=\"uk-container uk-container-small\"><div class=\"uk-margin-medium-bottom\"><span class=\"uk-label\">block-h</span><h2 class=\"uk-h2 uk-margin-small-top uk-margin-remove-bottom\">Вопросы и ответы</h2><p class=\"uk-text-lead uk-margin-small-top uk-margin-remove-bottom\">Аккордеон uk-accordion.</p></div><ul uk-accordion><li class=\"uk-open\"><a class=\"uk-accordion-title\" href=\"#\">Как поставить модуль во всю ширину?</a><div class=\"uk-accordion-content\"><p>Выберите модулю стиль оформления blank: шаблон выведет его без секции и контейнера, а модуль сам задаёт фон и отступы.</p></div></li><li><a class=\"uk-accordion-title\" href=\"#\">Как разделить позицию на колонки?</a><div class=\"uk-accordion-content\"><p>Опубликуйте в позиции несколько модулей без стиля blank: шаблон поставит их в сетку, колонок — по числу модулей, но не больше четырёх.</p></div></li><li><a class=\"uk-accordion-title\" href=\"#\">Где поменять фон блочных позиций?</a><div class=\"uk-accordion-content\"><p>В настройках шаблона, вкладка «Макет»: фон, отступы, зазор и чередование.</p></div></li></ul></div></section>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-blank"
+  }
+ },
+ {
+  "key": "pos-block-i",
+  "title": "Позиция block-i",
+  "module": "mod_custom",
+  "position": "block-i",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<section class=\"uk-section uk-section-default\"><div class=\"uk-container\"><div class=\"uk-margin-medium-bottom\"><span class=\"uk-label\">block-i</span><h2 class=\"uk-h2 uk-margin-small-top uk-margin-remove-bottom\">Четыре шага</h2><p class=\"uk-text-lead uk-margin-small-top uk-margin-remove-bottom\">Пронумерованные шаги: карточки с бейджами uk-badge.</p></div><div class=\"uk-grid-medium uk-child-width-1-2@s uk-child-width-1-4@m uk-grid-match\" uk-grid><div><div class=\"uk-card uk-card-default uk-card-body uk-height-1-1\"><span class=\"uk-badge\">1</span><h3 class=\"uk-h4 uk-margin-small-top\">Установить пакет</h3><p class=\"uk-text-small uk-margin-remove\">Расширения → Установка: шаблон, com_blank, демо.</p></div></div><div><div class=\"uk-card uk-card-default uk-card-body uk-height-1-1\"><span class=\"uk-badge\">2</span><h3 class=\"uk-h4 uk-margin-small-top\">Применить демо</h3><p class=\"uk-text-small uk-margin-remove\">Система → Образцы данных → Демо-сайт wmarka.</p></div></div><div><div class=\"uk-card uk-card-default uk-card-body uk-height-1-1\"><span class=\"uk-badge\">3</span><h3 class=\"uk-h4 uk-margin-small-top\">Настроить</h3><p class=\"uk-text-small uk-margin-remove\">Логотип, контакты, цвета — в стиле шаблона.</p></div></div><div><div class=\"uk-card uk-card-default uk-card-body uk-height-1-1\"><span class=\"uk-badge\">4</span><h3 class=\"uk-h4 uk-margin-small-top\">Писать новости</h3><p class=\"uk-text-small uk-margin-remove\">Материалы, метки и авторы — штатные Joomla.</p></div></div></div></div></section>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-blank"
+  }
+ },
+ {
+  "key": "pos-block-k",
+  "title": "Позиция block-k",
+  "module": "mod_custom",
+  "position": "block-k",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<section class=\"uk-section uk-section-secondary uk-light\"><div class=\"uk-container uk-container-small uk-text-center\"><span class=\"uk-label uk-label-warning\">block-k</span><h2 class=\"uk-margin-small-top\">Подписка на рассылку</h2><p class=\"uk-text-lead\">Последняя секция перед подвалом. Форма — для вида: адрес никуда не отправляется.</p><div class=\"uk-grid-small uk-flex-center uk-margin-medium-top\" uk-grid><div class=\"uk-width-1-1 uk-width-medium@s\"><input class=\"uk-input\" type=\"email\" placeholder=\"Ваша почта\" aria-label=\"Почта\"></div><div class=\"uk-width-auto\"><button class=\"uk-button uk-button-primary\" type=\"button\">Подписаться</button></div></div></div></section>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-blank"
+  }
+ },
+ {
+  "key": "pos-sidebar-a-1",
+  "title": "Стиль «card»",
+  "module": "mod_custom",
+  "position": "sidebar-a",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "ordering": 51,
+  "content": "<p><span class=\"uk-label\">sidebar-a</span> модуль со стилем оформления <code>wmarka-card</code>.</p><p>Стиль выбирают на вкладке «Дополнительно» модуля.</p>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-card"
+  }
+ },
+ {
+  "key": "pos-sidebar-a-2",
+  "title": "Стиль «primary»",
+  "module": "mod_custom",
+  "position": "sidebar-a",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "ordering": 52,
+  "content": "<p><span class=\"uk-label\">sidebar-a</span> модуль со стилем оформления <code>wmarka-primary</code>.</p><p>Стиль выбирают на вкладке «Дополнительно» модуля.</p>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-primary"
+  }
+ },
+ {
+  "key": "pos-sidebar-a-3",
+  "title": "Стиль «secondary»",
+  "module": "mod_custom",
+  "position": "sidebar-a",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "ordering": 53,
+  "content": "<p><span class=\"uk-label\">sidebar-a</span> модуль со стилем оформления <code>wmarka-secondary</code>.</p><p>Стиль выбирают на вкладке «Дополнительно» модуля.</p>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-secondary"
+  }
+ },
+ {
+  "key": "pos-sidebar-b-1",
+  "title": "Стиль «muted»",
+  "module": "mod_custom",
+  "position": "sidebar-b",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "ordering": 51,
+  "content": "<p><span class=\"uk-label\">sidebar-b</span> модуль со стилем оформления <code>wmarka-muted</code>.</p><p>Стиль выбирают на вкладке «Дополнительно» модуля.</p>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-muted"
+  }
+ },
+ {
+  "key": "pos-sidebar-b-2",
+  "title": "Стиль «tile»",
+  "module": "mod_custom",
+  "position": "sidebar-b",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "ordering": 52,
+  "content": "<p><span class=\"uk-label\">sidebar-b</span> модуль со стилем оформления <code>wmarka-tile</code>.</p><p>Стиль выбирают на вкладке «Дополнительно» модуля.</p>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-tile"
+  }
+ },
+ {
+  "key": "pos-sidebar-b-3",
+  "title": "Стиль «wmarka»",
+  "module": "mod_custom",
+  "position": "sidebar-b",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "ordering": 53,
+  "content": "<p><span class=\"uk-label\">sidebar-b</span> модуль со стилем оформления <code>wmarka-wmarka</code>.</p><p>Стиль выбирают на вкладке «Дополнительно» модуля.</p>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-wmarka"
+  }
+ },
+ {
+  "key": "pos-footer-left",
+  "title": "О проекте",
+  "module": "mod_custom",
+  "position": "footer-left",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "ordering": 1,
+  "content": "<p><span class=\"uk-label uk-label-warning\">footer-left</span></p><p>Первая колонка подвала: о проекте, логотип, короткий текст.</p>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-footer-center",
+  "title": "Разделы",
+  "module": "mod_custom",
+  "position": "footer-center",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "ordering": 1,
+  "content": "<p><span class=\"uk-label uk-label-warning\">footer-center</span></p><ul class=\"uk-list uk-list-collapse\"><li><a href=\"#\">Новости</a></li><li><a href=\"#\">Справочник</a></li><li><a href=\"#\">Авторы</a></li></ul>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-footer-right",
+  "title": "Соцсети",
+  "module": "mod_custom",
+  "position": "footer-right",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "ordering": 1,
+  "content": "<p><span class=\"uk-label uk-label-warning\">footer-right</span></p><p>Без модуля здесь выводятся контакты из настроек шаблона.</p><a class=\"uk-icon-button uk-margin-small-right\" href=\"#\" uk-icon=\"telegram\"></a><a class=\"uk-icon-button\" href=\"#\" uk-icon=\"youtube\"></a>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-footer",
+  "title": "Позиция footer",
+  "module": "mod_custom",
+  "position": "footer",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<span class=\"uk-label uk-label-warning\">footer</span> <span class=\"uk-margin-small-left uk-text-small\">Строка копирайта: правовая информация, ссылки на правила.</span>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-debug",
+  "title": "Позиция debug",
+  "module": "mod_custom",
+  "position": "debug",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<div class=\"uk-container uk-padding-small\"><span class=\"uk-label uk-label-danger\">debug</span> <span class=\"uk-text-small uk-margin-small-left\">Отладка: самый низ страницы.</span></div>",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "pos-counters",
+  "title": "Позиция counters",
+  "module": "mod_custom",
+  "position": "counters",
+  "assign": {
+   "only": [
+    "positions"
+   ]
+  },
+  "showtitle": 0,
+  "ordering": 1,
+  "content": "<!-- позиция counters: скрытая, для кодов счётчиков -->",
+  "params": {
+   "prepare_content": 0
+  }
+ },
+ {
+  "key": "h-lead",
+  "title": "Главное",
+  "module": "mod_articles",
+  "position": "block-a",
+  "assign": "home",
+  "showtitle": 0,
+  "ordering": 1,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "news"
+   ],
+   "count": 1,
+   "show_featured": "only",
+   "article_ordering": "a.publish_up",
+   "article_ordering_direction": "DESC",
+   "show_child_category_articles": 1,
+   "levels": 2,
+   "layout": "_:wm-cards",
+   "articles_layout": 1,
+   "layout_columns": 1,
+   "img_intro_full": "intro",
+   "show_introtext": 1,
+   "introtext_limit": 220,
+   "show_date": 1,
+   "show_date_field": "publish_up",
+   "show_date_format": "d.m.Y",
+   "show_category": 1,
+   "show_tags": 0,
+   "item_heading": "h3",
+   "header_tag": "h2",
+   "header_class": "",
+   "moduleclass_sfx": "uk-width-2-3@m"
+  }
+ },
+ {
+  "key": "h-feed",
+  "title": "Лента новостей",
+  "module": "mod_articles",
+  "position": "block-a",
+  "assign": "home",
+  "showtitle": 1,
+  "ordering": 2,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "news"
+   ],
+   "count": 9,
+   "show_featured": "show",
+   "article_ordering": "a.publish_up",
+   "article_ordering_direction": "DESC",
+   "show_child_category_articles": 1,
+   "levels": 2,
+   "layout": "_:wm-feed",
+   "articles_layout": 1,
+   "layout_columns": 1,
+   "img_intro_full": "intro",
+   "show_introtext": 0,
+   "introtext_limit": 120,
+   "show_date": 1,
+   "show_date_field": "publish_up",
+   "show_date_format": "d.m.Y",
+   "show_category": 1,
+   "show_tags": 0,
+   "item_heading": "h3",
+   "header_tag": "h2",
+   "header_class": "uk-h4 uk-heading-bullet uk-margin-medium-bottom",
+   "moduleclass_sfx": "uk-width-1-3@m"
+  }
+ },
+ {
+  "key": "h-latest",
+  "title": "Новости",
+  "module": "mod_articles",
+  "position": "block-b",
+  "assign": "home",
+  "showtitle": 1,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "news"
+   ],
+   "count": 6,
+   "show_featured": "hide",
+   "article_ordering": "a.publish_up",
+   "article_ordering_direction": "DESC",
+   "show_child_category_articles": 1,
+   "levels": 2,
+   "layout": "_:wm-cards",
+   "articles_layout": 1,
+   "layout_columns": 3,
+   "img_intro_full": "intro",
+   "show_introtext": 0,
+   "introtext_limit": 120,
+   "show_date": 1,
+   "show_date_field": "publish_up",
+   "show_date_format": "d.m.Y",
+   "show_category": 1,
+   "show_tags": 0,
+   "item_heading": "h3",
+   "header_tag": "h2",
+   "header_class": ""
+  }
+ },
+ {
+  "key": "h-economy",
+  "title": "Экономика",
+  "module": "mod_articles",
+  "position": "block-c",
+  "assign": "home",
+  "showtitle": 1,
+  "ordering": 1,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "economy"
+   ],
+   "count": 3,
+   "show_featured": "show",
+   "article_ordering": "a.publish_up",
+   "article_ordering_direction": "DESC",
+   "show_child_category_articles": 1,
+   "levels": 2,
+   "layout": "_:wm-media",
+   "articles_layout": 1,
+   "layout_columns": 1,
+   "img_intro_full": "intro",
+   "show_introtext": 0,
+   "introtext_limit": 120,
+   "show_date": 1,
+   "show_date_field": "publish_up",
+   "show_date_format": "d.m.Y",
+   "show_category": 1,
+   "show_tags": 0,
+   "item_heading": "h3",
+   "header_tag": "h2",
+   "header_class": ""
+  }
+ },
+ {
+  "key": "h-tech",
+  "title": "Технологии",
+  "module": "mod_articles",
+  "position": "block-c",
+  "assign": "home",
+  "showtitle": 1,
+  "ordering": 2,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "tech"
+   ],
+   "count": 3,
+   "show_featured": "show",
+   "article_ordering": "a.publish_up",
+   "article_ordering_direction": "DESC",
+   "show_child_category_articles": 1,
+   "levels": 2,
+   "layout": "_:wm-media",
+   "articles_layout": 1,
+   "layout_columns": 1,
+   "img_intro_full": "intro",
+   "show_introtext": 0,
+   "introtext_limit": 120,
+   "show_date": 1,
+   "show_date_field": "publish_up",
+   "show_date_format": "d.m.Y",
+   "show_category": 1,
+   "show_tags": 0,
+   "item_heading": "h3",
+   "header_tag": "h2",
+   "header_class": ""
+  }
+ },
+ {
+  "key": "h-science",
+  "title": "Наука",
+  "module": "mod_articles",
+  "position": "block-c",
+  "assign": "home",
+  "showtitle": 1,
+  "ordering": 3,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "science"
+   ],
+   "count": 3,
+   "show_featured": "show",
+   "article_ordering": "a.publish_up",
+   "article_ordering_direction": "DESC",
+   "show_child_category_articles": 1,
+   "levels": 2,
+   "layout": "_:wm-media",
+   "articles_layout": 1,
+   "layout_columns": 1,
+   "img_intro_full": "intro",
+   "show_introtext": 0,
+   "introtext_limit": 120,
+   "show_date": 1,
+   "show_date_field": "publish_up",
+   "show_date_format": "d.m.Y",
+   "show_category": 1,
+   "show_tags": 0,
+   "item_heading": "h3",
+   "header_tag": "h2",
+   "header_class": ""
+  }
+ },
+ {
+  "key": "h-video",
+  "title": "Главная: видео",
+  "module": "mod_custom",
+  "position": "block-d",
+  "assign": "home",
+  "content": "<section class=\"uk-section uk-section-secondary uk-light\"><div class=\"uk-container\"><div class=\"uk-flex uk-flex-between uk-flex-middle uk-margin\"><h2 class=\"uk-h3 uk-margin-remove\"><span uk-icon=\"icon: play-circle; ratio: 1.3\"></span> Видео</h2><a class=\"uk-button uk-button-text\" href=\"%MENU:m-video%\">Все видео</a></div><div class=\"uk-grid-medium\" uk-grid><div class=\"uk-width-2-3@m\"><ul id=\"wm-video-player\" class=\"uk-switcher\"><li><div class=\"uk-inline uk-width-1-1\"><iframe src=\"https://www.youtube-nocookie.com/embed/UXqq0ZvbOnk\" width=\"1280\" height=\"720\" title=\"Charge\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></div><p class=\"uk-text-small uk-margin-small-top\">«Charge» — четырнадцатый открытый фильм Blender Studio</p></li><li><div class=\"uk-inline uk-width-1-1\"><iframe src=\"https://www.youtube-nocookie.com/embed/gWw23EYM9VM\" width=\"1280\" height=\"720\" title=\"Elephants Dream\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></div><p class=\"uk-text-small uk-margin-small-top\">«Elephants Dream» — первый открытый фильм Blender</p></li><li><div class=\"uk-inline uk-width-1-1\"><iframe src=\"https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ\" width=\"1280\" height=\"720\" title=\"Big Buck Bunny\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></div><p class=\"uk-text-small uk-margin-small-top\">«Big Buck Bunny» — второй открытый фильм Blender</p></li><li><div class=\"uk-inline uk-width-1-1\"><iframe src=\"https://www.youtube-nocookie.com/embed/eRsGyueVLvQ\" width=\"1280\" height=\"720\" title=\"Sintel\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></div><p class=\"uk-text-small uk-margin-small-top\">«Sintel» — третий открытый фильм Blender</p></li></ul></div><div class=\"uk-width-1-3@m\"><ul class=\"uk-nav uk-nav-default\" uk-switcher=\"connect: #wm-video-player; animation: uk-animation-fade\"><li><a href=\"#\"><div class=\"uk-grid-small uk-flex-middle\" uk-grid><div class=\"uk-width-1-3\"><img src=\"https://i.ytimg.com/vi/UXqq0ZvbOnk/mqdefault.jpg\" width=\"320\" height=\"180\" alt=\"\" loading=\"lazy\"></div><div class=\"uk-width-expand uk-text-small\">«Charge»</div></div></a></li><li><a href=\"#\"><div class=\"uk-grid-small uk-flex-middle\" uk-grid><div class=\"uk-width-1-3\"><img src=\"https://i.ytimg.com/vi/gWw23EYM9VM/mqdefault.jpg\" width=\"320\" height=\"180\" alt=\"\" loading=\"lazy\"></div><div class=\"uk-width-expand uk-text-small\">«Elephants Dream»</div></div></a></li><li><a href=\"#\"><div class=\"uk-grid-small uk-flex-middle\" uk-grid><div class=\"uk-width-1-3\"><img src=\"https://i.ytimg.com/vi/aqz-KE-bpKQ/mqdefault.jpg\" width=\"320\" height=\"180\" alt=\"\" loading=\"lazy\"></div><div class=\"uk-width-expand uk-text-small\">«Big Buck Bunny»</div></div></a></li><li><a href=\"#\"><div class=\"uk-grid-small uk-flex-middle\" uk-grid><div class=\"uk-width-1-3\"><img src=\"https://i.ytimg.com/vi/eRsGyueVLvQ/mqdefault.jpg\" width=\"320\" height=\"180\" alt=\"\" loading=\"lazy\"></div><div class=\"uk-width-expand uk-text-small\">«Sintel»</div></div></a></li></ul></div></div></div></section>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-blank"
+  }
+ },
+ {
+  "key": "h-photo",
+  "title": "Фото",
+  "module": "mod_articles",
+  "position": "block-e",
+  "assign": "home",
+  "showtitle": 1,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "news"
+   ],
+   "count": 6,
+   "show_featured": "show",
+   "article_ordering": "a.publish_up",
+   "article_ordering_direction": "DESC",
+   "show_child_category_articles": 1,
+   "levels": 2,
+   "layout": "_:wm-slider",
+   "articles_layout": 1,
+   "layout_columns": 3,
+   "img_intro_full": "intro",
+   "show_introtext": 0,
+   "introtext_limit": 120,
+   "show_date": 1,
+   "show_date_field": "publish_up",
+   "show_date_format": "d.m.Y",
+   "show_category": 1,
+   "show_tags": 0,
+   "item_heading": "h3",
+   "header_tag": "h2",
+   "header_class": "",
+   "filter_tag": [
+    "photo"
+   ]
+  }
+ },
+ {
+  "key": "h-society",
+  "title": "Общество",
+  "module": "mod_articles",
+  "position": "block-f",
+  "assign": "home",
+  "showtitle": 1,
+  "ordering": 1,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "society"
+   ],
+   "count": 3,
+   "show_featured": "show",
+   "article_ordering": "a.publish_up",
+   "article_ordering_direction": "DESC",
+   "show_child_category_articles": 1,
+   "levels": 2,
+   "layout": "_:wm-media",
+   "articles_layout": 1,
+   "layout_columns": 1,
+   "img_intro_full": "intro",
+   "show_introtext": 0,
+   "introtext_limit": 120,
+   "show_date": 1,
+   "show_date_field": "publish_up",
+   "show_date_format": "d.m.Y",
+   "show_category": 1,
+   "show_tags": 0,
+   "item_heading": "h3",
+   "header_tag": "h2",
+   "header_class": ""
+  }
+ },
+ {
+  "key": "h-culture",
+  "title": "Культура",
+  "module": "mod_articles",
+  "position": "block-f",
+  "assign": "home",
+  "showtitle": 1,
+  "ordering": 2,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "culture"
+   ],
+   "count": 3,
+   "show_featured": "show",
+   "article_ordering": "a.publish_up",
+   "article_ordering_direction": "DESC",
+   "show_child_category_articles": 1,
+   "levels": 2,
+   "layout": "_:wm-media",
+   "articles_layout": 1,
+   "layout_columns": 1,
+   "img_intro_full": "intro",
+   "show_introtext": 0,
+   "introtext_limit": 120,
+   "show_date": 1,
+   "show_date_field": "publish_up",
+   "show_date_format": "d.m.Y",
+   "show_category": 1,
+   "show_tags": 0,
+   "item_heading": "h3",
+   "header_tag": "h2",
+   "header_class": ""
+  }
+ },
+ {
+  "key": "h-sport",
+  "title": "Спорт",
+  "module": "mod_articles",
+  "position": "block-f",
+  "assign": "home",
+  "showtitle": 1,
+  "ordering": 3,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "sport"
+   ],
+   "count": 3,
+   "show_featured": "show",
+   "article_ordering": "a.publish_up",
+   "article_ordering_direction": "DESC",
+   "show_child_category_articles": 1,
+   "levels": 2,
+   "layout": "_:wm-media",
+   "articles_layout": 1,
+   "layout_columns": 1,
+   "img_intro_full": "intro",
+   "show_introtext": 0,
+   "introtext_limit": 120,
+   "show_date": 1,
+   "show_date_field": "publish_up",
+   "show_date_format": "d.m.Y",
+   "show_category": 1,
+   "show_tags": 0,
+   "item_heading": "h3",
+   "header_tag": "h2",
+   "header_class": ""
+  }
+ },
+ {
+  "key": "h-ref",
+  "title": "Справочник",
+  "module": "mod_articles",
+  "position": "block-g",
+  "assign": "home",
+  "showtitle": 1,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "reference"
+   ],
+   "count": 3,
+   "show_featured": "show",
+   "article_ordering": "a.publish_up",
+   "article_ordering_direction": "DESC",
+   "show_child_category_articles": 1,
+   "levels": 2,
+   "layout": "_:wm-cards",
+   "articles_layout": 1,
+   "layout_columns": 3,
+   "img_intro_full": "intro",
+   "show_introtext": 1,
+   "introtext_limit": 120,
+   "show_date": 0,
+   "show_date_field": "publish_up",
+   "show_date_format": "d.m.Y",
+   "show_category": 1,
+   "show_tags": 0,
+   "item_heading": "h3",
+   "header_tag": "h2",
+   "header_class": ""
+  }
+ },
+ {
+  "key": "h-promo",
+  "title": "Главная: шаблон",
+  "module": "mod_custom",
+  "position": "block-h",
+  "assign": "home",
+  "content": "<section class=\"uk-section uk-section-secondary uk-light\"><div class=\"uk-container\"><div class=\"uk-grid-large uk-flex-middle\" uk-grid><div class=\"uk-width-expand@m\"><p class=\"uk-text-meta uk-margin-remove\">Шаблон этого сайта</p><h2 class=\"uk-margin-small-top\">wmarka — бесплатный стартовый шаблон для Joomla 5 и 6</h2><p class=\"uk-text-lead\">UIkit 3, мегаменю, карточки, srcset, микроразметка и демо-сайт одним пакетом.</p></div><div class=\"uk-width-auto@m\"><a class=\"uk-button uk-button-primary uk-margin-small-right\" href=\"%MENU:m-download%\">Скачать</a><a class=\"uk-button uk-button-default\" href=\"%MENU:positions%\">Позиции модулей</a></div></div></div></section>",
+  "params": {
+   "prepare_content": 0,
+   "style": "wmarka-blank"
+  }
+ },
+ {
+  "key": "side-feed",
+  "title": "Лента",
+  "module": "mod_articles",
+  "position": "sidebar-b",
+  "assign": {
+   "except": [
+    "home",
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "ordering": 0,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "news"
+   ],
+   "count": 8,
+   "show_featured": "show",
+   "article_ordering": "a.publish_up",
+   "article_ordering_direction": "DESC",
+   "show_child_category_articles": 1,
+   "levels": 2,
+   "layout": "_:wm-feed",
+   "articles_layout": 1,
+   "layout_columns": 1,
+   "img_intro_full": "intro",
+   "show_introtext": 0,
+   "introtext_limit": 120,
+   "show_date": 1,
+   "show_date_field": "publish_up",
+   "show_date_format": "d.m.Y",
+   "show_category": 1,
+   "show_tags": 0,
+   "item_heading": "h3",
+   "header_tag": "h2",
+   "header_class": ""
+  }
+ },
+ {
+  "key": "side-popular",
+  "title": "Популярное",
+  "module": "mod_articles_popular",
+  "position": "sidebar-b",
+  "assign": {
+   "except": [
+    "home",
+    "positions"
+   ]
+  },
+  "showtitle": 1,
+  "ordering": 1,
+  "params": {
+   "catid": [
+    "economy",
+    "energy",
+    "society",
+    "tech",
+    "science",
+    "culture",
+    "sport"
+   ],
+   "count": 5,
+   "show_front": 1,
+   "layout": "_:wm-media"
+  }
+ }
+]

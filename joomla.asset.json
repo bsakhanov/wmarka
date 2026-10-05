@@ -1,65 +1,20 @@
 {
   "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
   "name": "wmarka",
-  "version": "3.0.0",
-  "description": "Wmarka template assets (Joomla 6 & UIkit 3)",
+  "version": "4.0.9",
+  "description": "WMARKA 4.0.9 — UIkit 3.25.25. Относительные пути: файлы ищутся в media/templates/site/{шаблон}/css|js, дочерний шаблон может подменить любой файл.",
+  "license": "GPL-2.0-or-later",
   "assets": [
-    {
-      "name": "fonts",
-      "type": "style",
-      "uri": "media/templates/site/wmarka/css/fonts.css",
-      "version": "3.0.0"
-    },
-    {
-      "name": "uikit.min",
-      "type": "style",
-      "uri": "media/templates/site/wmarka/css/uikit.min.css",
-      "version": "3.25.4",
-      "dependencies": [
-        "template.wmarka.fonts"
-      ]
-    },
-    {
-      "name": "user",
-      "type": "style",
-      "uri": "media/templates/site/wmarka/css/user.css",
-      "version": "3.0.0",
-      "dependencies": [
-        "template.wmarka.uikit.min"
-      ]
-    },
-    {
-      "name": "uikit.min",
-      "type": "script",
-      "uri": "media/templates/site/wmarka/js/uikit.min.js",
-      "version": "3.25.4",
-      "attributes": {
-        "defer": true
-      }
-    },
-    {
-      "name": "uikit-icons.min",
-      "type": "script",
-      "uri": "media/templates/site/wmarka/js/uikit-icons.min.js",
-      "version": "3.25.4",
-      "attributes": {
-        "defer": true
-      },
-      "dependencies": [
-        "template.wmarka.uikit.min"
-      ]
-    },
-    {
-      "name": "wmarka-icons-min",
-      "type": "script",
-      "uri": "media/templates/site/wmarka/js/wmarka-icons-min.js",
-      "version": "3.0.0",
-      "attributes": {
-        "defer": true
-      },
-      "dependencies": [
-        "template.wmarka.uikit.min"
-      ]
-    }
+    { "name": "template.wmarka.fonts", "type": "style", "uri": "fonts.css" },
+    { "name": "template.wmarka.uikit", "type": "style", "uri": "uikit.min.css", "version": "3.25.25" },
+    { "name": "template.wmarka.core", "type": "style", "uri": "wmarka.css", "dependencies": ["template.wmarka.uikit"] },
+    { "name": "template.wmarka.nocaps", "type": "style", "uri": "nocaps.css", "dependencies": ["template.wmarka.uikit"] },
+    { "name": "template.active.language", "type": "style", "uri": "", "class": "LangActiveAssetItem", "dependencies": ["template.active"] },
+    { "name": "template.user", "description": "Свои стили сайта: css/user.css (не перезаписывается обновлением).", "type": "style", "uri": "user.css", "weight": 500, "dependencies": ["template.wmarka.uikit", "template.active.language"] },
+    { "name": "template.wmarka.uikit", "type": "script", "uri": "uikit.min.js", "version": "3.25.25", "attributes": { "defer": true } },
+    { "name": "template.wmarka.icons", "type": "script", "uri": "uikit-icons.min.js", "version": "3.25.25", "attributes": { "defer": true }, "dependencies": ["template.wmarka.uikit"] },
+    { "name": "template.wmarka", "type": "script", "uri": "wmarka.js", "attributes": { "defer": true }, "dependencies": ["template.wmarka.uikit"] },
+    { "name": "template.active", "type": "script", "uri": "", "dependencies": ["template.wmarka"] },
+    { "name": "template.user", "description": "Свой скрипт сайта: js/user.js.", "type": "script", "uri": "user.js", "attributes": { "defer": true }, "dependencies": ["template.active"] }
   ]
 }

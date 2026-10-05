@@ -1,69 +1,51 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  Layout
- * @version     WMARKA ULTRA (PHP 8.4 Fixed + WebP + srcset)
+ * WMARKA — интро-изображение (блог, избранное, модули ядра, сторонние вызовы).
+ *
+ * Единый профиль intro из php/Image.php: тот же файл миниатюры используют
+ * карточки блога, страницы меток, поиск и модули — лишних превью нет.
+ * Источник: image_intro → image_fulltext → первая картинка текста → заглушка.
+ *
+ * @var object|array $displayData материал (или ['item' => материал, 'link' => URL])
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\Component\Content\Site\Helper\RouteHelper;
+use Wmarka\Template\Image;
 
-// Универсальное извлечение объекта статьи (может быть массивом или объектом)
-$item = is_array($displayData) ? ($displayData['item'] ?? null) : $displayData;
-if (!$item) return;
+require_once JPATH_THEMES . '/wmarka/php/autoload.php';
 
-$params = $item->params;
+$item = \is_array($displayData) ? ($displayData['item'] ?? null) : $displayData;
 
-// ИСПРАВЛЕНИЕ: Декодируем в массив (true), чтобы избежать ошибки stdClass
-$images = json_decode($item->images, true) ?: [];
-
-$defaultImageFallback = 'media/templates/site/wmarka/images/zamena.jpg';
-$baseUrl = Uri::base(true) . '/';
-
-// ИСПРАВЛЕНИЕ: Безопасное получение размеров (объект или массив)
-$w = (int)(is_array($displayData) ? ($displayData['w'] ?? 390) : ($displayData->w ?? 390));
-$h = (int)(is_array($displayData) ? ($displayData['h'] ?? 260) : ($displayData->h ?? 260));
-$mobW = round($w / 1.5); 
-$mobH = round($h / 1.5);
-
-$imageToRender = $defaultImageFallback;
-$imageAlt      = $item->title;
-
-// Работаем с массивом $images['...']
-if (!empty($images['image_intro'])) {
-    $imageToRender = preg_replace('/#joomlaImage?([^\'" >]+)/', '', $images['image_intro']);
-    $imageAlt      = ($images['image_intro_caption'] ?? '') ?: $item->title;
-} elseif (!empty($images['image_fulltext'])) {
-    $imageToRender = preg_replace('/#joomlaImage?([^\'" >]+)/', '', $images['image_fulltext']);
+if (!\is_object($item)) {
+    return;
 }
 
-if (!file_exists(JPATH_ROOT . '/' . ltrim($imageToRender, '/'))) {
-    $imageToRender = $defaultImageFallback;
+$thumb = Image::intro($item);
+
+if (!$thumb) {
+    return;
 }
 
-require_once(JPATH_SITE . '/libraries/juimage/vendor/autoload.php');
-$juImg = new JUImage\Image();
+$link   = \is_array($displayData) ? ($displayData['link'] ?? '') : '';
+$params = $item->params ?? null;
 
-$options = ['w' => $w, 'h' => $h, 'q' => '35', 'f' => 'webp', 'cache' => 'img', 'fit' => 'cover'];
-$thumbD = $juImg->render($imageToRender, $options);
-$thumbM = $juImg->render($imageToRender, array_merge($options, ['w' => $mobW, 'h' => $mobH]));
+if ($link === '' && !empty($item->wmLink)) {
+    $link = $item->wmLink;
+} elseif ($link === '' && !empty($item->link) && \is_string($item->link)) {
+    $link = $item->link;
+} elseif ($link === '' && \is_object($params) && isset($item->slug, $item->catid) && $params->get('link_intro_image', $params->get('link_titles', 1)) && $params->get('access-view')) {
+    $link = Route::_(RouteHelper::getArticleRoute($item->slug, $item->catid, $item->language));
+}
 
-$link = ($params->get('link_titles', 1) && $params->get('access-view')) 
-    ? Route::_(RouteHelper::getArticleRoute($item->slug, $item->catid, $item->language)) : false;
+$img = Image::img($thumb, $thumb['alt'], ['class' => 'uk-width-1-1 uk-transition-scale-up uk-transition-opaque', 'sizes' => Image::sizes(3)]);
 ?>
-
-<div class="uk-card-media-top uk-inline-clip uk-transition-toggle uk-border-rounded">
-    <?php if ($link) : ?><a href="<?php echo $link; ?>" aria-label="<?php echo htmlspecialchars($item->title, ENT_QUOTES, 'UTF-8'); ?>"><?php endif; ?>
-        <picture>
-            <source srcset="<?php echo $baseUrl . ltrim($thumbM, '/'); ?>" media="(max-width: 640px)">
-            <img src="<?php echo $baseUrl . ltrim($thumbD, '/'); ?>" 
-                 width="<?php echo $w; ?>" height="<?php echo $h; ?>" 
-                 class="uk-transition-scale-up uk-transition-opaque uk-border-rounded" 
-                 alt="<?php echo htmlspecialchars($imageAlt, ENT_QUOTES, 'UTF-8'); ?>" 
-                 itemprop="thumbnailUrl" loading="lazy">
-        </picture>
-    <?php if ($link) : ?></a><?php endif; ?>
+<div class="uk-inline-clip uk-transition-toggle uk-display-block uk-margin-bottom">
+    <?php if ($link) : ?>
+        <a href="<?php echo $link; ?>" tabindex="-1" aria-hidden="true"><?php echo $img; ?></a>
+    <?php else : ?>
+        <?php echo $img; ?>
+    <?php endif; ?>
 </div>

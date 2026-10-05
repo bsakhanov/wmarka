@@ -1,120 +1,75 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_blank
- * @view        default (Базовая страница)
- * @version     Joomla 6.x
- * @PHP         8.3 / 8.4
+ * WMARKA — com_blank («Пустая страница», Alek Volsk, Sergey Tolkachyov).
+ *
+ * Компонент ничего не выводит: страница собирается из модулей позиций.
+ * Оверрайд добавляет то, чего у компонента нет, — вкладка «Опции WMARKA»
+ * пункта меню (html/com_blank/blank/default.xml):
+ *   - вводный абзац (uk-text-lead), обложка и текст страницы (редактор);
+ *   - ширина колонки текста и выравнивание.
+ * Заголовок — штатный «Показывать заголовок страницы» вкладки «Отображение страницы».
+ * Заголовок окна и описание выставляет сам компонент по своим настройкам
+ * (источник заголовка и описания), шаблон их не перебивает.
+ *
+ * Если всё пусто и заголовок выключен — вывод пустой, и шаблон не рисует
+ * под компонент пустую секцию (partial/main.php). Для главной из модулей
+ * удобнее токен wm-blank в «CSS-классе страницы».
+ *
+ * @var \Joomla\Component\Blank\Site\View\Blank\HtmlView $this
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Wmarka\Template\Image;
+use Wmarka\Template\Seo;
+use Wmarka\Template\Ui;
 
-// Подключаем наш арсенал
-JLoader::register('JUImage', JPATH_LIBRARIES . '/juimage/JUImage.php');
-require_once JPATH_THEMES . '/wmarka/php/Seo.php';
+require_once JPATH_THEMES . '/wmarka/php/autoload.php';
 
-// Базовые параметры
-$showPageHeading = $this->params->get('show_page_heading', 1);
-$pageHeading     = $this->params->get('page_heading', 'Новая страница');
+$app     = Factory::getApplication();
+$params  = $app->getMenu()->getActive()?->getParams() ?? new \Joomla\Registry\Registry();
+$heading = (int) $params->get('show_page_heading', 0) === 1;
+$title   = (string) ($params->get('page_heading') ?: ($app->getMenu()->getActive()->title ?? ''));
+$lead    = trim((string) $params->get('wm_blank_lead', ''));
+$text    = trim((string) $params->get('wm_blank_text', ''));
+$image   = Image::clean((string) $params->get('wm_blank_image', ''));
+$width   = (string) $params->get('wm_blank_width', 'small');
+$center  = (int) $params->get('wm_blank_center', 0) === 1;
 
-// --- РЕЖИМ ПРОТОТИПИРОВАНИЯ ---
-$isPrototyping  = true; 
-$placeholderUrl = $this->params->get('placeholder_service', 'https://placehold.co/{width}x{height}/EFEFEF/AAAAAA.png?text={text}');
-
-// === 1. ПОДГОТОВКА ДАННЫХ И SEO ===
-// В com_blank данные обычно берутся из параметров пункта меню или кастомных полей
-$seoTitle       = $pageHeading;
-$seoDescription = $this->params->get('page_description', '');
-$pageImageSrc   = $this->params->get('page_image', '');
-
-$finalImageSrc  = ''; // Картинка для страницы
-$seoImage       = ''; // Картинка для Open Graph
-
-if (!empty($pageImageSrc)) {
-    // Картинка для контента (баннер)
-    $finalImageSrc = JUImage::renderThumb($pageImageSrc, 1200, 500);
-    
-    // Картинка для соцсетей
-    $juImg = new JUImage();
-    $ogThumb = $juImg->render($pageImageSrc, ['w' => 1200, 'h' => 630, 'webp' => false, 'zc' => 'C']);
-    if ($ogThumb && !empty($ogThumb->src)) {
-        $seoImage = $ogThumb->src;
-    }
-} elseif ($isPrototyping) {
-    // Плейсхолдер для верстки
-    $finalImageSrc = str_replace(
-        ['{width}', '{height}', '{text}'],
-        [1200, 500, urlencode('Обложка: ' . $pageHeading)],
-        $placeholderUrl
-    );
-    $seoImage = $finalImageSrc;
+if (!$heading && $lead === '' && $text === '' && $image === '') {
+    return;
 }
 
-// Запускаем SEO
-WmarkaSeo::setPageMeta($seoTitle, $seoDescription, $seoImage);
+$cover = $image !== '' ? Image::thumb($image, 'full', false) : [];
 
-// === 2. ПОДГОТОВКА КОНТЕНТА ===
-// Текст страницы (если он задан в параметрах пункта меню)
-$pageContent = HTMLHelper::_('content.prepare', $this->params->get('page_content', ''), '', 'com_blank.default');
-
-if (empty($pageContent) && $isPrototyping) {
-    $pageContent = '
-        <p class="uk-text-lead">Это вводный абзац (lead). Он автоматически получает больший размер шрифта для привлечения внимания пользователя.</p>
-        <p>Здесь будет располагаться основной контент страницы, выводимый компонентом com_blank. Вы можете сверстать здесь лендинг, сложную форму или кастомный калькулятор, используя сетку UIkit 3.</p>
-        <div class="uk-child-width-1-2@m uk-margin-medium-top" uk-grid>
-            <div>
-                <ul class="uk-list uk-list-check uk-margin-remove-bottom">
-                    <li>Интеграция с JUImage</li>
-                    <li>SEO оптимизация из коробки</li>
-                </ul>
-            </div>
-            <div>
-                <ul class="uk-list uk-list-check uk-margin-remove-bottom">
-                    <li>Адаптивная сетка UIkit</li>
-                    <li>Строгий PHP 8.4</li>
-                </ul>
-            </div>
-        </div>';
+if ($image !== '') {
+    Seo::page(['image' => $image]);
 }
+
+$width = \in_array($width, ['xsmall', 'small', 'medium', 'large', 'xlarge', '1-1'], true) ? $width : 'small';
 ?>
-
-<div class="com-blank-default uk-container uk-container-small uk-margin-large-bottom uk-margin-large-top">
-
-    <article class="uk-article">
-
-        <?php // Главный заголовок ?>
-        <?php if ($showPageHeading) : ?>
-            <h1 class="uk-article-title uk-margin-medium-bottom">
-                <?php echo $this->escape($pageHeading); ?>
-            </h1>
+<article class="wm-blank<?php echo $center ? ' uk-text-center' : ''; ?>">
+    <div class="<?php echo $width === '1-1' ? '' : 'uk-width-' . $width . '@m'; ?><?php echo $center ? ' uk-margin-auto' : ''; ?>">
+        <?php if ($heading) : ?>
+            <h1 class="uk-article-title"><?php echo Ui::title($title); ?></h1>
         <?php endif; ?>
 
-        <?php // Обложка страницы (Hero Image) ?>
-        <?php if (!empty($finalImageSrc)) : ?>
-            <div class="uk-margin-medium-bottom">
-                <img src="<?php echo $this->escape($finalImageSrc); ?>" 
-                     class="uk-border-rounded uk-box-shadow-small uk-width-1-1" 
-                     loading="lazy" 
-                     alt="<?php echo $this->escape($pageHeading); ?>">
-            </div>
+        <?php if ($lead !== '') : ?>
+            <p class="uk-text-lead"><?php echo nl2br(Ui::esc($lead)); ?></p>
         <?php endif; ?>
+    </div>
 
-        <?php // Мета-данные (Опционально: дата, автор) ?>
-        <?php if ($isPrototyping) : ?>
-            <p class="uk-article-meta">
-                Опубликовано <time datetime="<?php echo date('c'); ?>"><?php echo date('d.m.Y'); ?></time> 
-                в категории <a href="#">Кастомные страницы</a>.
-            </p>
-        <?php endif; ?>
+    <?php if ($cover) : ?>
+        <figure class="uk-margin-medium">
+            <?php echo Image::img($cover, $title, ['class' => 'uk-width-1-1', 'loading' => 'eager', 'fetchpriority' => 'high', 'sizes' => '(min-width: 1200px) 1200px, 100vw']); ?>
+        </figure>
+    <?php endif; ?>
 
-        <?php // Основной контент страницы ?>
-        <div class="uk-panel uk-text-break uk-margin-medium-top">
-            <?php echo $pageContent; ?>
+    <?php if ($text !== '') : ?>
+        <div class="<?php echo $width === '1-1' ? '' : 'uk-width-' . $width . '@m'; ?><?php echo $center ? ' uk-margin-auto' : ''; ?>" data-wm-content>
+            <?php echo HTMLHelper::_('content.prepare', $text, '', 'com_blank.blank'); ?>
         </div>
-
-    </article>
-
-</div>
+    <?php endif; ?>
+</article>

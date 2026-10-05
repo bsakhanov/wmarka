@@ -1,42 +1,32 @@
 <?php
 /**
- * Файл вывода чистого компонента (версия для модальных окон)
- * Joomla 6 + UIkit 3
+ * WMARKA — только компонент (tmpl=component: печать, модальные окна).
+ *
+ * @var \Joomla\CMS\Document\HtmlDocument $this
  */
-declare(strict_types=1);
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-// Инициализация (подключает автозагрузку классов и WebAssetManager)
-require_once __DIR__ . '/php/init.php';
+require_once __DIR__ . '/php/autoload.php';
 
-/** * Подсказки для IDE (PhpStorm / VSCode)
- * @var \Joomla\CMS\Document\HtmlDocument $this 
- * @var \Wmarka\Template\Helper $tpl 
- */
+// Строки родителя wmarka: у дочернего шаблона своих языковых файлов нет
+\Joomla\CMS\Factory::getApplication()->getLanguage()->load('tpl_wmarka', JPATH_BASE)
+    || \Joomla\CMS\Factory::getApplication()->getLanguage()->load('tpl_wmarka', JPATH_THEMES . '/wmarka');
+
+(new \Wmarka\Template\Helper($this))->assets();
+$this->setMetaData('viewport', 'width=device-width, initial-scale=1');
 ?>
 <!DOCTYPE html>
-<?php echo $tpl->renderHTML(); ?>
+<html lang="<?php echo htmlspecialchars($this->language, ENT_QUOTES, 'UTF-8'); ?>" dir="<?php echo $this->direction; ?>">
 <head>
     <jdoc:include type="metas" />
     <jdoc:include type="styles" />
     <jdoc:include type="scripts" />
 </head>
-    <?php /* Подключаем системные мета-теги и ассеты из joomla.asset.json */ ?>
-    <jdoc:include type="head" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-
-<body class="<?php echo $tpl->getBodyClasses(); ?> uk-background-white">
-    
-    <main class="uk-section uk-section-small">
-        <div class="uk-container">
-            
-            <?php /* Вывод основного содержимого компонента */ ?>
-            <jdoc:include type="component" />
-            
-        </div>
-    </main>
-
+<body class="contentpane">
+    <div class="uk-padding">
+        <jdoc:include type="message" />
+        <jdoc:include type="component" />
+    </div>
 </body>
 </html>

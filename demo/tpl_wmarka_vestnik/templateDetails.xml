@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="template" client="site" method="upgrade">
+    <name>wmarka_vestnik</name>
+    <version>1.0.0</version>
+    <creationDate>October 2026</creationDate>
+    <author>Webmarka</author>
+    <authorEmail>support@webmarka.kz</authorEmail>
+    <authorUrl>https://webmarka.kz</authorUrl>
+    <copyright>(C) 2016–2026 Webmarka</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <description>TPL_WMARKA_XML_DESCRIPTION</description>
+    <positions>
+        <position>toolbar</position>
+        <position>toolbar-left</position>
+        <position>toolbar-right</position>
+        <position>lang</position>
+        <position>head-banner</position>
+        <position>logo</position>
+        <position>headbar</position>
+        <position>navbar-left</position>
+        <position>navbar-center</position>
+        <position>navbar-right</position>
+        <position>iconnav</position>
+        <position>login</position>
+        <position>offcanvas-menu</position>
+        <position>offcanvas</position>
+        <position>breadcrumb</position>
+        <position>adver-top</position>
+        <position>slider</position>
+        <position>block-a</position>
+        <position>block-b</position>
+        <position>main-top</position>
+        <position>sidebar-a</position>
+        <position>sidebar-b</position>
+        <position>main-bottom</position>
+        <position>block-c</position>
+        <position>block-d</position>
+        <position>block-e</position>
+        <position>block-f</position>
+        <position>block-g</position>
+        <position>block-h</position>
+        <position>block-i</position>
+        <position>block-k</position>
+        <position>footer-left</position>
+        <position>footer-center</position>
+        <position>footer-right</position>
+        <position>footer</position>
+        <position>counters</position>
+        <position>debug</position>
+    </positions>
+    <config>
+        <fields name="params" addfieldpath="/templates/wmarka/php/fields">
+            <fieldset name="basic" label="TPL_WMARKA_FS_BASIC">
+                <field name="status" type="wmarkastatus" label="TPL_WMARKA_F_STATUS" />
+                <field name="site_title" label="TPL_WMARKA_F_SITE_TITLE" description="TPL_WMARKA_F_SITE_TITLE_DESC" type="text" default="" />
+                <field name="site_slogan" label="TPL_WMARKA_F_SITE_SLOGAN" description="TPL_WMARKA_F_SITE_SLOGAN_DESC" type="text" default="" />
+                <field name="logo_mode" label="TPL_WMARKA_F_LOGO_MODE" description="TPL_WMARKA_F_LOGO_MODE_DESC" type="list" default="auto" validate="options"><option value="auto">TPL_WMARKA_F_LOGO_MODE_O_AUTO</option><option value="image">TPL_WMARKA_F_LOGO_MODE_O_IMAGE</option><option value="text">TPL_WMARKA_F_LOGO_MODE_O_TEXT</option><option value="both">TPL_WMARKA_F_LOGO_MODE_O_BOTH</option></field>
+                <field name="logo_image" label="TPL_WMARKA_F_LOGO_IMAGE" description="TPL_WMARKA_F_LOGO_IMAGE_DESC" type="media" default="" preview="tooltip" />
+                <field name="logo_footer" label="TPL_WMARKA_F_LOGO_FOOTER" type="media" default="" preview="tooltip" />
+                <field name="logo_width" label="TPL_WMARKA_F_LOGO_WIDTH" type="number" default="160" min="0" filter="integer" />
+                <field name="logo_alt" label="TPL_WMARKA_F_LOGO_ALT" type="text" default="" />
+                <field name="logo_slogan" label="TPL_WMARKA_F_LOGO_SLOGAN" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="container" label="TPL_WMARKA_F_CONTAINER" type="list" default="default" validate="options"><option value="xsmall">TPL_WMARKA_F_CONTAINER_O_XSMALL</option><option value="small">TPL_WMARKA_F_CONTAINER_O_SMALL</option><option value="default">TPL_WMARKA_F_CONTAINER_O_DEFAULT</option><option value="large">TPL_WMARKA_F_CONTAINER_O_LARGE</option><option value="xlarge">TPL_WMARKA_F_CONTAINER_O_XLARGE</option><option value="expand">TPL_WMARKA_F_CONTAINER_O_EXPAND</option></field>
+                <field name="home_component" label="TPL_WMARKA_F_HOME_COMPONENT" description="TPL_WMARKA_F_HOME_COMPONENT_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="font" label="TPL_WMARKA_F_FONT" description="TPL_WMARKA_F_FONT_DESC" type="list" default="system" validate="options"><option value="system">TPL_WMARKA_F_FONT_O_SYSTEM</option><option value="noto">TPL_WMARKA_F_FONT_O_NOTO</option></field>
+                <field name="mobile_bp" label="TPL_WMARKA_F_MOBILE_BP" description="TPL_WMARKA_F_MOBILE_BP_DESC" type="list" default="m" validate="options"><option value="s">TPL_WMARKA_F_MOBILE_BP_O_S</option><option value="m">TPL_WMARKA_F_MOBILE_BP_O_M</option><option value="l">TPL_WMARKA_F_MOBILE_BP_O_L</option></field>
+            </fieldset>
+            <fieldset name="header" label="TPL_WMARKA_FS_HEADER">
+                <field name="header_layout" label="TPL_WMARKA_F_HEADER_LAYOUT" description="TPL_WMARKA_F_HEADER_LAYOUT_DESC" type="list" default="navbar" validate="options"><option value="navbar">TPL_WMARKA_F_HEADER_LAYOUT_O_NAVBAR</option><option value="stacked">TPL_WMARKA_F_HEADER_LAYOUT_O_STACKED</option></field>
+                <field name="navbar_style" label="TPL_WMARKA_F_NAVBAR_STYLE" type="list" default="default" validate="options"><option value="default">TPL_WMARKA_F_NAVBAR_STYLE_O_DEFAULT</option><option value="white">TPL_WMARKA_F_NAVBAR_STYLE_O_WHITE</option><option value="transparent">TPL_WMARKA_F_NAVBAR_STYLE_O_TRANSPARENT</option><option value="primary">TPL_WMARKA_F_NAVBAR_STYLE_O_PRIMARY</option><option value="secondary">TPL_WMARKA_F_NAVBAR_STYLE_O_SECONDARY</option></field>
+                <field name="navbar_sticky" label="TPL_WMARKA_F_NAVBAR_STICKY" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="navbar_show_on_up" label="TPL_WMARKA_F_NAVBAR_SHOW_ON_UP" description="TPL_WMARKA_F_NAVBAR_SHOW_ON_UP_DESC" showon="navbar_sticky:1" type="radio" layout="joomla.form.field.radio.switcher" default="0" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="navbar_dropbar" label="TPL_WMARKA_F_NAVBAR_DROPBAR" type="radio" layout="joomla.form.field.radio.switcher" default="0" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="dropdown_align" label="TPL_WMARKA_F_DROPDOWN_ALIGN" type="list" default="left" validate="options"><option value="left">TPL_WMARKA_F_DROPDOWN_ALIGN_O_LEFT</option><option value="center">TPL_WMARKA_F_DROPDOWN_ALIGN_O_CENTER</option></field>
+                <field name="search_show" label="TPL_WMARKA_F_SEARCH_SHOW" description="TPL_WMARKA_F_SEARCH_SHOW_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="search_itemid" label="TPL_WMARKA_F_SEARCH_ITEMID" description="TPL_WMARKA_F_SEARCH_ITEMID_DESC" showon="search_show:1" type="menuitem" default="" filter="integer"><option value="">JNONE</option></field>
+                <field name="cta_text" label="TPL_WMARKA_F_CTA_TEXT" description="TPL_WMARKA_F_CTA_TEXT_DESC" type="text" default="" />
+                <field name="cta_link" label="TPL_WMARKA_F_CTA_LINK" description="TPL_WMARKA_F_CTA_LINK_DESC" type="text" default="" />
+                <field name="offcanvas_mode" label="TPL_WMARKA_F_OFFCANVAS_MODE" type="list" default="slide" validate="options"><option value="slide">TPL_WMARKA_F_OFFCANVAS_MODE_O_SLIDE</option><option value="push">TPL_WMARKA_F_OFFCANVAS_MODE_O_PUSH</option><option value="reveal">TPL_WMARKA_F_OFFCANVAS_MODE_O_REVEAL</option><option value="none">TPL_WMARKA_F_OFFCANVAS_MODE_O_NONE</option></field>
+                <field name="offcanvas_flip" label="TPL_WMARKA_F_OFFCANVAS_FLIP" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="offcanvas_auto" label="TPL_WMARKA_F_OFFCANVAS_AUTO" description="TPL_WMARKA_F_OFFCANVAS_AUTO_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="offcanvas_contacts" label="TPL_WMARKA_F_OFFCANVAS_CONTACTS" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="toolbar_show" label="TPL_WMARKA_F_TOOLBAR_SHOW" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="toolbar_contacts" label="TPL_WMARKA_F_TOOLBAR_CONTACTS" showon="toolbar_show:1" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="toolbar_style" label="TPL_WMARKA_F_TOOLBAR_STYLE" showon="toolbar_show:1" type="list" default="secondary" validate="options"><option value="secondary">TPL_WMARKA_F_TOOLBAR_STYLE_O_SECONDARY</option><option value="primary">TPL_WMARKA_F_TOOLBAR_STYLE_O_PRIMARY</option><option value="muted">TPL_WMARKA_F_TOOLBAR_STYLE_O_MUTED</option><option value="default">TPL_WMARKA_F_TOOLBAR_STYLE_O_DEFAULT</option></field>
+                <field name="toolbar_mobile" label="TPL_WMARKA_F_TOOLBAR_MOBILE" showon="toolbar_show:1" type="radio" layout="joomla.form.field.radio.switcher" default="0" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+            </fieldset>
+            <fieldset name="contacts" label="TPL_WMARKA_FS_CONTACTS">
+                <field name="contacts_note" type="note" label="TPL_WMARKA_F_CONTACTS_NOTE" description="TPL_WMARKA_F_CONTACTS_NOTE_DESC" class="alert alert-info w-100" />
+                <field name="contact_phone" label="TPL_WMARKA_F_CONTACT_PHONE" description="TPL_WMARKA_F_CONTACT_PHONE_DESC" type="text" default="" />
+                <field name="contact_phone_label" label="TPL_WMARKA_F_CONTACT_PHONE_LABEL" description="TPL_WMARKA_F_CONTACT_PHONE_LABEL_DESC" type="text" default="" />
+                <field name="contact_phone2" label="TPL_WMARKA_F_CONTACT_PHONE2" type="text" default="" />
+                <field name="contact_email" label="TPL_WMARKA_F_CONTACT_EMAIL" type="email" default="" filter="string" />
+                <field name="contact_whatsapp" label="TPL_WMARKA_F_CONTACT_WHATSAPP" description="TPL_WMARKA_F_CONTACT_WHATSAPP_DESC" type="text" default="" />
+                <field name="contact_whatsapp_text" label="TPL_WMARKA_F_CONTACT_WHATSAPP_TEXT" type="text" default="" />
+                <field name="contact_telegram" label="TPL_WMARKA_F_CONTACT_TELEGRAM" description="TPL_WMARKA_F_CONTACT_TELEGRAM_DESC" type="text" default="" />
+                <field name="contact_address" label="TPL_WMARKA_F_CONTACT_ADDRESS" type="text" default="" />
+                <field name="contact_map" label="TPL_WMARKA_F_CONTACT_MAP" description="TPL_WMARKA_F_CONTACT_MAP_DESC" type="url" default="" filter="url" />
+                <field name="contact_hours" label="TPL_WMARKA_F_CONTACT_HOURS" type="text" default="" />
+            </fieldset>
+            <fieldset name="layout" label="TPL_WMARKA_FS_LAYOUT">
+                <field name="sidebar_width" label="TPL_WMARKA_F_SIDEBAR_WIDTH" type="list" default="1-4" validate="options"><option value="1-5">TPL_WMARKA_F_SIDEBAR_WIDTH_O_1_5</option><option value="1-4">TPL_WMARKA_F_SIDEBAR_WIDTH_O_1_4</option><option value="1-3">TPL_WMARKA_F_SIDEBAR_WIDTH_O_1_3</option><option value="2-5">TPL_WMARKA_F_SIDEBAR_WIDTH_O_2_5</option></field>
+                <field name="sidebar_bp" label="TPL_WMARKA_F_SIDEBAR_BP" type="list" default="m" validate="options"><option value="s">TPL_WMARKA_F_SIDEBAR_BP_O_S</option><option value="m">TPL_WMARKA_F_SIDEBAR_BP_O_M</option><option value="l">TPL_WMARKA_F_SIDEBAR_BP_O_L</option></field>
+                <field name="sidebar_gutter" label="TPL_WMARKA_F_SIDEBAR_GUTTER" type="list" default="large" validate="options"><option value="medium">TPL_WMARKA_F_SIDEBAR_GUTTER_O_MEDIUM</option><option value="large">TPL_WMARKA_F_SIDEBAR_GUTTER_O_LARGE</option></field>
+                <field name="main_padding" label="TPL_WMARKA_F_MAIN_PADDING" type="list" default="" validate="options"><option value="xsmall">TPL_WMARKA_F_MAIN_PADDING_O_XSMALL</option><option value="small">TPL_WMARKA_F_MAIN_PADDING_O_SMALL</option><option value="">TPL_WMARKA_F_MAIN_PADDING_O_DEFAULT</option><option value="large">TPL_WMARKA_F_MAIN_PADDING_O_LARGE</option></field>
+                <field name="breadcrumbs_auto" label="TPL_WMARKA_F_BREADCRUMBS_AUTO" description="TPL_WMARKA_F_BREADCRUMBS_AUTO_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="blocks_style" label="TPL_WMARKA_F_BLOCKS_STYLE" type="list" default="default" validate="options"><option value="default">TPL_WMARKA_F_BLOCKS_STYLE_O_DEFAULT</option><option value="muted">TPL_WMARKA_F_BLOCKS_STYLE_O_MUTED</option></field>
+                <field name="blocks_alternate" label="TPL_WMARKA_F_BLOCKS_ALTERNATE" description="TPL_WMARKA_F_BLOCKS_ALTERNATE_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="blocks_padding" label="TPL_WMARKA_F_BLOCKS_PADDING" type="list" default="" validate="options"><option value="small">TPL_WMARKA_F_BLOCKS_PADDING_O_SMALL</option><option value="">TPL_WMARKA_F_BLOCKS_PADDING_O_DEFAULT</option><option value="large">TPL_WMARKA_F_BLOCKS_PADDING_O_LARGE</option></field>
+                <field name="blocks_cols" label="TPL_WMARKA_F_BLOCKS_COLS" description="TPL_WMARKA_F_BLOCKS_COLS_DESC" type="list" default="auto" validate="options"><option value="auto">TPL_WMARKA_F_BLOCKS_COLS_O_AUTO</option><option value="1">TPL_WMARKA_F_BLOCKS_COLS_O_1</option><option value="2">TPL_WMARKA_F_BLOCKS_COLS_O_2</option><option value="3">TPL_WMARKA_F_BLOCKS_COLS_O_3</option><option value="4">TPL_WMARKA_F_BLOCKS_COLS_O_4</option></field>
+                <field name="blocks_gutter" label="TPL_WMARKA_F_BLOCKS_GUTTER" type="list" default="large" validate="options"><option value="small">TPL_WMARKA_F_BLOCKS_GUTTER_O_SMALL</option><option value="medium">TPL_WMARKA_F_BLOCKS_GUTTER_O_MEDIUM</option><option value="large">TPL_WMARKA_F_BLOCKS_GUTTER_O_LARGE</option></field>
+                <field name="footer_style" label="TPL_WMARKA_F_FOOTER_STYLE" type="list" default="secondary" validate="options"><option value="secondary">TPL_WMARKA_F_FOOTER_STYLE_O_SECONDARY</option><option value="primary">TPL_WMARKA_F_FOOTER_STYLE_O_PRIMARY</option><option value="muted">TPL_WMARKA_F_FOOTER_STYLE_O_MUTED</option><option value="default">TPL_WMARKA_F_FOOTER_STYLE_O_DEFAULT</option></field>
+                <field name="footer_contacts" label="TPL_WMARKA_F_FOOTER_CONTACTS" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="copyright_text" label="TPL_WMARKA_F_COPYRIGHT_TEXT" description="TPL_WMARKA_F_COPYRIGHT_TEXT_DESC" type="text" default="" />
+                <field name="copyright_year" label="TPL_WMARKA_F_COPYRIGHT_YEAR" description="TPL_WMARKA_F_COPYRIGHT_YEAR_DESC" type="number" default="" min="0" filter="integer" />
+                <field name="totop" label="TPL_WMARKA_F_TOTOP" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+            </fieldset>
+            <fieldset name="images" label="TPL_WMARKA_FS_IMAGES">
+                <field name="images_note" type="note" label="TPL_WMARKA_F_IMAGES_NOTE" description="TPL_WMARKA_F_IMAGES_NOTE_DESC" class="alert alert-info w-100" />
+                <field name="img_juimage" label="TPL_WMARKA_F_IMG_JUIMAGE" description="TPL_WMARKA_F_IMG_JUIMAGE_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="img_intro_w" label="TPL_WMARKA_F_IMG_INTRO_W" type="number" default="720" min="0" filter="integer" />
+                <field name="img_intro_h" label="TPL_WMARKA_F_IMG_INTRO_H" description="TPL_WMARKA_F_IMG_INTRO_H_DESC" type="number" default="480" min="0" filter="integer" />
+                <field name="img_full_w" label="TPL_WMARKA_F_IMG_FULL_W" type="number" default="1200" min="0" filter="integer" />
+                <field name="img_full_h" label="TPL_WMARKA_F_IMG_FULL_H" description="TPL_WMARKA_F_IMG_FULL_H_DESC" type="number" default="800" min="0" filter="integer" />
+                <field name="img_srcset" label="TPL_WMARKA_F_IMG_SRCSET" description="TPL_WMARKA_F_IMG_SRCSET_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="img_quality" label="TPL_WMARKA_F_IMG_QUALITY" type="list" default="75" validate="options"><option value="60">TPL_WMARKA_F_IMG_QUALITY_O_60</option><option value="70">TPL_WMARKA_F_IMG_QUALITY_O_70</option><option value="75">TPL_WMARKA_F_IMG_QUALITY_O_75</option><option value="80">TPL_WMARKA_F_IMG_QUALITY_O_80</option><option value="90">TPL_WMARKA_F_IMG_QUALITY_O_90</option></field>
+                <field name="img_format" label="TPL_WMARKA_F_IMG_FORMAT" type="list" default="webp" validate="options"><option value="webp">TPL_WMARKA_F_IMG_FORMAT_O_WEBP</option><option value="jpg">TPL_WMARKA_F_IMG_FORMAT_O_JPG</option></field>
+                <field name="img_cache" label="TPL_WMARKA_F_IMG_CACHE" description="TPL_WMARKA_F_IMG_CACHE_DESC" type="text" default="img" />
+                <field name="img_placeholder" label="TPL_WMARKA_F_IMG_PLACEHOLDER" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="img_placeholder_file" label="TPL_WMARKA_F_IMG_PLACEHOLDER_FILE" description="TPL_WMARKA_F_IMG_PLACEHOLDER_FILE_DESC" showon="img_placeholder:1" type="media" default="" preview="tooltip" />
+                <field name="img_full_fallback" label="TPL_WMARKA_F_IMG_FULL_FALLBACK" description="TPL_WMARKA_F_IMG_FULL_FALLBACK_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="img_from_text" label="TPL_WMARKA_F_IMG_FROM_TEXT" description="TPL_WMARKA_F_IMG_FROM_TEXT_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="article_image" label="TPL_WMARKA_F_ARTICLE_IMAGE" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="article_placeholder" label="TPL_WMARKA_F_ARTICLE_PLACEHOLDER" type="radio" layout="joomla.form.field.radio.switcher" default="0" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="img_lazy" label="TPL_WMARKA_F_IMG_LAZY" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+            </fieldset>
+            <fieldset name="content" label="TPL_WMARKA_FS_CONTENT">
+                <field name="intro_limit" label="TPL_WMARKA_F_INTRO_LIMIT" description="TPL_WMARKA_F_INTRO_LIMIT_DESC" type="number" default="200" min="0" filter="integer" />
+                <field name="blog_view" label="TPL_WMARKA_F_BLOG_VIEW" description="TPL_WMARKA_F_BLOG_VIEW_DESC" type="list" default="grid" validate="options"><option value="grid">TPL_WMARKA_F_BLOG_VIEW_O_GRID</option><option value="list">TPL_WMARKA_F_BLOG_VIEW_O_LIST</option></field>
+                <field name="card_media_width" label="TPL_WMARKA_F_CARD_MEDIA_WIDTH" description="TPL_WMARKA_F_CARD_MEDIA_WIDTH_DESC" type="list" default="1-2" validate="options"><option value="1-2">TPL_WMARKA_F_CARD_MEDIA_WIDTH_O_1_2</option><option value="1-3">TPL_WMARKA_F_CARD_MEDIA_WIDTH_O_1_3</option></field>
+                <field name="pagenav_thumbs" label="TPL_WMARKA_F_PAGENAV_THUMBS" description="TPL_WMARKA_F_PAGENAV_THUMBS_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="date_style" label="TPL_WMARKA_F_DATE_STYLE" description="TPL_WMARKA_F_DATE_STYLE_DESC" type="list" default="relative" validate="options"><option value="relative">TPL_WMARKA_F_DATE_STYLE_O_RELATIVE</option><option value="joomla">TPL_WMARKA_F_DATE_STYLE_O_JOOMLA</option></field>
+                <field name="card_tags" label="TPL_WMARKA_F_CARD_TAGS" description="TPL_WMARKA_F_CARD_TAGS_DESC" type="list" default="hash" validate="options"><option value="hash">TPL_WMARKA_F_CARD_TAGS_O_HASH</option><option value="footer">TPL_WMARKA_F_CARD_TAGS_O_FOOTER</option><option value="none">TPL_WMARKA_F_CARD_TAGS_O_NONE</option></field>
+                <field name="video_tag" label="TPL_WMARKA_F_VIDEO_TAG" description="TPL_WMARKA_F_VIDEO_TAG_DESC" type="text" default="video" />
+                <field name="photo_tag" label="TPL_WMARKA_F_PHOTO_TAG" description="TPL_WMARKA_F_PHOTO_TAG_DESC" type="text" default="foto" />
+                <field name="share_buttons" label="TPL_WMARKA_F_SHARE_BUTTONS" description="TPL_WMARKA_F_SHARE_BUTTONS_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="article_author_box" label="TPL_WMARKA_F_ARTICLE_AUTHOR_BOX" description="TPL_WMARKA_F_ARTICLE_AUTHOR_BOX_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="article_tags_bottom" label="TPL_WMARKA_F_ARTICLE_TAGS_BOTTOM" description="TPL_WMARKA_F_ARTICLE_TAGS_BOTTOM_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="read_time" label="TPL_WMARKA_F_READ_TIME" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="typo_quotes" label="TPL_WMARKA_F_TYPO_QUOTES" description="TPL_WMARKA_F_TYPO_QUOTES_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+            </fieldset>
+            <fieldset name="seo" label="TPL_WMARKA_FS_SEO">
+                <field name="seo_enable" label="TPL_WMARKA_F_SEO_ENABLE" description="TPL_WMARKA_F_SEO_ENABLE_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="seo_canonical" label="TPL_WMARKA_F_SEO_CANONICAL" description="TPL_WMARKA_F_SEO_CANONICAL_DESC" showon="seo_enable:1" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="seo_og" label="TPL_WMARKA_F_SEO_OG" showon="seo_enable:1" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="seo_jsonld" label="TPL_WMARKA_F_SEO_JSONLD" showon="seo_enable:1" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="seo_title" label="TPL_WMARKA_F_SEO_TITLE" description="TPL_WMARKA_F_SEO_TITLE_DESC" showon="seo_enable:1" type="list" default="joomla" validate="options"><option value="joomla">TPL_WMARKA_F_SEO_TITLE_O_JOOMLA</option><option value="suffix">TPL_WMARKA_F_SEO_TITLE_O_SUFFIX</option></field>
+                <field name="seo_og_image" label="TPL_WMARKA_F_SEO_OG_IMAGE" description="TPL_WMARKA_F_SEO_OG_IMAGE_DESC" showon="seo_enable:1" type="media" default="" preview="tooltip" />
+                <field name="seo_og_site_name" label="TPL_WMARKA_F_SEO_OG_SITE_NAME" showon="seo_enable:1" type="text" default="" />
+                <field name="seo_twitter" label="TPL_WMARKA_F_SEO_TWITTER" showon="seo_enable:1" type="text" default="" />
+                <field name="seo_org_type" label="TPL_WMARKA_F_SEO_ORG_TYPE" showon="seo_enable:1" type="list" default="Organization" validate="options"><option value="Organization">TPL_WMARKA_F_SEO_ORG_TYPE_O_ORGANIZATION</option><option value="LocalBusiness">TPL_WMARKA_F_SEO_ORG_TYPE_O_LOCALBUSINESS</option><option value="Corporation">TPL_WMARKA_F_SEO_ORG_TYPE_O_CORPORATION</option><option value="NewsMediaOrganization">TPL_WMARKA_F_SEO_ORG_TYPE_O_NEWSMEDIAORGANIZATION</option><option value="EducationalOrganization">TPL_WMARKA_F_SEO_ORG_TYPE_O_EDUCATIONALORGANIZATION</option><option value="GovernmentOrganization">TPL_WMARKA_F_SEO_ORG_TYPE_O_GOVERNMENTORGANIZATION</option><option value="Person">TPL_WMARKA_F_SEO_ORG_TYPE_O_PERSON</option></field>
+                <field name="seo_org_name" label="TPL_WMARKA_F_SEO_ORG_NAME" showon="seo_enable:1" type="text" default="" />
+                <field name="seo_org_logo" label="TPL_WMARKA_F_SEO_ORG_LOGO" description="TPL_WMARKA_F_SEO_ORG_LOGO_DESC" showon="seo_enable:1" type="media" default="" preview="tooltip" />
+                <field name="seo_street" label="TPL_WMARKA_F_SEO_STREET" showon="seo_enable:1" type="text" default="" />
+                <field name="seo_city" label="TPL_WMARKA_F_SEO_CITY" showon="seo_enable:1" type="text" default="" />
+                <field name="seo_postal" label="TPL_WMARKA_F_SEO_POSTAL" showon="seo_enable:1" type="text" default="" />
+                <field name="seo_country" label="TPL_WMARKA_F_SEO_COUNTRY" description="TPL_WMARKA_F_SEO_COUNTRY_DESC" showon="seo_enable:1" type="text" default="" />
+                <field name="seo_lat" label="TPL_WMARKA_F_SEO_LAT" showon="seo_enable:1" type="text" default="" />
+                <field name="seo_lng" label="TPL_WMARKA_F_SEO_LNG" showon="seo_enable:1" type="text" default="" />
+                <field name="seo_social" label="TPL_WMARKA_F_SEO_SOCIAL" description="TPL_WMARKA_F_SEO_SOCIAL_DESC" showon="seo_enable:1" type="textarea" rows="4" filter="raw" default="" />
+                <field name="seo_article_type" label="TPL_WMARKA_F_SEO_ARTICLE_TYPE" showon="seo_enable:1" type="list" default="Article" validate="options"><option value="Article">TPL_WMARKA_F_SEO_ARTICLE_TYPE_O_ARTICLE</option><option value="NewsArticle">TPL_WMARKA_F_SEO_ARTICLE_TYPE_O_NEWSARTICLE</option><option value="BlogPosting">TPL_WMARKA_F_SEO_ARTICLE_TYPE_O_BLOGPOSTING</option></field>
+            </fieldset>
+            <fieldset name="code" label="TPL_WMARKA_FS_CODE">
+                <field name="counter_yandex" label="TPL_WMARKA_F_COUNTER_YANDEX" type="text" default="" />
+                <field name="counter_webvisor" label="TPL_WMARKA_F_COUNTER_WEBVISOR" type="radio" layout="joomla.form.field.radio.switcher" default="0" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="counter_google" label="TPL_WMARKA_F_COUNTER_GOOGLE" type="text" default="" />
+                <field name="counters_skip_admins" label="TPL_WMARKA_F_COUNTERS_SKIP_ADMINS" type="radio" layout="joomla.form.field.radio.switcher" default="0" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="code_head" label="TPL_WMARKA_F_CODE_HEAD" description="TPL_WMARKA_F_CODE_HEAD_DESC" type="textarea" rows="4" filter="raw" default="" />
+                <field name="code_body_start" label="TPL_WMARKA_F_CODE_BODY_START" type="textarea" rows="4" filter="raw" default="" />
+                <field name="code_body_end" label="TPL_WMARKA_F_CODE_BODY_END" type="textarea" rows="4" filter="raw" default="" />
+            </fieldset>
+            <fieldset name="advanced" label="TPL_WMARKA_FS_ADVANCED">
+                <field name="nocaps" label="TPL_WMARKA_F_NOCAPS" description="TPL_WMARKA_F_NOCAPS_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="core_bridge" label="TPL_WMARKA_F_CORE_BRIDGE" description="TPL_WMARKA_F_CORE_BRIDGE_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="uikit_icons" label="TPL_WMARKA_F_UIKIT_ICONS" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="disable_bootstrap" label="TPL_WMARKA_F_DISABLE_BOOTSTRAP" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="favicons" label="TPL_WMARKA_F_FAVICONS" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="favicon_folder" label="TPL_WMARKA_F_FAVICON_FOLDER" description="TPL_WMARKA_F_FAVICON_FOLDER_DESC" showon="favicons:1" type="folderlist" directory="images" recursive="true" default="" hide_none="false" hide_default="true" />
+                <field name="theme_color" label="TPL_WMARKA_F_THEME_COLOR" type="color" default="#ffffff" />
+                <field name="generator" label="TPL_WMARKA_F_GENERATOR" description="TPL_WMARKA_F_GENERATOR_DESC" type="text" default="" />
+            </fieldset>
+        </fields>
+    </config>
+    <files>
+        <filename>templateDetails.xml</filename>
+        <filename>template_preview.png</filename>
+        <filename>template_thumbnail.png</filename>
+        <folder>html</folder>
+    </files>
+    <media folder="media" destination="templates/site/wmarka_vestnik">
+        <folder>css</folder>
+        <folder>js</folder>
+        <folder>images</folder>
+        <folder>scss</folder>
+    </media>
+    <inheritable>0</inheritable>
+    <parent>wmarka</parent>
+</extension>

@@ -1,40 +1,48 @@
 <?php
-
 /**
- * @package     Joomla.Site
- * @subpackage  com_contact
+ * WMARKA — ссылки контакта (соцсети, сайты): кнопки-иконки по домену.
  *
- * @copyright   (C) 2009 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @var \Joomla\Component\Contact\Site\View\Contact\HtmlView $this
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-/** @var \Joomla\Component\Contact\Site\View\Contact\HtmlView $this */
+use Wmarka\Template\Ui;
+
+require_once JPATH_THEMES . '/wmarka/php/autoload.php';
+
+$icons = ['t.me' => 'telegram', 'telegram' => 'telegram', 'wa.me' => 'whatsapp', 'whatsapp' => 'whatsapp', 'instagram' => 'instagram',
+    'facebook' => 'facebook', 'x.com' => 'x', 'twitter' => 'x', 'youtube' => 'youtube', 'linkedin' => 'linkedin', 'github' => 'github',
+    'tiktok' => 'tiktok', 'threads' => 'threads', 'pinterest' => 'pinterest', 'behance' => 'behance', 'dribbble' => 'dribbble'];
+$links = [];
+
+foreach (range('a', 'e') as $char) {
+    $link = (string) $this->item->params->get('link' . $char);
+
+    if ($link === '') {
+        continue;
+    }
+
+    $link  = str_starts_with($link, 'http') ? $link : 'https://' . $link;
+    $label = (string) ($this->item->params->get('link' . $char . '_name') ?: $link);
+    $icon  = 'link';
+
+    foreach ($icons as $needle => $name) {
+        if (stripos($link, $needle) !== false) {
+            $icon = $name;
+            break;
+        }
+    }
+
+    $links[] = [$link, $label, $icon];
+}
+
+if (!$links) {
+    return;
+}
 ?>
-<div class="com-contact__links contact-links">
-    <ul class="list-unstyled">
-        <?php
-        // Letters 'a' to 'e'
-        foreach (range('a', 'e') as $char) :
-            $link = $this->item->params->get('link' . $char);
-            $label = $this->item->params->get('link' . $char . '_name');
-
-            if (!$link) :
-                continue;
-            endif;
-
-            // Add 'http://' if not present
-            $link = (0 === strpos($link, 'http')) ? $link : 'http://' . $link;
-
-            // If no label is present, take the link
-            $label = $label ?: $link;
-            ?>
-            <li>
-                <a href="<?php echo $link; ?>" rel="noopener noreferrer">
-                    <?php echo $label; ?>
-                </a>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-</div>
+<ul class="uk-iconnav uk-margin-medium-top">
+    <?php foreach ($links as [$link, $label, $icon]) : ?>
+        <li><a class="uk-icon-button" href="<?php echo Ui::esc($link); ?>" target="_blank" rel="noopener noreferrer" uk-icon="<?php echo $icon; ?>" title="<?php echo Ui::esc($label); ?>" aria-label="<?php echo Ui::esc($label); ?>" itemprop="sameAs"></a></li>
+    <?php endforeach; ?>
+</ul>

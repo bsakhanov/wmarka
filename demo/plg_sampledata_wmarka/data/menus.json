@@ -1,0 +1,869 @@
+{
+ "types": [
+  {
+   "menutype": "mainmenu",
+   "title": "Main Menu"
+  },
+  {
+   "menutype": "news-mega",
+   "title": "Мегаменю «Новости»",
+   "description": "Колонки мегаменю пункта «Новости» (токен wm-mega:news-mega)"
+  },
+  {
+   "menutype": "template-mega",
+   "title": "Мегаменю «Шаблон»",
+   "description": "Колонки полноэкранного мегаменю (токен wm-mega-modal:template-mega)"
+  },
+  {
+   "menutype": "service",
+   "title": "Служебное меню",
+   "description": "Страницы, на которые ведут мегаменю: чистые адреса, модулем не выводится"
+  }
+ ],
+ "items": [
+  {
+   "key": "home",
+   "menutype": "mainmenu",
+   "alias": "home",
+   "title": "Главная",
+   "type": "blank",
+   "home": 1,
+   "pageclass": "wm-blank",
+   "params": {
+    "show_page_heading": 0,
+    "page_title": "Вестник — демо-сайт шаблона wmarka"
+   },
+   "metadesc": "Новостной демо-сайт стартового шаблона wmarka для Joomla 5 и 6."
+  },
+  {
+   "key": "news",
+   "menutype": "mainmenu",
+   "alias": "news",
+   "title": "Новости",
+   "type": "blog",
+   "category": "news",
+   "css": "wm-mega:news-mega",
+   "params": {
+    "show_category_title": 1,
+    "show_description": 1,
+    "num_leading_articles": 1,
+    "num_intro_articles": 9,
+    "num_columns": 3,
+    "num_links": 0,
+    "orderby_sec": "rdate",
+    "show_pagination": 2,
+    "show_tags": 1,
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_media": "top",
+    "show_subcategory_content": -1
+   }
+  },
+  {
+   "key": "m-video",
+   "menutype": "mainmenu",
+   "alias": "video",
+   "title": "Видео",
+   "type": "tag",
+   "tag": "video",
+   "params": {
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_columns": 3,
+    "wm_masonry": 0,
+    "tag_list_show_date": "published"
+   }
+  },
+  {
+   "key": "tag-photo",
+   "menutype": "mainmenu",
+   "alias": "foto",
+   "title": "Фото",
+   "type": "tag",
+   "tag": "photo",
+   "params": {
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_columns": 3,
+    "wm_masonry": 0,
+    "tag_list_show_date": "published"
+   }
+  },
+  {
+   "key": "reference",
+   "menutype": "mainmenu",
+   "alias": "reference",
+   "title": "Справочник",
+   "type": "blog",
+   "category": "reference",
+   "params": {
+    "show_category_title": 1,
+    "show_description": 1,
+    "num_leading_articles": 0,
+    "num_intro_articles": 9,
+    "num_columns": 1,
+    "num_links": 0,
+    "orderby_sec": "date",
+    "show_pagination": 2,
+    "show_tags": 1,
+    "wm_view": "list",
+    "wm_switch": 1,
+    "wm_media": "alternate",
+    "show_subcategory_content": -1
+   }
+  },
+  {
+   "key": "authors",
+   "menutype": "mainmenu",
+   "alias": "authors",
+   "title": "Авторы",
+   "type": "contacts",
+   "category": "authors",
+   "layout": "wmarka:wm-team",
+   "params": {
+    "wm_view": "grid",
+    "wm_switch": 0,
+    "show_position_headings": 1,
+    "show_email_headings": 1
+   }
+  },
+  {
+   "key": "template",
+   "menutype": "mainmenu",
+   "alias": "template",
+   "title": "Шаблон",
+   "type": "url",
+   "url": "#template",
+   "css": "wm-mega-modal:template-mega",
+   "note": "Что умеет шаблон wmarka"
+  },
+  {
+   "key": "contacts",
+   "menutype": "mainmenu",
+   "alias": "contacts",
+   "title": "Контакты",
+   "type": "contact",
+   "contact": "editorial",
+   "params": {
+    "show_email_form": 1
+   }
+  },
+  {
+   "key": "rub-economy",
+   "menutype": "service",
+   "alias": "ekonomika",
+   "title": "Экономика",
+   "type": "blog",
+   "category": "economy",
+   "params": {
+    "show_category_title": 1,
+    "show_description": 1,
+    "num_leading_articles": 1,
+    "num_intro_articles": 9,
+    "num_columns": 3,
+    "num_links": 0,
+    "orderby_sec": "rdate",
+    "show_pagination": 2,
+    "show_tags": 1,
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_media": "top",
+    "show_subcategory_content": -1
+   }
+  },
+  {
+   "key": "rub-energy",
+   "menutype": "service",
+   "alias": "energetika",
+   "title": "Энергетика",
+   "type": "blog",
+   "category": "energy",
+   "params": {
+    "show_category_title": 1,
+    "show_description": 1,
+    "num_leading_articles": 1,
+    "num_intro_articles": 9,
+    "num_columns": 3,
+    "num_links": 0,
+    "orderby_sec": "rdate",
+    "show_pagination": 2,
+    "show_tags": 1,
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_media": "top",
+    "show_subcategory_content": -1
+   }
+  },
+  {
+   "key": "rub-society",
+   "menutype": "service",
+   "alias": "obshchestvo",
+   "title": "Общество",
+   "type": "blog",
+   "category": "society",
+   "params": {
+    "show_category_title": 1,
+    "show_description": 1,
+    "num_leading_articles": 1,
+    "num_intro_articles": 9,
+    "num_columns": 3,
+    "num_links": 0,
+    "orderby_sec": "rdate",
+    "show_pagination": 2,
+    "show_tags": 1,
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_media": "top",
+    "show_subcategory_content": -1
+   }
+  },
+  {
+   "key": "rub-tech",
+   "menutype": "service",
+   "alias": "tekhnologii",
+   "title": "Технологии",
+   "type": "blog",
+   "category": "tech",
+   "params": {
+    "show_category_title": 1,
+    "show_description": 1,
+    "num_leading_articles": 1,
+    "num_intro_articles": 9,
+    "num_columns": 3,
+    "num_links": 0,
+    "orderby_sec": "rdate",
+    "show_pagination": 2,
+    "show_tags": 1,
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_media": "top",
+    "show_subcategory_content": -1
+   }
+  },
+  {
+   "key": "rub-science",
+   "menutype": "service",
+   "alias": "nauka",
+   "title": "Наука",
+   "type": "blog",
+   "category": "science",
+   "params": {
+    "show_category_title": 1,
+    "show_description": 1,
+    "num_leading_articles": 1,
+    "num_intro_articles": 9,
+    "num_columns": 3,
+    "num_links": 0,
+    "orderby_sec": "rdate",
+    "show_pagination": 2,
+    "show_tags": 1,
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_media": "top",
+    "show_subcategory_content": -1
+   }
+  },
+  {
+   "key": "rub-culture",
+   "menutype": "service",
+   "alias": "kultura",
+   "title": "Культура",
+   "type": "blog",
+   "category": "culture",
+   "params": {
+    "show_category_title": 1,
+    "show_description": 1,
+    "num_leading_articles": 1,
+    "num_intro_articles": 9,
+    "num_columns": 3,
+    "num_links": 0,
+    "orderby_sec": "rdate",
+    "show_pagination": 2,
+    "show_tags": 1,
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_media": "top",
+    "show_subcategory_content": -1
+   }
+  },
+  {
+   "key": "rub-sport",
+   "menutype": "service",
+   "alias": "sport",
+   "title": "Спорт",
+   "type": "blog",
+   "category": "sport",
+   "params": {
+    "show_category_title": 1,
+    "show_description": 1,
+    "num_leading_articles": 1,
+    "num_intro_articles": 9,
+    "num_columns": 3,
+    "num_links": 0,
+    "orderby_sec": "rdate",
+    "show_pagination": 2,
+    "show_tags": 1,
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_media": "top",
+    "show_subcategory_content": -1
+   }
+  },
+  {
+   "key": "tag-main",
+   "menutype": "service",
+   "alias": "glavnoe",
+   "title": "Главное",
+   "type": "tag",
+   "tag": "main",
+   "params": {
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_columns": 3,
+    "wm_masonry": 0
+   }
+  },
+  {
+   "key": "tag-city",
+   "menutype": "service",
+   "alias": "gorod",
+   "title": "Город",
+   "type": "tag",
+   "tag": "city",
+   "params": {
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_columns": 3,
+    "wm_masonry": 0
+   }
+  },
+  {
+   "key": "tag-transport",
+   "menutype": "service",
+   "alias": "transport",
+   "title": "Транспорт",
+   "type": "tag",
+   "tag": "transport",
+   "params": {
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_columns": 3,
+    "wm_masonry": 0
+   }
+  },
+  {
+   "key": "tag-ecology",
+   "menutype": "service",
+   "alias": "ekologiya",
+   "title": "Экология",
+   "type": "tag",
+   "tag": "ecology",
+   "params": {
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_columns": 3,
+    "wm_masonry": 0
+   }
+  },
+  {
+   "key": "tag-ai",
+   "menutype": "service",
+   "alias": "ii",
+   "title": "Искусственный интеллект",
+   "type": "tag",
+   "tag": "ai",
+   "params": {
+    "wm_view": "grid",
+    "wm_switch": 1,
+    "wm_columns": 3,
+    "wm_masonry": 0
+   }
+  },
+  {
+   "key": "positions",
+   "menutype": "service",
+   "alias": "positions",
+   "title": "Позиции модулей",
+   "type": "blank",
+   "style": "positions",
+   "params": {
+    "show_page_heading": 1,
+    "wm_blank_lead": "Каждая позиция шаблона заполнена модулем mod_custom с разметкой UIkit, ярлык внутри модуля называет позицию. Блочные позиции идут во всю ширину: у их модулей стиль оформления blank. Страница открыта вторым стилем дочернего шаблона wmarka_vestnik с шапкой «логотип над меню» — так видна и позиция headbar.",
+    "wm_blank_width": "large"
+   }
+  },
+  {
+   "key": "m-typography",
+   "menutype": "service",
+   "alias": "typography",
+   "title": "Типографика",
+   "type": "article",
+   "category": "template",
+   "article": "typography"
+  },
+  {
+   "key": "m-download",
+   "menutype": "service",
+   "alias": "download",
+   "title": "Скачать шаблон",
+   "type": "article",
+   "category": "template",
+   "article": "about-template"
+  },
+  {
+   "key": "m-reforming",
+   "menutype": "service",
+   "alias": "catalytic-reforming",
+   "title": "Каталитический риформинг",
+   "type": "article",
+   "category": "reference",
+   "article": "reforming"
+  },
+  {
+   "key": "tags",
+   "menutype": "service",
+   "alias": "tags",
+   "title": "Все метки",
+   "type": "tags",
+   "layout": "wmarka:wm-catalog",
+   "params": {
+    "tag_columns": 4,
+    "all_tags_show_tag_description": 1,
+    "all_tags_tag_maximum_characters": 90
+   }
+  },
+  {
+   "key": "tag-list",
+   "menutype": "service",
+   "alias": "tag-list",
+   "title": "Метка списком",
+   "type": "tag",
+   "tag": "main",
+   "layout": "list",
+   "params": {
+    "wm_list_thumbs": 1,
+    "tag_list_show_date": "published",
+    "show_headings": 1
+   }
+  },
+  {
+   "key": "map",
+   "menutype": "service",
+   "alias": "map",
+   "title": "Карта меток и рубрик",
+   "type": "tags",
+   "layout": "wmarka:wm-tree",
+   "params": {
+    "wm_show_categories": 1
+   }
+  },
+  {
+   "key": "search",
+   "menutype": "service",
+   "alias": "search",
+   "title": "Поиск",
+   "type": "finder",
+   "params": {
+    "show_date_filters": 1,
+    "show_advanced": 1,
+    "show_image": 1,
+    "show_sort_order": 1,
+    "description_length": 220
+   }
+  },
+  {
+   "key": "archive",
+   "menutype": "service",
+   "alias": "archive",
+   "title": "Архив",
+   "type": "archive"
+  },
+  {
+   "key": "categories",
+   "menutype": "service",
+   "alias": "categories",
+   "title": "Все рубрики",
+   "type": "categories",
+   "params": {
+    "show_base_description": 1,
+    "maxLevelcat": -1
+   }
+  },
+  {
+   "key": "nc-rub",
+   "menutype": "news-mega",
+   "alias": "mega-rubrics",
+   "title": "Рубрики",
+   "type": "heading",
+   "note": "Все новости по разделам"
+  },
+  {
+   "key": "a-economy",
+   "menutype": "news-mega",
+   "parent": "nc-rub",
+   "alias": "mega-ekonomika",
+   "title": "Экономика",
+   "type": "alias",
+   "target": "rub-economy"
+  },
+  {
+   "key": "a-energy",
+   "menutype": "news-mega",
+   "parent": "nc-rub",
+   "alias": "mega-energetika",
+   "title": "Энергетика",
+   "type": "alias",
+   "target": "rub-energy"
+  },
+  {
+   "key": "a-society",
+   "menutype": "news-mega",
+   "parent": "nc-rub",
+   "alias": "mega-obshchestvo",
+   "title": "Общество",
+   "type": "alias",
+   "target": "rub-society"
+  },
+  {
+   "key": "a-tech",
+   "menutype": "news-mega",
+   "parent": "nc-rub",
+   "alias": "mega-tekhnologii",
+   "title": "Технологии",
+   "type": "alias",
+   "target": "rub-tech"
+  },
+  {
+   "key": "nc-rub2",
+   "menutype": "news-mega",
+   "alias": "mega-rubrics-2",
+   "title": "Ещё рубрики",
+   "type": "heading",
+   "note": "Наука, культура, спорт"
+  },
+  {
+   "key": "a-science",
+   "menutype": "news-mega",
+   "parent": "nc-rub2",
+   "alias": "mega-nauka",
+   "title": "Наука",
+   "type": "alias",
+   "target": "rub-science"
+  },
+  {
+   "key": "a-culture",
+   "menutype": "news-mega",
+   "parent": "nc-rub2",
+   "alias": "mega-kultura",
+   "title": "Культура",
+   "type": "alias",
+   "target": "rub-culture"
+  },
+  {
+   "key": "a-sport",
+   "menutype": "news-mega",
+   "parent": "nc-rub2",
+   "alias": "mega-sport",
+   "title": "Спорт",
+   "type": "alias",
+   "target": "rub-sport"
+  },
+  {
+   "key": "a-allnews",
+   "menutype": "news-mega",
+   "parent": "nc-rub2",
+   "alias": "mega-all-news",
+   "title": "Вся лента",
+   "type": "alias",
+   "target": "news",
+   "css": "wm-col-footer"
+  },
+  {
+   "key": "nc-tags",
+   "menutype": "news-mega",
+   "alias": "mega-tags",
+   "title": "Темы",
+   "type": "heading",
+   "note": "Метки, которые идут через рубрики"
+  },
+  {
+   "key": "a-tag-main",
+   "menutype": "news-mega",
+   "parent": "nc-tags",
+   "alias": "mega-tag-main",
+   "title": "Главное",
+   "type": "alias",
+   "target": "tag-main",
+   "css": "uk-icon:star"
+  },
+  {
+   "key": "a-tag-city",
+   "menutype": "news-mega",
+   "parent": "nc-tags",
+   "alias": "mega-tag-city",
+   "title": "Город",
+   "type": "alias",
+   "target": "tag-city",
+   "css": "uk-icon:home"
+  },
+  {
+   "key": "a-tag-transport",
+   "menutype": "news-mega",
+   "parent": "nc-tags",
+   "alias": "mega-tag-transport",
+   "title": "Транспорт",
+   "type": "alias",
+   "target": "tag-transport",
+   "css": "uk-icon:location"
+  },
+  {
+   "key": "a-tag-ecology",
+   "menutype": "news-mega",
+   "parent": "nc-tags",
+   "alias": "mega-tag-ecology",
+   "title": "Экология",
+   "type": "alias",
+   "target": "tag-ecology",
+   "css": "uk-icon:world"
+  },
+  {
+   "key": "a-tag-ai",
+   "menutype": "news-mega",
+   "parent": "nc-tags",
+   "alias": "mega-tag-ai",
+   "title": "Искусственный интеллект",
+   "type": "alias",
+   "target": "tag-ai",
+   "css": "uk-icon:bolt"
+  },
+  {
+   "key": "a-tag-photo",
+   "menutype": "news-mega",
+   "parent": "nc-tags",
+   "alias": "mega-tag-photo",
+   "title": "Фото",
+   "type": "alias",
+   "target": "tag-photo",
+   "css": "uk-icon:camera"
+  },
+  {
+   "key": "a-tag-video",
+   "menutype": "news-mega",
+   "parent": "nc-tags",
+   "alias": "mega-tag-video",
+   "title": "Видео",
+   "type": "alias",
+   "target": "m-video",
+   "css": "uk-icon:play-circle"
+  },
+  {
+   "key": "a-alltags",
+   "menutype": "news-mega",
+   "parent": "nc-tags",
+   "alias": "mega-all-tags",
+   "title": "Все метки",
+   "type": "alias",
+   "target": "tags",
+   "css": "wm-col-footer"
+  },
+  {
+   "key": "nc-top",
+   "menutype": "news-mega",
+   "alias": "mega-top",
+   "title": "Главная новость",
+   "type": "heading",
+   "module": "mega-top"
+  },
+  {
+   "key": "tc-features",
+   "menutype": "template-mega",
+   "alias": "mega-features",
+   "title": "Возможности",
+   "type": "heading",
+   "note": "Штатные страницы Joomla в оформлении wmarka"
+  },
+  {
+   "key": "tm-positions",
+   "menutype": "template-mega",
+   "parent": "tc-features",
+   "alias": "mega-positions",
+   "title": "Позиции модулей",
+   "type": "alias",
+   "target": "positions",
+   "css": "uk-icon:thumbnails",
+   "note": "Каждая позиция шаблона подписана на одной странице"
+  },
+  {
+   "key": "tm-m-typography",
+   "menutype": "template-mega",
+   "parent": "tc-features",
+   "alias": "mega-m-typography",
+   "title": "Типографика",
+   "type": "alias",
+   "target": "m-typography",
+   "css": "uk-icon:italic",
+   "note": "Заголовки, списки, цитаты и таблицы"
+  },
+  {
+   "key": "tm-authors",
+   "menutype": "template-mega",
+   "parent": "tc-features",
+   "alias": "mega-authors",
+   "title": "Авторы",
+   "type": "alias",
+   "target": "authors",
+   "css": "uk-icon:users",
+   "note": "Карточки авторов и их материалы"
+  },
+  {
+   "key": "tm-contacts",
+   "menutype": "template-mega",
+   "parent": "tc-features",
+   "alias": "mega-contacts",
+   "title": "Контакты и форма",
+   "type": "alias",
+   "target": "contacts",
+   "css": "uk-icon:mail",
+   "note": "Адрес, телефоны и форма обратной связи"
+  },
+  {
+   "key": "tm-search",
+   "menutype": "template-mega",
+   "parent": "tc-features",
+   "alias": "mega-search",
+   "title": "Умный поиск",
+   "type": "alias",
+   "target": "search",
+   "css": "uk-icon:search",
+   "note": "Умный поиск с фильтрами по датам"
+  },
+  {
+   "key": "tc-content",
+   "menutype": "template-mega",
+   "alias": "mega-content",
+   "title": "Материалы и метки",
+   "type": "heading",
+   "note": "Один контент — разные виды"
+  },
+  {
+   "key": "tm-news",
+   "menutype": "template-mega",
+   "parent": "tc-content",
+   "alias": "mega-c-news",
+   "title": "Новости сеткой",
+   "type": "alias",
+   "target": "news",
+   "css": "uk-icon:grid",
+   "note": "Карточки с переключателем «сетка / список»"
+  },
+  {
+   "key": "tm-reference",
+   "menutype": "template-mega",
+   "parent": "tc-content",
+   "alias": "mega-c-reference",
+   "title": "Справочник списком",
+   "type": "alias",
+   "target": "reference",
+   "css": "uk-icon:list",
+   "note": "Картинка то слева, то справа"
+  },
+  {
+   "key": "tm-tags",
+   "menutype": "template-mega",
+   "parent": "tc-content",
+   "alias": "mega-c-tags",
+   "title": "Каталог меток",
+   "type": "alias",
+   "target": "tags",
+   "css": "uk-icon:tag",
+   "note": "Метки с картинками и фильтром"
+  },
+  {
+   "key": "tm-tag-list",
+   "menutype": "template-mega",
+   "parent": "tc-content",
+   "alias": "mega-c-tag-list",
+   "title": "Метка таблицей",
+   "type": "alias",
+   "target": "tag-list",
+   "css": "uk-icon:table",
+   "note": "Материалы метки таблицей"
+  },
+  {
+   "key": "tm-map",
+   "menutype": "template-mega",
+   "parent": "tc-content",
+   "alias": "mega-c-map",
+   "title": "Карта меток и рубрик",
+   "type": "alias",
+   "target": "map",
+   "css": "uk-icon:git-fork",
+   "note": "Деревья меток и рубрик"
+  },
+  {
+   "key": "tm-archive",
+   "menutype": "template-mega",
+   "parent": "tc-content",
+   "alias": "mega-c-archive",
+   "title": "Архив",
+   "type": "alias",
+   "target": "archive",
+   "css": "uk-icon:history",
+   "note": "Материалы по месяцам"
+  },
+  {
+   "key": "tm-categories",
+   "menutype": "template-mega",
+   "parent": "tc-content",
+   "alias": "mega-c-categories",
+   "title": "Все рубрики",
+   "type": "alias",
+   "target": "categories",
+   "css": "uk-icon:folder",
+   "note": "Рубрики с описаниями"
+  },
+  {
+   "key": "tc-docs",
+   "menutype": "template-mega",
+   "alias": "mega-docs",
+   "title": "Шаблон",
+   "type": "heading",
+   "note": "wmarka для Joomla 5 и 6"
+  },
+  {
+   "key": "tm-download",
+   "menutype": "template-mega",
+   "parent": "tc-docs",
+   "alias": "mega-download",
+   "title": "Возможности и скачивание",
+   "type": "alias",
+   "target": "m-download",
+   "css": "uk-icon:download",
+   "note": "Что умеет шаблон и как его поставить"
+  },
+  {
+   "key": "gh",
+   "menutype": "template-mega",
+   "parent": "tc-docs",
+   "alias": "github",
+   "title": "Репозиторий на GitHub",
+   "type": "url",
+   "url": "https://github.com/bsakhanov/wmarka",
+   "browserNav": 1,
+   "css": "uk-icon:github",
+   "note": "Исходный код и выпуски"
+  },
+  {
+   "key": "wm-site",
+   "menutype": "template-mega",
+   "parent": "tc-docs",
+   "alias": "webmarka",
+   "title": "Webmarka",
+   "type": "url",
+   "url": "https://webmarka.kz",
+   "browserNav": 1,
+   "css": "uk-icon:world",
+   "note": "Сайт разработчика"
+  }
+ ]
+}

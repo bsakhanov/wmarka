@@ -1,52 +1,36 @@
 <?php
-
 /**
- * @package     Joomla.Site
- * @subpackage  com_contact
+ * WMARKA — пользовательские поля пользователя контакта, сгруппированные.
  *
- * @copyright   (C) 2016 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @var \Joomla\Component\Contact\Site\View\Contact\HtmlView $this
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-use Joomla\CMS\Application\ApplicationHelper;
 use Joomla\CMS\Language\Text;
 
-/** @var \Joomla\Component\Contact\Site\View\Contact\HtmlView $this */
-$params             = $this->item->params;
+$display = $this->item->params->get('show_user_custom_fields');
 
-$displayGroups      = $params->get('show_user_custom_fields');
-$userFieldGroups    = [];
-?>
+if (!$display || !$this->contactUser) {
+    return;
+}
 
-<?php if (!$displayGroups || !$this->contactUser) : ?>
-    <?php return; ?>
-<?php endif; ?>
+$groups = [];
 
-<?php foreach ($this->contactUser->jcfields as $field) : ?>
-    <?php if ($field->value && (in_array('-1', $displayGroups) || in_array($field->group_id, $displayGroups))) : ?>
-        <?php $userFieldGroups[$field->group_title][] = $field; ?>
-    <?php endif; ?>
-<?php endforeach; ?>
+foreach ($this->contactUser->jcfields as $field) {
+    if ($field->value && (\in_array('-1', $display) || \in_array($field->group_id, $display))) {
+        $groups[$field->group_title][] = $field;
+    }
+}
 
-<?php foreach ($userFieldGroups as $groupTitle => $fields) : ?>
-    <?php $id = ApplicationHelper::stringURLSafe($groupTitle); ?>
-    <?php echo '<h3>' . ($groupTitle ?: Text::_('COM_CONTACT_USER_FIELDS')) . '</h3>'; ?>
-
-    <div class="com-contact__user-fields contact-profile" id="user-custom-fields-<?php echo $id; ?>">
-        <dl class="dl-horizontal">
-        <?php foreach ($fields as $field) : ?>
-            <?php if (!$field->value) : ?>
-                <?php continue; ?>
-            <?php endif; ?>
-
-            <?php if ($field->params->get('showlabel')) : ?>
-                <?php echo '<dt>' . Text::_($field->label) . '</dt>'; ?>
-            <?php endif; ?>
-
-            <?php echo '<dd>' . $field->value . '</dd>'; ?>
-        <?php endforeach; ?>
+foreach ($groups as $title => $fields) : ?>
+    <section class="uk-margin-large-top">
+        <h3 class="uk-h4"><?php echo $title ?: Text::_('COM_CONTACT_USER_FIELDS'); ?></h3>
+        <dl class="uk-description-list uk-description-list-divider">
+            <?php foreach ($fields as $field) : ?>
+                <?php if ($field->params->get('showlabel')) : ?><dt><?php echo Text::_($field->label); ?></dt><?php endif; ?>
+                <dd><?php echo $field->value; ?></dd>
+            <?php endforeach; ?>
         </dl>
-    </div>
-<?php endforeach; ?>
+    </section>
+<?php endforeach;

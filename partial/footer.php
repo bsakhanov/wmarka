@@ -1,51 +1,64 @@
 <?php
 /**
- * Часть шаблона: Футер (Footer)
- * Автоматически адаптирует количество колонок в зависимости от активных модулей.
+ * WMARKA — подвал: колонки footer-left / footer-center / footer-right,
+ * контакты из настроек, строка копирайта.
+ *
+ * @var \Wmarka\Template\Helper $this
  */
-declare(strict_types=1);
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Wmarka\Template\Config;
+use Wmarka\Template\Helper;
+use Wmarka\Template\Ui;
 
-/** @var \Wmarka\Template\Helper $this */
-$doc = $this->doc;
-
-$positions = ['footer-left', 'footer-center', 'footer-right'];
-$activePositions = [];
-
-// Проверяем, какие позиции содержат модули
-foreach ($positions as $pos) {
-    if ($doc->countModules($pos)) {
-        $activePositions[] = $pos;
-    }
-}
-
-if (!empty($activePositions)) : 
-    // Динамический расчет класса сетки (например, uk-child-width-1-3@m)
-    $gridClass = 'uk-child-width-1-' . count($activePositions) . '@m';
+$style    = Config::str('footer_style', 'secondary');
+$light    = \in_array($style, ['secondary', 'primary'], true) ? ' uk-light' : '';
+$columns  = array_values(array_filter(['footer-left', 'footer-center', 'footer-right'], fn ($p) => $this->count($p) > 0));
+$contacts = Config::bool('footer_contacts', true) ? Helper::contacts() : [];
+$cols     = \count($columns) + ($contacts ? 1 : 0);
+$year     = (int) date('Y');
+$start    = Config::int('copyright_year', 0);
+$years    = ($start > 0 && $start < $year) ? $start . '–' . $year : (string) $year;
+$owner    = Config::str('copyright_text') ?: Config::siteTitle();
 ?>
+<footer id="footer" class="uk-section uk-section-<?php echo $style . $light; ?>">
+    <div class="<?php echo Config::container(); ?>">
 
-<footer id="footer" class="uk-section uk-section-secondary uk-section-small" itemscope itemtype="https://schema.org/WPFooter">
-    <div class="uk-container">
-        
-        <div class="<?php echo $gridClass; ?> uk-grid-medium uk-grid-match" uk-grid>
-            <?php foreach ($activePositions as $posName) : ?>
-                <div>
-                    <jdoc:include type="modules" name="<?php echo $posName; ?>" style="wmarka" />
-                </div>
-            <?php endforeach; ?>
-        </div>
+        <?php if ($cols) : ?>
+            <div class="uk-grid-large <?php echo Ui::columns(min($cols, 4)); ?>" uk-grid>
+                <?php foreach ($columns as $position) : ?>
+                    <div><div class="uk-child-width-1-1" uk-grid><?php echo $this->modules($position); ?></div></div>
+                <?php endforeach; ?>
 
-        <div class="uk-margin-medium-top uk-text-center uk-text-meta">
-            <p>© <?php echo date('Y'); ?> <?php echo Factory::getApplication()->get('sitename'); ?>. 
-               <?php echo Text::_('TPL_WMARKA_ALL_RIGHTS_RESERVED'); ?>
-            </p>
+                <?php if ($contacts) : ?>
+                    <div>
+                        <h3 class="uk-h5"><?php echo Text::_('TPL_WMARKA_CONTACTS'); ?></h3>
+                        <ul class="uk-list">
+                            <?php foreach ($contacts as $key => $c) : ?>
+                                <li class="uk-flex uk-flex-top">
+                                    <?php echo Ui::icon(Helper::contactIcon($key), 0.9, 'uk-margin-small-right'); ?>
+                                    <?php if ($c['href'] !== '') : ?>
+                                        <a class="uk-link-text" href="<?php echo Ui::esc($c['href']); ?>"<?php echo str_starts_with($c['href'], 'http') ? ' target="_blank" rel="noopener"' : ''; ?>><?php echo Ui::esc($c['label']); ?></a>
+                                    <?php else : ?>
+                                        <span><?php echo Ui::esc($c['label']); ?></span>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <hr class="uk-margin-medium">
+        <?php endif; ?>
+
+        <div class="uk-flex uk-flex-middle uk-flex-between uk-flex-wrap uk-text-small">
+            <p class="uk-margin-remove">© <?php echo $years; ?> <?php echo Ui::esc($owner); ?>. <?php echo Text::_('TPL_WMARKA_ALL_RIGHTS_RESERVED'); ?></p>
+            <?php if ($this->count('footer')) : ?>
+                <div><?php echo $this->modules('footer', 'none'); ?></div>
+            <?php endif; ?>
         </div>
 
     </div>
 </footer>
-
-<?php endif; ?>

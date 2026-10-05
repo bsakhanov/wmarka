@@ -1,358 +1,181 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_content
- * @version     Joomla 6 WMARKA Core Edition (UIkit 3 Category Articles)
+ * WMARKA — таблица материалов категории: фильтр, сортировка по столбцам,
+ * лимит, миниатюры (опция WMARKA), пагинация. uk-table-responsive на мобильных.
  *
- * @copyright   (C) 2009 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @var \Joomla\Component\Content\Site\View\Category\HtmlView $this
  */
 
-declare(strict_types=1);
-
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
-use Joomla\Component\Content\Site\Helper\AssociationHelper;
 use Joomla\Component\Content\Site\Helper\RouteHelper;
+use Wmarka\Template\Image;
+use Wmarka\Template\Seo;
+use Wmarka\Template\Ui;
 
-/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
-$wa = $this->document->getWebAssetManager();
-$wa->useScript('com_content.articles-list');
+require_once JPATH_THEMES . '/wmarka/php/autoload.php';
 
-// Create some shortcuts.
-$n          = count($this->items);
+$this->getDocument()->getWebAssetManager()->useScript('com_content.articles-list');
+
 $listOrder  = $this->escape($this->state->get('list.ordering'));
 $listDirn   = $this->escape($this->state->get('list.direction'));
+$filter     = $this->params->get('filter_field');
 $langFilter = false;
+$thumbs     = (bool) $this->params->get('wm_list_thumbs', 0);
 
-// Tags filtering based on language filter
-if (($this->params->get('filter_field') === 'tag') && (Multilanguage::isEnabled())) {
-    $tagfilter = ComponentHelper::getParams('com_tags')->get('tag_list_language_filter');
-
-    switch ($tagfilter) {
-        case 'current_language':
-            $langFilter = Factory::getApplication()->getLanguage()->getTag();
-            break;
-        case 'all':
-            $langFilter = false;
-            break;
-        default:
-            $langFilter = $tagfilter;
-    }
+if ($filter === 'tag' && Multilanguage::isEnabled()) {
+    $tagfilter  = ComponentHelper::getParams('com_tags')->get('tag_list_language_filter');
+    $langFilter = $tagfilter === 'current_language' ? Factory::getApplication()->getLanguage()->getTag() : ($tagfilter === 'all' ? false : $tagfilter);
 }
 
-// Check for at least one editable article
 $isEditable = false;
 
-if (!empty($this->items)) {
-    foreach ($this->items as $article) {
-        if ($article->params->get('access-edit')) {
-            $isEditable = true;
-            break;
-        }
+foreach ($this->items as $article) {
+    if ($article->params->get('access-edit')) {
+        $isEditable = true;
+        break;
     }
 }
 
-$currentDate = Factory::getDate()->format('Y-m-d H:i:s');
+$sort = static fn (string $label, string $field): string => Ui::bridge((string) HTMLHelper::_('grid.sort', $label, $field, $listDirn, $listOrder, null, 'asc', '', 'adminForm'));
 ?>
+<form action="<?php echo htmlspecialchars(Uri::getInstance()->toString(), ENT_QUOTES, 'UTF-8'); ?>" method="post" name="adminForm" id="adminForm">
+    <?php
+    $wmSelect = null;
 
-<form action="<?php echo htmlspecialchars(Uri::getInstance()->toString(), ENT_QUOTES, 'UTF-8'); ?>" method="post" name="adminForm" id="adminForm" class="com-content-category__articles">
-    
-    <?php /* --- ФИЛЬТРЫ И ЛИМИТЫ (UIkit 3) --- */ ?>
-    <div class="uk-flex uk-flex-between uk-flex-middle uk-flex-wrap uk-margin-bottom" uk-margin>
-        <?php if ($this->params->get('filter_field') !== 'hide') : ?>
-            <div class="com-content__filter uk-flex uk-flex-middle uk-flex-wrap" uk-margin>
-                <?php if ($this->params->get('filter_field') === 'tag') : ?>
-                    <span class="visually-hidden">
-                        <label class="filter-search-lbl" for="filter-search">
-                            <?php echo Text::_('JOPTION_SELECT_TAG'); ?>
-                        </label>
-                    </span>
-                    <select name="filter_tag" id="filter-search" class="uk-select uk-width-auto" onchange="document.adminForm.submit();" >
-                        <option value=""><?php echo Text::_('JOPTION_SELECT_TAG'); ?></option>
-                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('tag.options', ['filter.published' => [1], 'filter.language' => $langFilter], true), 'value', 'text', $this->state->get('filter.tag')); ?>
-                    </select>
-                <?php elseif ($this->params->get('filter_field') === 'month') : ?>
-                    <span class="visually-hidden">
-                        <label class="filter-search-lbl" for="filter-search">
-                            <?php echo Text::_('JOPTION_SELECT_MONTH'); ?>
-                        </label>
-                    </span>
-                    <select name="filter-search" id="filter-search" class="uk-select uk-width-auto" onchange="document.adminForm.submit();">
-                        <option value=""><?php echo Text::_('JOPTION_SELECT_MONTH'); ?></option>
-                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('content.months', $this->state), 'value', 'text', $this->state->get('list.filter')); ?>
-                    </select>
-                <?php else : ?>
-                    <label class="filter-search-lbl visually-hidden" for="filter-search">
-                        <?php echo Text::_('COM_CONTENT_' . $this->params->get('filter_field') . '_FILTER_LABEL'); ?>
-                    </label>
-                    <div class="uk-inline">
-                        <span class="uk-form-icon" uk-icon="icon: search"></span>
-                        <input type="text" name="filter-search" id="filter-search" value="<?php echo $this->escape($this->state->get('list.filter')); ?>" class="uk-input uk-width-medium" onchange="document.adminForm.submit();" placeholder="<?php echo Text::_('COM_CONTENT_' . $this->params->get('filter_field') . '_FILTER_LABEL'); ?>">
-                    </div>
-                <?php endif; ?>
+    if ($filter === 'tag') {
+        $wmSelect = '<select name="filter_tag" id="filter-search" class="uk-select uk-form-small" onchange="this.form.submit()" aria-label="' . Ui::esc(Text::_('JOPTION_SELECT_TAG')) . '"><option value="">' . Text::_('JOPTION_SELECT_TAG') . '</option>'
+            . HTMLHelper::_('select.options', HTMLHelper::_('tag.options', ['filter.published' => [1], 'filter.language' => $langFilter], true), 'value', 'text', $this->state->get('filter.tag')) . '</select>';
+    } elseif ($filter === 'month') {
+        $wmSelect = '<select name="filter-search" id="filter-search" class="uk-select uk-form-small" onchange="this.form.submit()" aria-label="' . Ui::esc(Text::_('JOPTION_SELECT_MONTH')) . '"><option value="">' . Text::_('JOPTION_SELECT_MONTH') . '</option>'
+            . HTMLHelper::_('select.options', HTMLHelper::_('content.months', $this->state), 'value', 'text', $this->state->get('list.filter')) . '</select>';
+    }
 
-                <?php if ($this->params->get('filter_field') !== 'tag' && $this->params->get('filter_field') !== 'month') : ?>
-                    <button type="submit" name="filter_submit" class="uk-button uk-button-primary uk-margin-small-left"><?php echo Text::_('JGLOBAL_FILTER_BUTTON'); ?></button>
-                <?php endif; ?>
-                <button type="reset" name="filter-clear-button" class="uk-button uk-button-default uk-margin-small-left"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-            </div>
-        <?php endif; ?>
+    echo \Joomla\CMS\Layout\LayoutHelper::render('wmarka.filterbar', [
+        'search'  => \in_array($filter, ['hide', 'tag', 'month'], true) ? null : ['name' => 'filter-search', 'value' => (string) $this->state->get('list.filter'), 'label' => Text::_('COM_CONTENT_' . $filter . '_FILTER_LABEL')],
+        'select'  => $wmSelect,
+        'buttons' => $filter !== 'hide',
+        'limit'   => $this->params->get('show_pagination_limit') ? $this->pagination->getLimitBox() : null,
+    ]);
+    ?>
 
-        <?php if ($this->params->get('show_pagination_limit')) : ?>
-            <div class="com-content-category__pagination uk-flex uk-flex-middle">
-                <label for="limit" class="visually-hidden">
-                    <?php echo Text::_('JGLOBAL_DISPLAY_NUM'); ?>
-                </label>
-                <span class="uk-margin-small-right uk-text-meta"><?php echo Text::_('JGLOBAL_DISPLAY_NUM'); ?></span>
-                <?php echo $this->pagination->getLimitBox(); ?>
-            </div>
-        <?php endif; ?>
-    </div>
-
-    <?php /* --- ТАБЛИЦА СТАТЕЙ (UIkit 3) --- */ ?>
     <?php if (empty($this->items)) : ?>
         <?php if ($this->params->get('show_no_articles', 1)) : ?>
-            <div class="uk-alert-primary" uk-alert>
-                <span uk-icon="info" class="uk-margin-small-right"></span>
-                <?php echo Text::_('COM_CONTENT_NO_ARTICLES'); ?>
-            </div>
+            <div class="uk-alert-primary" uk-alert><p><?php echo Text::_('COM_CONTENT_NO_ARTICLES'); ?></p></div>
         <?php endif; ?>
     <?php else : ?>
         <div class="uk-overflow-auto">
-            <table class="com-content-category__table category uk-table uk-table-striped uk-table-divider uk-table-hover uk-table-middle">
-                <caption class="visually-hidden">
-                    <?php echo Text::_('COM_CONTENT_ARTICLES_TABLE_CAPTION'); ?>
-                </caption>
-                <thead<?php echo $this->params->get('show_headings', '1') ? '' : ' class="visually-hidden"'; ?>>
-                    <tr>
-                        <th scope="col" id="categorylist_header_title">
-                            <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder, null, 'asc', '', 'adminForm'); ?>
-                        </th>
-                        <?php if ($date = $this->params->get('list_show_date')) : ?>
-                            <th scope="col" id="categorylist_header_date">
-                                <?php if ($date === 'created') : ?>
-                                    <?php echo HTMLHelper::_('grid.sort', 'COM_CONTENT_' . $date . '_DATE', 'a.created', $listDirn, $listOrder); ?>
-                                <?php elseif ($date === 'modified') : ?>
-                                    <?php echo HTMLHelper::_('grid.sort', 'COM_CONTENT_' . $date . '_DATE', 'a.modified', $listDirn, $listOrder); ?>
-                                <?php elseif ($date === 'published') : ?>
-                                    <?php echo HTMLHelper::_('grid.sort', 'COM_CONTENT_' . $date . '_DATE', 'a.publish_up', $listDirn, $listOrder); ?>
-                                <?php endif; ?>
-                            </th>
-                        <?php endif; ?>
-                        <?php if ($this->params->get('list_show_author')) : ?>
-                            <th scope="col" id="categorylist_header_author">
-                                <?php echo HTMLHelper::_('grid.sort', 'JAUTHOR', 'author', $listDirn, $listOrder); ?>
-                            </th>
-                        <?php endif; ?>
-                        <?php if ($this->params->get('list_show_hits')) : ?>
-                            <th scope="col" id="categorylist_header_hits">
-                                <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_HITS', 'a.hits', $listDirn, $listOrder); ?>
-                            </th>
-                        <?php endif; ?>
-                        <?php if ($this->params->get('list_show_votes', 0) && $this->vote) : ?>
-                            <th scope="col" id="categorylist_header_votes">
-                                <?php echo HTMLHelper::_('grid.sort', 'COM_CONTENT_VOTES', 'rating_count', $listDirn, $listOrder); ?>
-                            </th>
-                        <?php endif; ?>
-                        <?php if ($this->params->get('list_show_ratings', 0) && $this->vote) : ?>
-                            <th scope="col" id="categorylist_header_ratings">
-                                <?php echo HTMLHelper::_('grid.sort', 'COM_CONTENT_RATINGS', 'rating', $listDirn, $listOrder); ?>
-                            </th>
-                        <?php endif; ?>
-                        <?php if ($isEditable) : ?>
-                            <th scope="col" id="categorylist_header_edit"><?php echo Text::_('COM_CONTENT_EDIT_ITEM'); ?></th>
-                        <?php endif; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php foreach ($this->items as $i => $article) : ?>
-                    <?php if ($this->items[$i]->state == ContentComponent::CONDITION_UNPUBLISHED) : ?>
-                        <tr class="system-unpublished cat-list-row<?php echo $i % 2; ?>">
-                    <?php else : ?>
-                        <tr class="cat-list-row<?php echo $i % 2; ?>" >
+        <table class="uk-table uk-table-divider uk-table-hover uk-table-middle uk-table-responsive">
+            <caption class="uk-hidden-visually"><?php echo Text::_('COM_CONTENT_ARTICLES_TABLE_CAPTION'); ?></caption>
+            <thead<?php echo $this->params->get('show_headings', '1') ? '' : ' class="uk-hidden-visually"'; ?>>
+                <tr>
+                    <th scope="col" class="uk-table-expand"><?php echo $sort('JGLOBAL_TITLE', 'a.title'); ?></th>
+                    <?php if ($date = $this->params->get('list_show_date')) : ?>
+                        <th scope="col" class="uk-table-shrink uk-text-nowrap"><?php echo $sort('COM_CONTENT_' . $date . '_DATE', ['created' => 'a.created', 'modified' => 'a.modified', 'published' => 'a.publish_up'][$date] ?? 'a.created'); ?></th>
                     <?php endif; ?>
-                    <th class="list-title" scope="row">
-                        <?php if (in_array($article->access, $this->user->getAuthorisedViewLevels())) : ?>
-                            <a class="uk-link-reset uk-text-bold" href="<?php echo Route::_(RouteHelper::getArticleRoute($article->slug, $article->catid, $article->language)); ?>">
-                                <?php echo $this->escape($article->title); ?>
-                            </a>
-                            <?php if (Associations::isEnabled() && $this->params->get('show_associations')) : ?>
-                                <div class="cat-list-association uk-margin-small-top">
-                                <?php $associations = AssociationHelper::displayAssociations($article->id); ?>
-                                <?php foreach ($associations as $association) : ?>
-                                    <?php if ($this->params->get('flags', 1) && $association['language']->image) : ?>
-                                        <?php $flag = HTMLHelper::_('image', 'mod_languages/' . $association['language']->image . '.gif', $association['language']->title_native, ['title' => $association['language']->title_native], true); ?>
-                                        <a href="<?php echo Route::_($association['item']); ?>"><?php echo $flag; ?></a>
-                                    <?php else : ?>
-                                        <a class="uk-label uk-label-default" title="<?php echo $association['language']->title_native; ?>" href="<?php echo Route::_($association['item']); ?>"><?php echo $association['language']->lang_code; ?>
-                                            <span class="visually-hidden"><?php echo $association['language']->title_native; ?></span>
-                                        </a>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                                </div>
-                            <?php endif; ?>
-                        <?php else : ?>
-                            <?php
-                            echo '<span class="uk-text-bold">' . $this->escape($article->title) . ' : </span>';
-                            $itemId = Factory::getApplication()->getMenu()->getActive()->id;
-                            $link   = new Uri(Route::_('index.php?option=com_users&view=login&Itemid=' . $itemId, false));
-                            $link->setVar('return', base64_encode(RouteHelper::getArticleRoute($article->slug, $article->catid, $article->language)));
-                            ?>
-                            <a href="<?php echo $link; ?>" class="uk-text-warning">
-                                <span uk-icon="icon: lock; ratio: 0.8"></span> <?php echo Text::_('COM_CONTENT_REGISTER_TO_READ_MORE'); ?>
-                            </a>
-                            <?php if (Associations::isEnabled() && $this->params->get('show_associations')) : ?>
-                                <div class="cat-list-association uk-margin-small-top">
-                                <?php $associations = AssociationHelper::displayAssociations($article->id); ?>
-                                <?php foreach ($associations as $association) : ?>
-                                    <?php if ($this->params->get('flags', 1)) : ?>
-                                        <?php $flag = HTMLHelper::_('image', 'mod_languages/' . $association['language']->image . '.gif', $association['language']->title_native, ['title' => $association['language']->title_native], true); ?>
-                                        <a href="<?php echo Route::_($association['item']); ?>"><?php echo $flag; ?></a>
-                                    <?php else : ?>
-                                        <a class="uk-label uk-label-default" title="<?php echo $association['language']->title_native; ?>" href="<?php echo Route::_($association['item']); ?>"><?php echo $association['language']->lang_code; ?>
-                                            <span class="visually-hidden"><?php echo $association['language']->title_native; ?></span>
-                                        </a>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                                </div>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                        <?php if ($article->state == ContentComponent::CONDITION_UNPUBLISHED) : ?>
-                            <div class="uk-margin-small-top">
-                                <span class="list-published uk-label uk-label-warning">
-                                    <?php echo Text::_('JUNPUBLISHED'); ?>
-                                </span>
-                            </div>
-                        <?php endif; ?>
-                        <?php if ($article->publish_up > $currentDate) : ?>
-                            <div class="uk-margin-small-top">
-                                <span class="list-published uk-label uk-label-warning">
-                                    <?php echo Text::_('JNOTPUBLISHEDYET'); ?>
-                                </span>
-                            </div>
-                        <?php endif; ?>
-                        <?php if (!is_null($article->publish_down) && $article->publish_down < $currentDate) : ?>
-                            <div class="uk-margin-small-top">
-                                <span class="list-published uk-label uk-label-danger">
-                                    <?php echo Text::_('JEXPIRED'); ?>
-                                </span>
-                            </div>
-                        <?php endif; ?>
-                    </th>
-                    <?php if ($this->params->get('list_show_date')) : ?>
-                        <td class="list-date uk-text-meta">
-                            <?php
-                            echo HTMLHelper::_(
-                                'date',
-                                $article->displayDate,
-                                $this->escape($this->params->get('date_format', Text::_('DATE_FORMAT_LC3')))
-                            ); ?>
-                        </td>
+                    <?php if ($this->params->get('list_show_author')) : ?>
+                        <th scope="col" class="uk-table-shrink uk-text-nowrap"><?php echo $sort('JAUTHOR', 'author'); ?></th>
                     <?php endif; ?>
-                    <?php if ($this->params->get('list_show_author', 1)) : ?>
-                        <td class="list-author">
-                            <?php if (!empty($article->author) || !empty($article->created_by_alias)) : ?>
-                                <?php $author = $article->author ?>
-                                <?php $author = $article->created_by_alias ?: $author; ?>
-                                <?php if (!empty($article->contact_link) && $this->params->get('link_author') == true) : ?>
-                                    <?php if ($this->params->get('show_headings')) : ?>
-                                        <?php echo HTMLHelper::_('link', $article->contact_link, $author); ?>
-                                    <?php else : ?>
-                                        <?php echo Text::sprintf('COM_CONTENT_WRITTEN_BY', HTMLHelper::_('link', $article->contact_link, $author)); ?>
-                                    <?php endif; ?>
-                                <?php else : ?>
-                                    <?php if ($this->params->get('show_headings')) : ?>
-                                        <?php echo $author; ?>
-                                    <?php else : ?>
-                                        <?php echo Text::sprintf('COM_CONTENT_WRITTEN_BY', $author); ?>
-                                    <?php endif; ?>
-                                <?php endif; ?>
-                            <?php endif; ?>
-                        </td>
-                    <?php endif; ?>
-                    <?php if ($this->params->get('list_show_hits', 1)) : ?>
-                        <td class="list-hits">
-                            <span class="uk-badge">
-                                <?php if ($this->params->get('show_headings')) : ?>
-                                    <?php echo $article->hits; ?>
-                                <?php else : ?>
-                                    <?php echo Text::sprintf('JGLOBAL_HITS_COUNT', $article->hits); ?>
-                                <?php endif; ?>
-                            </span>
-                        </td>
+                    <?php if ($this->params->get('list_show_hits')) : ?>
+                        <th scope="col" class="uk-table-shrink uk-text-nowrap"><?php echo $sort('JGLOBAL_HITS', 'a.hits'); ?></th>
                     <?php endif; ?>
                     <?php if ($this->params->get('list_show_votes', 0) && $this->vote) : ?>
-                        <td class="list-votes">
-                            <span class="uk-label uk-label-success">
-                                <?php if ($this->params->get('show_headings')) : ?>
-                                    <?php echo $article->rating_count; ?>
-                                <?php else : ?>
-                                    <?php echo Text::sprintf('COM_CONTENT_VOTES_COUNT', $article->rating_count); ?>
-                                <?php endif; ?>
-                            </span>
-                        </td>
+                        <th scope="col" class="uk-table-shrink"><?php echo $sort('COM_CONTENT_VOTES', 'rating_count'); ?></th>
                     <?php endif; ?>
                     <?php if ($this->params->get('list_show_ratings', 0) && $this->vote) : ?>
-                        <td class="list-ratings">
-                            <span class="uk-label uk-label-warning">
-                                <?php if ($this->params->get('show_headings')) : ?>
-                                    <?php echo $article->rating; ?>
-                                <?php else : ?>
-                                    <?php echo Text::sprintf('COM_CONTENT_RATINGS_COUNT', $article->rating); ?>
-                                <?php endif; ?>
-                            </span>
-                        </td>
+                        <th scope="col" class="uk-table-shrink"><?php echo $sort('COM_CONTENT_RATINGS', 'rating'); ?></th>
                     <?php endif; ?>
                     <?php if ($isEditable) : ?>
-                        <td class="list-edit">
-                            <?php if ($article->params->get('access-edit')) : ?>
-                                <?php echo HTMLHelper::_('contenticon.edit', $article, $article->params); ?>
+                        <th scope="col" class="uk-table-shrink"><?php echo Text::_('COM_CONTENT_EDIT_ITEM'); ?></th>
+                    <?php endif; ?>
+                </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($this->items as $article) : ?>
+                <?php
+                $canView = \in_array($article->access, $this->user->getAuthorisedViewLevels());
+                $link    = Route::_(RouteHelper::getArticleRoute($article->slug, $article->catid, $article->language));
+
+                if ($canView) {
+                    Seo::addListItem((string) $article->title, $link);
+                }
+                ?>
+                <tr<?php echo $article->state == ContentComponent::CONDITION_UNPUBLISHED ? ' class="uk-text-muted"' : ''; ?>>
+                    <td>
+                        <div class="uk-flex uk-flex-middle">
+                            <?php if ($thumbs && ($thumb = Image::intro($article, false))) : ?>
+                                <a href="<?php echo $link; ?>" class="uk-margin-small-right uk-flex-none uk-width-small" tabindex="-1" aria-hidden="true"><?php echo Image::img($thumb, '', ['class' => 'uk-width-1-1', 'sizes' => '150px']); ?></a>
+                            <?php endif; ?>
+                            <div>
+                                <?php if ($canView) : ?>
+                                    <a class="uk-link-heading" href="<?php echo $link; ?>"><?php echo Ui::title($article->title); ?></a>
+                                <?php else : ?>
+                                    <?php
+                                    $active = Factory::getApplication()->getMenu()->getActive();
+                                    $login  = new Uri(Route::_('index.php?option=com_users&view=login' . ($active ? '&Itemid=' . $active->id : ''), false));
+                                    $login->setVar('return', base64_encode(RouteHelper::getArticleRoute($article->slug, $article->catid, $article->language)));
+                                    ?>
+                                    <?php echo Ui::title($article->title); ?> — <a href="<?php echo $login; ?>"><?php echo Text::_('COM_CONTENT_REGISTER_TO_READ_MORE'); ?></a>
+                                <?php endif; ?>
+                                <?php if ($article->state == ContentComponent::CONDITION_UNPUBLISHED) : ?>
+                                    <span class="uk-label uk-label-warning"><?php echo Text::_('JUNPUBLISHED'); ?></span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </td>
+                    <?php if ($this->params->get('list_show_date')) : ?>
+                        <td class="uk-text-nowrap uk-text-meta"><?php echo HTMLHelper::_('date', $article->displayDate, $this->escape($this->params->get('date_format', Text::_('DATE_FORMAT_LC3')))); ?></td>
+                    <?php endif; ?>
+                    <?php if ($this->params->get('list_show_author')) : ?>
+                        <td class="uk-text-nowrap uk-text-meta">
+                            <?php $author = $article->created_by_alias ?: $article->author; ?>
+                            <?php if (!empty($article->contact_link) && $this->params->get('link_author')) : ?>
+                                <a href="<?php echo $article->contact_link; ?>"><?php echo $this->escape($author); ?></a>
+                            <?php else : ?>
+                                <?php echo $this->escape($author); ?>
                             <?php endif; ?>
                         </td>
                     <?php endif; ?>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
+                    <?php if ($this->params->get('list_show_hits')) : ?>
+                        <td class="uk-text-meta"><span class="uk-badge"><?php echo (int) $article->hits; ?></span></td>
+                    <?php endif; ?>
+                    <?php if ($this->params->get('list_show_votes', 0) && $this->vote) : ?>
+                        <td class="uk-text-meta"><?php echo (int) $article->rating_count; ?></td>
+                    <?php endif; ?>
+                    <?php if ($this->params->get('list_show_ratings', 0) && $this->vote) : ?>
+                        <td class="uk-text-meta"><?php echo $article->rating; ?></td>
+                    <?php endif; ?>
+                    <?php if ($isEditable) : ?>
+                        <td><?php echo $article->params->get('access-edit') ? Ui::bridge((string) HTMLHelper::_('contenticon.edit', $article, $article->params)) : ''; ?></td>
+                    <?php endif; ?>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
         </div>
     <?php endif; ?>
 
-    <?php // Code to add a link to submit an article. ?>
     <?php if ($this->category->getParams()->get('access-create')) : ?>
-        <div class="uk-margin-top">
-            <?php echo HTMLHelper::_('contenticon.create', $this->category, $this->category->params); ?>
-        </div>
+        <div class="uk-margin"><?php echo Ui::bridge((string) HTMLHelper::_('contenticon.create', $this->category, $this->category->params)); ?></div>
     <?php endif; ?>
 
-    <?php // Add pagination links ?>
-    <?php if (!empty($this->items)) : ?>
-        <?php if (($this->params->def('show_pagination', 2) == 1  || ($this->params->get('show_pagination') == 2)) && ($this->pagination->pagesTotal > 1)) : ?>
-            <div class="com-content-category__navigation uk-margin-large-top uk-flex uk-flex-between uk-flex-middle uk-flex-wrap">
-                <div class="com-content-category__pagination">
-                    <?php echo $this->pagination->getPagesLinks(); ?>
-                </div>
-                <?php if ($this->params->def('show_pagination_results', 1)) : ?>
-                    <p class="com-content-category__counter counter uk-text-meta uk-margin-remove">
-                        <?php echo $this->pagination->getPagesCounter(); ?>
-                    </p>
-                <?php endif; ?>
-            </div>
+    <?php if (!empty($this->items) && ($this->params->def('show_pagination', 2) == 1 || $this->params->get('show_pagination') == 2) && $this->pagination->pagesTotal > 1) : ?>
+        <?php echo $this->pagination->getPagesLinks(); ?>
+        <?php if ($this->params->def('show_pagination_results', 1)) : ?>
+            <p class="uk-text-meta uk-text-center"><?php echo $this->pagination->getPagesCounter(); ?></p>
         <?php endif; ?>
     <?php endif; ?>
-    <div>
-        <input type="hidden" name="filter_order" value="">
-        <input type="hidden" name="filter_order_Dir" value="">
-        <input type="hidden" name="limitstart" value="">
-        <input type="hidden" name="task" value="">
-    </div>
+
+    <input type="hidden" name="filter_order" value="">
+    <input type="hidden" name="filter_order_Dir" value="">
+    <input type="hidden" name="limitstart" value="">
+    <input type="hidden" name="task" value="">
 </form>

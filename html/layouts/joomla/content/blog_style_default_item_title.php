@@ -1,73 +1,30 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  Layout
- * @version     WMARKA ULTRA (Blog Item Title + UKit 3 + Typography)
+ * WMARKA — заголовок элемента блога (для сторонних вызовов макета ядра).
+ *
+ * @var object $displayData
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\Component\Content\Site\Helper\RouteHelper;
+use Wmarka\Template\Ui;
 
-// Создаем сокращение для параметров
+require_once JPATH_THEMES . '/wmarka/php/autoload.php';
+
 $params = $displayData->params;
 
-// Логика кавычек-"елочек" для заголовков
-$fixQuotes = function ($text) {
-    return preg_replace_callback('#(([\"]{2,})|(?![^\W])(\"))|([^\s][\"]+(?![\w]))#u', function ($m) {
-        if (count($m) === 3) return "«»";
-        return (isset($m[1]) && $m[1]) ? "«" : "»";
-    }, $text);
-};
+if (!$params->get('show_title')) {
+    return;
+}
 
-$currentDate = Factory::getDate()->format('Y-m-d H:i:s');
-$link = RouteHelper::getArticleRoute($displayData->slug, $displayData->catid, $displayData->language);
-
-$showTitle = $params->get('show_title');
-$isUnpublished = ($displayData->state == 0);
-$isNotPublishedYet = ($displayData->publish_up > $currentDate);
-$isExpired = ($displayData->publish_down !== null && $displayData->publish_down < $currentDate);
+$title = Ui::title($displayData->title);
 ?>
-
-<?php if ($isUnpublished || $showTitle || ($params->get('show_author') && !empty($displayData->author))) : ?>
-    <div class="uk-margin-small-bottom blog-item-header">
-        
-        <?php if ($showTitle) : ?>
-            <h2 class="uk-card-title uk-margin-remove-top uk-text-bold">
-                <?php if ($params->get('link_titles') && ($params->get('access-view') || $params->get('show_noauth', '0') == '1')) : ?>
-                    <a href="<?php echo Route::_($link); ?>" class="uk-link-reset">
-                        <?php echo $fixQuotes($this->escape($displayData->title)); ?>
-                    </a>
-                <?php else : ?>
-                    <?php echo $fixQuotes($this->escape($displayData->title)); ?>
-                <?php endif; ?>
-            </h2>
-        <?php endif; ?>
-
-        <?php /* Вывод меток состояния материала (Снято с публикации / Ожидает / Истекло) */ ?>
-        <?php if ($isUnpublished || $isNotPublishedYet || $isExpired) : ?>
-            <div class="uk-grid-small uk-child-width-auto uk-margin-small-top" uk-grid>
-                <?php if ($isUnpublished) : ?>
-                    <div>
-                        <span class="uk-label uk-label-warning uk-border-rounded"><?php echo Text::_('JUNPUBLISHED'); ?></span>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($isNotPublishedYet) : ?>
-                    <div>
-                        <span class="uk-label uk-label-warning uk-border-rounded"><?php echo Text::_('JNOTPUBLISHEDYET'); ?></span>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($isExpired) : ?>
-                    <div>
-                        <span class="uk-label uk-label-danger uk-border-rounded"><?php echo Text::_('JEXPIRED'); ?></span>
-                    </div>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
-    </div>
-<?php endif; ?>
+<h2 class="uk-h3 uk-margin-remove-bottom" itemprop="headline">
+    <?php if ($params->get('link_titles') && $params->get('access-view')) : ?>
+        <a class="uk-link-heading" href="<?php echo Route::_(RouteHelper::getArticleRoute($displayData->slug, $displayData->catid, $displayData->language)); ?>" itemprop="url"><?php echo $title; ?></a>
+    <?php else : ?>
+        <?php echo $title; ?>
+    <?php endif; ?>
+</h2>

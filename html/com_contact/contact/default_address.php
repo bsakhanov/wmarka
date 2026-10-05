@@ -1,152 +1,70 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_contact
- * @author      Partially modified for Joomla 5 and UIkit 3
+ * WMARKA — адрес и средства связи контакта (uk-list с иконками UIkit).
  *
- * @copyright   (C) 2006 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @var \Joomla\Component\Contact\Site\View\Contact\HtmlView $this
  */
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\String\PunycodeHelper;
-use Joomla\CMS\HTML\HTMLHelper; // Добавим для email cloak
+use Wmarka\Template\Ui;
 
-/** @var \Joomla\Component\Contact\Site\View\Contact\HtmlView $this */
+require_once JPATH_THEMES . '/wmarka/php/autoload.php';
 
+$item  = $this->item;
+$p     = $this->params;
+$rows  = [];
+
+if ($p->get('address_check') > 0) {
+    $parts = [];
+
+    foreach (['address' => 'show_street_address', 'suburb' => 'show_suburb', 'state' => 'show_state', 'postcode' => 'show_postcode', 'country' => 'show_country'] as $field => $flag) {
+        if ($item->$field && $p->get($flag)) {
+            $parts[] = $field === 'address' ? nl2br($this->escape($item->$field), false) : $this->escape($item->$field);
+        }
+    }
+
+    if ($parts) {
+        $rows[] = ['location', Text::_('COM_CONTACT_ADDRESS'), '<span itemprop="address">' . implode(', ', $parts) . '</span>'];
+    }
+}
+
+if ($item->email_to && $p->get('show_email')) {
+    $rows[] = ['mail', Text::_('JGLOBAL_EMAIL'), $item->email_to];
+}
+
+if ($item->telephone && $p->get('show_telephone')) {
+    $rows[] = ['receiver', Text::_('COM_CONTACT_TELEPHONE'), '<a href="tel:' . preg_replace('/[^\d+]/', '', $item->telephone) . '" itemprop="telephone">' . $this->escape($item->telephone) . '</a>'];
+}
+
+if ($item->mobile && $p->get('show_mobile')) {
+    $rows[] = ['phone', Text::_('COM_CONTACT_MOBILE'), '<a href="tel:' . preg_replace('/[^\d+]/', '', $item->mobile) . '">' . $this->escape($item->mobile) . '</a>'];
+}
+
+if ($item->fax && $p->get('show_fax')) {
+    $rows[] = ['print', Text::_('COM_CONTACT_FAX'), $this->escape($item->fax)];
+}
+
+if ($item->webpage && $p->get('show_webpage')) {
+    $url    = $this->escape($item->webpage);
+    $rows[] = ['world', Text::_('COM_CONTACT_WEBPAGE'), '<a href="' . $url . '" target="_blank" rel="noopener noreferrer" itemprop="url">' . $this->escape(PunycodeHelper::urlToUTF8($item->webpage)) . '</a>'];
+}
+
+if (!$rows) {
+    return;
+}
 ?>
-<?php // Используем горизонтальный список описаний UIkit ?>
-<dl class="uk-description-list uk-description-list-horizontal">
-
-    <?php // --- Блок Адреса --- ?>
-    <?php if (($this->params->get('address_check') > 0) &&
-              ($this->item->address || $this->item->suburb || $this->item->state || $this->item->country || $this->item->postcode)) : ?>
-        <dt>
-            <?php // Иконка UIkit для адреса ?>
-            <span uk-icon="icon: location" class="uk-margin-small-right" aria-hidden="true"></span>
-            <?php echo Text::_('COM_CONTACT_ADDRESS'); ?>:
-        </dt>
-        <?php // Оборачиваем весь адрес в dd с микроразметкой PostalAddress ?>
-        <dd itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-            <?php if ($this->item->address && $this->params->get('show_street_address')) : ?>
-                <div class="contact-street" itemprop="streetAddress"> <?php // Используем div вместо span для nl2br ?>
-                    <?php echo nl2br($this->escape($this->item->address)); ?>
-                </div>
+<?php $mode = (int) $p->get('contact_icons', 0); ?>
+<ul class="uk-list uk-list-large">
+    <?php foreach ($rows as [$icon, $label, $value]) : ?>
+        <li class="uk-flex uk-flex-top">
+            <?php if ($mode === 0) : ?>
+                <?php $marker = (string) $p->get('marker_' . ['location' => 'address', 'mail' => 'email', 'receiver' => 'telephone', 'phone' => 'mobile', 'print' => 'fax', 'world' => 'webpage'][$icon], ''); ?>
+                <?php echo $marker !== '' ? '<span class="uk-margin-small-right">' . $marker . '</span>' : Ui::icon($icon, 1.0, 'uk-margin-small-right uk-text-muted'); ?>
             <?php endif; ?>
-            <?php // Собираем остальные части адреса в одну строку для компактности ?>
-            <?php
-            $address_parts = [];
-            if ($this->item->suburb && $this->params->get('show_suburb')) {
-                $address_parts[] = '<span itemprop="addressLocality">' . $this->escape($this->item->suburb) . '</span>';
-            }
-            if ($this->item->state && $this->params->get('show_state')) {
-                $address_parts[] = '<span itemprop="addressRegion">' . $this->escape($this->item->state) . '</span>';
-            }
-            if ($this->item->postcode && $this->params->get('show_postcode')) {
-                $address_parts[] = '<span itemprop="postalCode">' . $this->escape($this->item->postcode) . '</span>';
-            }
-            if ($this->item->country && $this->params->get('show_country')) {
-                $address_parts[] = '<span itemprop="addressCountry">' . $this->escape($this->item->country) . '</span>';
-            }
-            ?>
-            <?php if (!empty($address_parts)) : ?>
-                 <div class="contact-city-state-zip-country uk-margin-small-top">
-                     <?php echo implode(', ', $address_parts); ?>
-                 </div>
-            <?php endif; ?>
-        </dd>
-    <?php endif; ?>
-
-    <?php // --- Блок Email --- ?>
-    <?php if ($this->item->email_to && $this->params->get('show_email')) : ?>
-        <dt>
-            <?php // Иконка UIkit для Email ?>
-            <span uk-icon="icon: mail" class="uk-margin-small-right" aria-hidden="true"></span>
-            <?php echo Text::_('COM_CONTACT_EMAIL_LABEL'); ?>:
-        </dt>
-        <dd>
-            <span class="contact-emailto" itemprop="email"> <?php // itemprop на сам email ?>
-                <?php // Используем email cloak для защиты от спама ?>
-                <?php echo HTMLHelper::_('email.cloak', $this->escape($this->item->email_to)); ?>
-            </span>
-        </dd>
-    <?php endif; ?>
-
-    <?php // --- Блок Телефон --- ?>
-    <?php if ($this->item->telephone && $this->params->get('show_telephone')) : ?>
-        <dt>
-             <?php // Иконка UIkit для Телефона ?>
-            <span uk-icon="icon: receiver" class="uk-margin-small-right" aria-hidden="true"></span>
-            <?php echo Text::_('COM_CONTACT_TELEPHONE'); ?>:
-        </dt>
-        <dd>
-            <span class="contact-telephone" itemprop="telephone"> <?php // itemprop для телефона ?>
-                <?php // Создаем ссылку tel: (удаляем все кроме цифр и + для href) ?>
-                <a href="tel:<?php echo $this->escape(preg_replace('/[^0-9+]/', '', $this->item->telephone)); ?>">
-                    <?php echo $this->escape($this->item->telephone); ?>
-                </a>
-            </span>
-        </dd>
-    <?php endif; ?>
-
-    <?php // --- Блок Мобильный --- ?>
-    <?php if ($this->item->mobile && $this->params->get('show_mobile')) : ?>
-        <dt>
-            <?php // Иконка UIkit для Мобильного ?>
-            <span uk-icon="icon: phone" class="uk-margin-small-right" aria-hidden="true"></span>
-            <?php echo Text::_('COM_CONTACT_MOBILE'); ?>:
-        </dt>
-        <dd>
-            <span class="contact-mobile" itemprop="telephone"> <?php // Schema.org использует 'telephone' для всех видов ?>
-                <?php // Создаем ссылку tel: ?>
-                <a href="tel:<?php echo $this->escape(preg_replace('/[^0-9+]/', '', $this->item->mobile)); ?>">
-                    <?php echo $this->escape($this->item->mobile); ?>
-                </a>
-            </span>
-        </dd>
-    <?php endif; ?>
-
-    <?php // --- Блок Факс --- ?>
-    <?php if ($this->item->fax && $this->params->get('show_fax')) : ?>
-        <dt>
-            <?php // Иконка UIkit для Факса ?>
-            <span uk-icon="icon: print" class="uk-margin-small-right" aria-hidden="true"></span>
-            <?php echo Text::_('COM_CONTACT_FAX'); ?>:
-        </dt>
-        <dd>
-            <span class="contact-fax" itemprop="faxNumber"> <?php // itemprop для факса ?>
-                <?php echo $this->escape($this->item->fax); ?>
-            </span>
-        </dd>
-    <?php endif; ?>
-
-    <?php // --- Блок Веб-сайт --- ?>
-    <?php if ($this->item->webpage && $this->params->get('show_webpage')) : ?>
-        <dt>
-            <?php // Иконка UIkit для Веб-сайта ?>
-            <span uk-icon="icon: world" class="uk-margin-small-right" aria-hidden="true"></span>
-            <?php echo Text::_('COM_CONTACT_WEBPAGE'); ?>:
-        </dt>
-        <dd>
-            <span class="contact-webpage" itemprop="url"> <?php // itemprop url или sameAs ?>
-                <?php
-                    // Убедимся, что URL имеет протокол
-                    $webpageUrl = trim($this->item->webpage);
-                    if ($webpageUrl && strpos($webpageUrl, 'http') !== 0) {
-                        $webpageUrl = 'http://' . $webpageUrl;
-                    }
-                ?>
-                <?php if (filter_var($webpageUrl, FILTER_VALIDATE_URL)): // Проверяем валидность URL ?>
-                    <a href="<?php echo $this->escape($webpageUrl); ?>" target="_blank" rel="noopener noreferrer nofollow"> <?php // Добавим nofollow ?>
-                        <?php // Отображаем URL в читаемом виде (Punycode для IDN) ?>
-                        <?php echo $this->escape(PunycodeHelper::urlToUTF8($this->item->webpage)); ?>
-                    </a>
-                <?php else: // Если URL невалидный, просто показываем текст ?>
-                    <?php echo $this->escape($this->item->webpage); ?>
-                <?php endif; ?>
-            </span>
-        </dd>
-    <?php endif; ?>
-</dl>
+            <div><span class="<?php echo $mode === 1 ? 'uk-text-muted ' . $p->get('marker_class', '') : 'uk-hidden-visually'; ?>"><?php echo $label; ?>: </span><?php echo $value; ?></div>
+        </li>
+    <?php endforeach; ?>
+</ul>
