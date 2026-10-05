@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="template" client="site" method="upgrade">
     <name>wmarka</name>
-    <version>4.0.10</version>
+    <version>4.0.11</version>
     <creationDate>2026-10-03</creationDate>
     <author>Webmarka · Beibit Sakhanov</author>
     <authorEmail>support@webmarka.kz</authorEmail>
@@ -25,6 +25,7 @@
         <filename>template_thumbnail.png</filename>
         <filename>README.md</filename>
         <filename>README.en.md</filename>
+        <filename>LICENSE.txt</filename>
         <filename>CHANGELOG.md</filename>
         <filename>script.php</filename>
         <folder>html</folder>
