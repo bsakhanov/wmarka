@@ -49,6 +49,6 @@ class pkg_wmarkaInstallerScript
             }
         }
 
-        Factory::getApplication()->enqueueMessage('<b>Wmarka 4.0.9 установлен.</b> Демо-сайт: <b>Система → Образцы данных → Демо-сайт wmarka → Применить</b>. Повторный запуск безопасен: дублей не будет.', 'notice');
+        Factory::getApplication()->enqueueMessage('<b>Wmarka 4.0.10 установлен.</b> Демо-сайт: <b>Система → Образцы данных → Демо-сайт wmarka → Применить</b>. Повторный запуск безопасен: дублей не будет.', 'notice');
     }
 }

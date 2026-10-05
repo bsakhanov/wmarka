@@ -24,7 +24,7 @@ final class Config
     /** Имя родительского шаблона (каталог в templates/ и media/templates/site/) */
     public const NAME = 'wmarka';
 
-    public const VERSION = '4.0.9';
+    public const VERSION = '4.0.10';
 
     public const BUILD = '2026-10-03';
 

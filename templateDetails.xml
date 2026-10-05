@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="template" client="site" method="upgrade">
     <name>wmarka</name>
-    <version>4.0.9</version>
+    <version>4.0.10</version>
     <creationDate>2026-10-03</creationDate>
     <author>Webmarka · Beibit Sakhanov</author>
     <authorEmail>support@webmarka.kz</authorEmail>

@@ -1,4 +1,4 @@
-# Wmarka 4.0.9 — starter template for Joomla 5 and 6 built on UIkit 3
+# Wmarka 4.0.10 — starter template for Joomla 5 and 6 built on UIkit 3
 
 *Русская версия: [README.md](README.md)*
 
@@ -40,17 +40,17 @@ Wmarka is a free starter template for Joomla 5 and 6 built on UIkit 3.25, with n
 
 ## What is in the package
 
-The full installation is one archive, **`pkg_wmarka-4.0.9.zip`**. It contains five extensions, installed in this order:
+The full installation is one archive, **`pkg_wmarka-4.0.10.zip`**. It contains five extensions, installed in this order:
 
 | Extension | What it is | Why |
 |---|---|---|
 | `lib_juimage` 5.21 | JUImage library (Denys Nosov, Joomla! Ukraine) | crops thumbnails and converts them to WebP |
-| `tpl_wmarka` 4.0.9 | the template | all site styling |
+| `tpl_wmarka` 4.0.10 | the template | all site styling |
 | `tpl_wmarka_vestnik` 1.0.0 | child template of the demo site | a child template built the way Joomla builds them |
 | `com_blank` 2.0.1 | "Blank page" component (Alek Volsk, Sergey Tolkachyov) | pages made of modules: homepage, landings |
 | `plg_sampledata_wmarka` | sample data installer | deploys the "Vestnik" demo site |
 
-The template alone is **`tpl_wmarka-4.0.9.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
+The template alone is **`tpl_wmarka-4.0.10.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
 
 ## Requirements
 
@@ -66,7 +66,7 @@ The template alone is **`tpl_wmarka-4.0.9.zip`**. JUImage and com_blank are then
 Good for trying the template and for a brand-new site.
 
 1. Install a clean Joomla 5 or 6.
-2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.0.9.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component and the installer.
+2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.0.10.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component and the installer.
 3. **System → Sample Data** (or the "Sample Data" box on the dashboard) → **wmarka demo site → Install**. Six steps run one after another; each reports what it did.
 4. Open the site: homepage, news, mega menus and the "Module positions" page are in place.
 
@@ -74,7 +74,7 @@ The demo changes the template style and the global options of Articles, Tags and
 
 ### Option 2. Template only
 
-1. Install `tpl_wmarka-4.0.9.zip`.
+1. Install `tpl_wmarka-4.0.10.zip`.
 2. Optionally install JUImage (from the package or <https://github.com/Joomla-Ukraine/JUImage>) and com_blank.
 3. **System → Site Template Styles → wmarka → Default**.
 4. Follow the [first steps](#first-steps).
@@ -370,7 +370,7 @@ Back up a production site before updating — a rule for any extension.
 - overrides for all modules and the main components;
 - a fixed package structure.
 
-**4.0.1–4.0.9** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
+**4.0.1–4.0.10** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
 
 ## What changed since 3.0
 

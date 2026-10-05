@@ -74,7 +74,7 @@ $footer  = trim(($d['tags'] ?? '') . ($d['readmore'] ?? ''));
 ob_start();
 ?>
 <?php if ($hasBody) : ?>
-    <div class="uk-card-body">
+    <div class="<?php echo $style === 'blank' ? 'uk-margin-small-top' : 'uk-card-body'; ?>">
         <?php if (!empty($d['kicker'])) : ?>
             <p class="uk-text-small uk-margin-remove-top uk-margin-xsmall-bottom"><?php echo $d['kicker']; ?></p>
         <?php endif; ?>
@@ -96,7 +96,7 @@ ob_start();
     </div>
 <?php endif; ?>
 <?php if ($footer !== '') : ?>
-    <div class="uk-card-footer uk-margin-auto-top">
+    <div class="<?php echo $style === 'blank' ? 'uk-margin-small-top' : 'uk-card-footer'; ?> uk-margin-auto-top">
         <div class="uk-flex uk-flex-middle uk-flex-between uk-flex-wrap">
             <div><?php echo $d['tags'] ?? ''; ?></div>
             <div><?php echo $d['readmore'] ?? ''; ?></div>

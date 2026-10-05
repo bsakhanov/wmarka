@@ -226,59 +226,80 @@ $linkOf = static function (array $l, string $class = '') use ($icon): string {
         . '>' . $icon($l['css']) . htmlspecialchars($l['title'], ENT_QUOTES, 'UTF-8') . '</a>';
 };
 
-/** Выпадающая панель: колонка — карточка с шапкой, списком ссылок и подвалом */
-$dropColumn = static function (array $c) use ($linkOf): string {
-    $title = htmlspecialchars($c['title'], ENT_QUOTES, 'UTF-8');
-    $card  = $c['invert'] ? 'uk-card-secondary uk-light' : 'uk-card-default';
+/**
+ * Пункт мегаменю: иконка, название и — если у пункта есть «Примечание» — подпись
+ * второй строкой (uk-nav-subtitle), как в мегаменю Stripe или GitHub.
+ */
+$dropItem = static function (array $l, string $class = '') use ($icon): string {
+    $title = htmlspecialchars($l['title'], ENT_QUOTES, 'UTF-8');
+    $label = $l['note'] !== '' ? '<div>' . $title . '<div class="uk-nav-subtitle">' . Ui::esc($l['note']) . '</div></div>' : $title;
 
-    // Колонка-модуль: модуль сам рисует свою карточку, второй рамки вокруг нет
+    return '<a' . ($class !== '' ? ' class="' . $class . '"' : '') . ' href="' . $l['href'] . '"' . ($l['target'] ? ' target="_blank" rel="noopener"' : '') . '>'
+        . $icon($l['css']) . $label . '</a>';
+};
+
+/**
+ * Выпадающая панель: колонки разделены тонкой линией (uk-grid-divider), без рамок и теней.
+ * Заголовок колонки — с маркером слева (uk-heading-bullet), под ним серая подпись;
+ * ссылки — список uk-navbar-dropdown-nav; подвал колонки — после разделителя, акцентной
+ * ссылкой со стрелкой. Колонка с модулем — на приглушённом фоне, как промо-блок.
+ */
+$dropColumn = static function (array $c) use ($dropItem): string {
+    $title = htmlspecialchars($c['title'], ENT_QUOTES, 'UTF-8');
+    $head  = '<h3 class="uk-h6 uk-heading-bullet uk-margin-remove">'
+        . ($c['link'] !== '' ? '<a class="uk-link-heading" href="' . $c['link'] . '">' . $title . '</a>' : $title) . '</h3>'
+        . ($c['note'] !== '' ? '<p class="uk-text-meta uk-margin-xsmall-top uk-margin-remove-bottom">' . Ui::esc($c['note']) . '</p>' : '');
+
     if ($c['module'] !== '' && !$c['items']) {
-        return '<div' . ($c['invert'] ? ' class="uk-light"' : '') . '><p class="uk-text-meta uk-margin-small-bottom">' . $title . '</p>' . $c['module'] . '</div>';
+        return '<div><div class="uk-padding-small uk-border-rounded ' . ($c['invert'] ? 'uk-background-secondary uk-light' : 'uk-background-muted') . '">'
+            . $head . '<div class="uk-margin-small-top">' . $c['module'] . '</div></div></div>';
     }
 
-    $head = '<div class="uk-card-header"><h3 class="uk-h5 uk-margin-remove">'
-        . ($c['link'] !== '' ? '<a class="uk-link-heading" href="' . $c['link'] . '">' . $title . '</a>' : $title) . '</h3>'
-        . ($c['note'] !== '' ? '<p class="uk-text-meta uk-margin-xsmall-top uk-margin-remove-bottom">' . Ui::esc($c['note']) . '</p>' : '') . '</div>';
     $list = '';
 
     foreach ($c['items'] as $l) {
-        $list .= '<li' . ($l['active'] ? ' class="uk-active"' : '') . '>' . $linkOf($l) . $l['children'] . '</li>';
+        $list .= '<li' . ($l['active'] ? ' class="uk-active"' : '') . '>' . $dropItem($l) . $l['children'] . '</li>';
     }
 
-    $foot = '';
+    if ($c['footer']) {
+        $list .= '<li class="uk-nav-divider"></li>';
 
-    foreach ($c['footer'] as $l) {
-        $foot .= $linkOf($l, 'uk-button uk-button-text');
+        foreach ($c['footer'] as $l) {
+            $list .= '<li>' . $dropItem($l + ['note' => ''], 'uk-text-primary') . '</li>';
+        }
     }
 
-    return '<div><div class="uk-card ' . $card . ' uk-card-small">' . $head
-        . '<div class="uk-card-body"><ul class="uk-nav uk-navbar-dropdown-nav">' . $list . '</ul>' . $c['module'] . '</div>'
-        . ($foot !== '' ? '<div class="uk-card-footer">' . $foot . '</div>' : '') . '</div></div>';
+    return '<div>' . $head . '<ul class="uk-nav uk-navbar-dropdown-nav uk-margin-small-top">' . $list . '</ul>' . $c['module'] . '</div>';
 };
 
-/** Полноэкранное окно: колонка — секция с заголовком-линией, каждый пункт — карточка с иконкой и заметкой */
-$modalSection = static function (array $c) use ($linkOf): string {
+/**
+ * Полноэкранное окно: колонка — секция с заголовком-линией (uk-heading-line), пункт —
+ * плитка без рамки и тени: иконка в круге (uk-icon-button), название, подпись. Фон
+ * и тень появляются только при наведении (uk-card-hover), текущая страница — акцентная.
+ */
+$modalSection = static function (array $c): string {
     $cards = '';
 
     foreach (array_merge($c['items'], $c['footer']) as $l) {
-        $iconName = preg_match('/uk-icon:([\w-]+)/', $l['css'], $m) ? $m[1] : '';
+        $iconName = preg_match('/uk-icon:([\w-]+)/', $l['css'], $m) ? $m[1] : 'arrow-right';
         $cards   .= '<div><a class="uk-link-toggle uk-display-block uk-height-1-1" href="' . $l['href'] . '"' . ($l['target'] ? ' target="_blank" rel="noopener"' : '') . '>'
-            . '<div class="uk-card ' . ($l['active'] ? 'uk-card-primary' : 'uk-card-default') . ' uk-card-hover uk-card-body uk-height-1-1">'
-            . ($iconName !== '' ? '<span class="' . ($l['active'] ? '' : 'uk-text-primary') . '" uk-icon="icon: ' . $iconName . '; ratio: 1.6"></span>' : '')
-            . '<h4 class="uk-h5 uk-margin-small-top uk-margin-remove-bottom"><span class="uk-link-heading">' . htmlspecialchars($l['title'], ENT_QUOTES, 'UTF-8') . '</span>'
-            . ($l['target'] ? ' <span uk-icon="icon: arrow-up-right; ratio: 0.8"></span>' : '') . '</h4>'
+            . '<div class="uk-card uk-card-small uk-card-body uk-card-hover uk-border-rounded uk-height-1-1' . ($l['active'] ? ' uk-card-primary uk-light' : '') . '">'
+            . '<div class="uk-grid-small uk-flex-top" uk-grid>'
+            . '<div class="uk-width-auto"><span class="uk-icon-button" uk-icon="icon: ' . $iconName . '"></span></div>'
+            . '<div class="uk-width-expand"><h4 class="uk-h5 uk-margin-remove"><span class="uk-link-heading">' . htmlspecialchars($l['title'], ENT_QUOTES, 'UTF-8') . '</span>'
+            . ($l['target'] ? ' <span uk-icon="icon: arrow-up-right; ratio: 0.7"></span>' : '') . '</h4>'
             . ($l['note'] !== '' ? '<p class="uk-text-small uk-margin-xsmall-top uk-margin-remove-bottom' . ($l['active'] ? '' : ' uk-text-muted') . '">' . Ui::esc($l['note']) . '</p>' : '')
-            . '</div></a></div>';
+            . '</div></div></div></a></div>';
     }
 
     if ($c['module'] !== '') {
-        $cards .= '<div><div class="uk-card ' . ($c['invert'] ? 'uk-card-secondary uk-light' : 'uk-card-default') . ' uk-card-body uk-height-1-1">' . $c['module'] . '</div></div>';
+        $cards .= '<div><div class="uk-padding-small uk-border-rounded ' . ($c['invert'] ? 'uk-background-secondary uk-light' : 'uk-background-muted') . '">' . $c['module'] . '</div></div>';
     }
 
     return '<section class="uk-margin-large-bottom">'
         . '<h3 class="uk-heading-line uk-h4"><span>' . htmlspecialchars($c['title'], ENT_QUOTES, 'UTF-8') . '</span></h3>'
         . ($c['note'] !== '' ? '<p class="uk-text-meta uk-margin-remove-top">' . Ui::esc($c['note']) . '</p>' : '')
-        . '<div class="uk-grid-medium uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l uk-grid-match" uk-grid>' . $cards . '</div>'
+        . '<div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l uk-grid-match" uk-grid>' . $cards . '</div>'
         . '</section>';
 };
 
@@ -312,7 +333,7 @@ endif;
                 <?php $cols = $megaColumns($item, $modal); ?>
                 <a href="#wm-mega-<?php echo (int) $item->id; ?>" uk-toggle><?php echo $icon($css) . (str_contains($css, 'wm-icon-only') ? '<span class="uk-hidden-visually">' . Ui::esc($item->title) . '</span>' : Ui::esc($item->title)); ?></a>
                 <div id="wm-mega-<?php echo (int) $item->id; ?>" class="uk-modal-full" uk-modal>
-                    <div class="uk-modal-dialog uk-background-muted" uk-height-viewport>
+                    <div class="uk-modal-dialog" uk-height-viewport>
                         <button class="uk-modal-close-full uk-close-large" type="button" uk-close aria-label="<?php echo Ui::esc(Text::_('JLIB_HTML_BEHAVIOR_CLOSE')); ?>"></button>
                         <div class="uk-section uk-section-large">
                             <div class="<?php echo Config::container(); ?>">
@@ -326,11 +347,11 @@ endif;
                     </div>
                 </div>
             <?php elseif ($mega !== null) : ?>
-                <?php $cols = $megaColumns($item, $mega); $n = max(1, min(5, \count($cols))); ?>
+                <?php $cols = $megaColumns($item, $mega); $n = max(1, min(5, \count($cols))); $w = $n >= 3 ? min(5, $n + 1) : $n; ?>
                 <?php echo $anchor($item, ' <span uk-navbar-parent-icon></span>'); ?>
                 <?php if ($cols) : ?>
-                    <div class="uk-navbar-dropdown uk-navbar-dropdown-large uk-navbar-dropdown-width-<?php echo $n; ?> uk-background-muted">
-                        <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-<?php echo $n; ?>@m uk-grid-match" uk-grid><?php echo implode('', array_map($dropColumn, $cols)); ?></div>
+                    <div class="uk-navbar-dropdown uk-navbar-dropdown-large uk-navbar-dropdown-width-<?php echo $w; ?>">
+                        <div class="uk-grid-medium uk-grid-divider uk-child-width-1-2@s uk-child-width-1-<?php echo $n; ?>@m" uk-grid><?php echo implode('', array_map($dropColumn, $cols)); ?></div>
                     </div>
                 <?php endif; ?>
             <?php elseif ($children) : ?>

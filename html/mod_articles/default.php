@@ -52,7 +52,7 @@ $render = static function (array $items) use ($params, $style, $columns, $headin
         $cards[] = $card;
     }
 
-    return Card::items($cards, $style, ['columns' => $columns, 'heading' => $heading, 'compact' => (string) ($module->position ?? '') === 'mega' || str_starts_with((string) ($module->position ?? ''), 'sidebar')]);
+    return Card::items($cards, $style, ['columns' => $columns, 'heading' => $heading, 'compact' => (string) ($module->position ?? '') === 'mega' || str_starts_with((string) ($module->position ?? ''), 'sidebar'), 'bare' => (string) ($module->position ?? '') === 'mega']);
 };
 
 if ($grouped) {

@@ -38,7 +38,7 @@ if ($style === 'cards' || $style === 'slider') :
     <div class="<?php echo $grid; ?>" uk-grid>
         <?php foreach ($items as $card) : ?>
             <?php $compact = $columns > 3 || !empty($displayData['compact']); ?>
-            <div><?php echo Card::render($card + ['size' => $compact ? 'small' : 'default', 'heading' => $htag, 'titleClass' => $compact ? 'uk-h5 uk-text-bold' : 'uk-h4', 'sizes' => Image::sizes($columns, false)]); ?></div>
+            <div><?php echo Card::render(($displayData['bare'] ?? false ? ['style' => 'blank', 'hover' => false] : []) + $card + ['size' => $compact ? 'small' : 'default', 'heading' => $htag, 'titleClass' => $compact ? 'uk-h5 uk-text-bold' : 'uk-h4', 'sizes' => Image::sizes($columns, false)]); ?></div>
         <?php endforeach; ?>
     </div>
     <?php if ($style === 'slider') : ?></div>

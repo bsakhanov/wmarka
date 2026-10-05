@@ -495,7 +495,7 @@
    "alias": "mega-rubrics",
    "title": "Рубрики",
    "type": "heading",
-   "note": "Все новости по разделам"
+   "note": "Новости по разделам"
   },
   {
    "key": "a-economy",
@@ -504,7 +504,8 @@
    "alias": "mega-ekonomika",
    "title": "Экономика",
    "type": "alias",
-   "target": "rub-economy"
+   "target": "rub-economy",
+   "note": "Цены, бизнес, бюджет и деньги горожан"
   },
   {
    "key": "a-energy",
@@ -513,7 +514,8 @@
    "alias": "mega-energetika",
    "title": "Энергетика",
    "type": "alias",
-   "target": "rub-energy"
+   "target": "rub-energy",
+   "note": "Электростанции, топливо, возобновляемые источники"
   },
   {
    "key": "a-society",
@@ -522,7 +524,8 @@
    "alias": "mega-obshchestvo",
    "title": "Общество",
    "type": "alias",
-   "target": "rub-society"
+   "target": "rub-society",
+   "note": "Город, транспорт, экология и люди"
   },
   {
    "key": "a-tech",
@@ -531,7 +534,8 @@
    "alias": "mega-tekhnologii",
    "title": "Технологии",
    "type": "alias",
-   "target": "rub-tech"
+   "target": "rub-tech",
+   "note": "Цифровые сервисы, роботы, стартапы"
   },
   {
    "key": "nc-rub2",
@@ -539,7 +543,7 @@
    "alias": "mega-rubrics-2",
    "title": "Ещё рубрики",
    "type": "heading",
-   "note": "Наука, культура, спорт"
+   "note": "Знания и досуг"
   },
   {
    "key": "a-science",
@@ -548,7 +552,8 @@
    "alias": "mega-nauka",
    "title": "Наука",
    "type": "alias",
-   "target": "rub-science"
+   "target": "rub-science",
+   "note": "Открытия, лаборатории, исследования"
   },
   {
    "key": "a-culture",
@@ -557,7 +562,8 @@
    "alias": "mega-kultura",
    "title": "Культура",
    "type": "alias",
-   "target": "rub-culture"
+   "target": "rub-culture",
+   "note": "Выставки, театр, книги и фестивали"
   },
   {
    "key": "a-sport",
@@ -566,7 +572,8 @@
    "alias": "mega-sport",
    "title": "Спорт",
    "type": "alias",
-   "target": "rub-sport"
+   "target": "rub-sport",
+   "note": "Соревнования, сборные и любительский спорт"
   },
   {
    "key": "a-allnews",
