@@ -24,7 +24,7 @@ final class Config
     /** Имя родительского шаблона (каталог в templates/ и media/templates/site/) */
     public const NAME = 'wmarka';
 
-    public const VERSION = '4.0.12';
+    public const VERSION = '4.0.13';
 
     public const BUILD = '2026-10-03';
 
@@ -100,6 +100,43 @@ final class Config
     public static function mediaPath(string $file = ''): string
     {
         return 'media/templates/site/' . self::NAME . ($file !== '' ? '/' . ltrim($file, '/') : '');
+    }
+
+    /**
+     * Главный пункт меню — список материалов (блог категории или избранные): через него
+     * открываются и сами материалы. Для этой схемы режимы «Авто» включают скрытие блоков
+     * главной вокруг материалов и склейку адресов материала в canonical.
+     */
+    public static function homeIsList(): bool
+    {
+        static $list = null;
+
+        if ($list === null) {
+            $app     = Factory::getApplication();
+            $menu    = $app->getMenu('site');
+            $default = $menu->getDefault($app->getLanguage()->getTag()) ?: $menu->getDefault('*');
+            $query   = (array) ($default->query ?? []);
+            $list    = ($query['option'] ?? '') === 'com_content'
+                && (($query['view'] ?? '') === 'featured' || (($query['view'] ?? '') === 'category' && ($query['layout'] ?? '') === 'blog'));
+        }
+
+        return $list;
+    }
+
+    /** «Блоки главной — только на главной»: auto (по типу главного пункта), 1 или 0 */
+    public static function homeBlocksOnly(): bool
+    {
+        $value = self::str('home_positions_only', 'auto');
+
+        return $value === 'auto' ? self::homeIsList() : $value === '1';
+    }
+
+    /** Режим canonical: auto (склеивать, если главный пункт — список материалов), self или entity */
+    public static function canonicalMode(): string
+    {
+        $value = self::str('seo_canonical_mode', 'auto');
+
+        return $value === 'auto' ? (self::homeIsList() ? 'entity' : 'self') : $value;
     }
 
     /**

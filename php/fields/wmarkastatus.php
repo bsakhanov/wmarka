@@ -59,6 +59,21 @@ class JFormFieldWmarkastatus extends FormField
         $strict = $sef && (new \Joomla\Registry\Registry($sef->params ?? ''))->get('strictrouting');
         $schema = \Joomla\CMS\Plugin\PluginHelper::isEnabled('system', 'schemaorg');
         $rows[] = [Text::_('TPL_WMARKA_STATUS_STRICT'), sprintf($strict ? $ok : $bad, Text::_($strict ? 'TPL_WMARKA_STATUS_ON' : 'TPL_WMARKA_STATUS_STRICT_OFF'))];
+        // Схема главной: для главного пункта «блог категории» режимы «Авто» включаются сами.
+        // Строка справочная: любая ошибка здесь не должна ломать форму стиля
+        try {
+            $styleParams = new \Joomla\Registry\Registry($this->form->getValue('params') ?? []);
+            $isList      = \Wmarka\Template\Config::homeIsList();
+            $blocks      = (string) $styleParams->get('home_positions_only', 'auto');
+            $mode        = (string) $styleParams->get('seo_canonical_mode', 'auto');
+            $hide        = $blocks === 'auto' ? $isList : $blocks === '1';
+            $merge       = $mode === 'auto' ? $isList : $mode === 'entity';
+            $rows[]      = [Text::_('TPL_WMARKA_STATUS_HOME'), $isList
+                ? sprintf(($hide && $merge) ? $ok : $bad, Text::sprintf('TPL_WMARKA_STATUS_HOME_LIST', Text::_($hide ? 'TPL_WMARKA_STATUS_HIDDEN' : 'TPL_WMARKA_STATUS_SHOWN'), Text::_($merge ? 'TPL_WMARKA_STATUS_MERGED' : 'TPL_WMARKA_STATUS_SELF')))
+                : sprintf($ok, Text::_('TPL_WMARKA_STATUS_HOME_PAGE'))];
+        } catch (\Throwable $e) {
+        }
+
         $rows[] = [Text::_('TPL_WMARKA_STATUS_SCHEMAORG'), sprintf($schema ? $bad : $ok, Text::_($schema ? 'TPL_WMARKA_STATUS_SCHEMAORG_ON' : 'TPL_WMARKA_STATUS_OFF'))];
 
         $html = '<table class="table table-sm mb-0" style="max-width: 640px"><tbody>';

@@ -523,7 +523,22 @@ final class Helper
             return;
         }
 
-        $folder = trim(Image::clean(Config::str('favicon_folder')), '/') ?: \dirname(Config::mediaFile('images/favicon/favicon-32x32.png'));
+        // Поле — folderlist внутри images: значение «vrknews-demo» значит images/vrknews-demo.
+        // Принимается и путь от корня (images/…, media/…); «-1» (старое «Не использовать»)
+        // и пусто — фавиконки шаблона или дочернего шаблона
+        $folder = trim(Image::clean(Config::str('favicon_folder')), '/');
+
+        if ($folder === '-1') {
+            $folder = '';
+        }
+
+        if ($folder !== '' && !is_dir(JPATH_ROOT . '/' . $folder) && is_dir(JPATH_ROOT . '/images/' . $folder)) {
+            $folder = 'images/' . $folder;
+        }
+
+        if ($folder === '' || !is_dir(JPATH_ROOT . '/' . $folder)) {
+            $folder = \dirname(Config::mediaFile('images/favicon/favicon-32x32.png'));
+        }
         $base   = JPATH_ROOT . '/' . $folder . '/';
         $url    = Uri::root(true) . '/' . $folder . '/';
 

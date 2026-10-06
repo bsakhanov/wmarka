@@ -1,4 +1,4 @@
-# Wmarka 4.0.12 — starter template for Joomla 5 and 6 built on UIkit 3
+# Wmarka 4.0.13 — starter template for Joomla 5 and 6 built on UIkit 3
 
 *Русская версия: [README.md](README.md)*
 
@@ -40,17 +40,17 @@ Wmarka is a free starter template for Joomla 5 and 6 built on UIkit 3.25, with n
 
 ## What is in the package
 
-The full installation is one archive, **`pkg_wmarka-4.0.12.zip`**. It contains five extensions, installed in this order:
+The full installation is one archive, **`pkg_wmarka-4.0.13.zip`**. It contains five extensions, installed in this order:
 
 | Extension | What it is | Why |
 |---|---|---|
 | `lib_juimage` 5.21 | JUImage library (Denys Nosov, Joomla! Ukraine) | crops thumbnails and converts them to WebP |
-| `tpl_wmarka` 4.0.12 | the template | all site styling |
+| `tpl_wmarka` 4.0.13 | the template | all site styling |
 | `tpl_wmarka_vestnik` 1.0.0 | child template of the demo site | a child template built the way Joomla builds them |
 | `com_blank` 2.0.1 | "Blank page" component (Alek Volsk, Sergey Tolkachyov) | pages made of modules: homepage, landings |
 | `plg_sampledata_wmarka` | sample data installer | deploys the "Vestnik" demo site |
 
-The template alone is **`tpl_wmarka-4.0.12.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
+The template alone is **`tpl_wmarka-4.0.13.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
 
 ## Requirements
 
@@ -66,7 +66,7 @@ The template alone is **`tpl_wmarka-4.0.12.zip`**. JUImage and com_blank are the
 Good for trying the template and for a brand-new site.
 
 1. Install a clean Joomla 5 or 6.
-2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.0.12.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component and the installer.
+2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.0.13.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component and the installer.
 3. **System → Sample Data** (or the "Sample Data" box on the dashboard) → **wmarka demo site → Install**. Six steps run one after another; each reports what it did.
 4. Open the site: homepage, news, mega menus and the "Module positions" page are in place.
 
@@ -74,7 +74,7 @@ The demo changes the template style and the global options of Articles, Tags and
 
 ### Option 2. Template only
 
-1. Install `tpl_wmarka-4.0.12.zip`.
+1. Install `tpl_wmarka-4.0.13.zip`.
 2. Optionally install JUImage (from the package or <https://github.com/Joomla-Ukraine/JUImage>) and com_blank.
 3. **System → Site Template Styles → wmarka → Default**.
 4. Follow the [first steps](#first-steps).
@@ -206,7 +206,7 @@ Mega menus are switched on by tokens in the **"Link Class"** field of a first-le
 
 ### Home page
 
-Only the default menu item's own page (its `option`, `view` and `id`) is the home page. With a category-blog default item, articles open through it but are not the home page: they get their own canonical, breadcrumbs, heading and logo link, and the default item's tokens (`wm-blank`) do not apply. To keep the home slider and blocks off those articles, turn on "Home blocks on the home page only" (Layout tab).
+Only the default menu item's own page (its `option`, `view` and `id`) is the home page. With a category-blog default item, articles open through it but are not the home page: they get their own canonical, breadcrumbs, heading and logo link, and the default item's tokens (`wm-blank`) do not apply. This scheme needs two options, both set to "Auto" by default: "Home blocks on the home page only" (Layout tab) hides the home slider and blocks around articles, and "Canonical mode" merges article addresses. "Auto" turns them on when the default item is a category blog or featured articles; the status card shows what is in effect.
 
 ### Page tokens (menu item "Page Class")
 
@@ -319,6 +319,8 @@ See `wmarka_vestnik` in the demo package. A child template style keeps its own s
 
 A child template has no language files — that is how core creates it. The template loads the parent's `TPL_WMARKA_*` strings itself.
 
+Joomla builds the child style form from the child's own manifest — a copy of the parent's options on the day it was created. So every wmarka update copies its fields into all child templates (`<parent>wmarka</parent>`): new fields are added, existing ones replaced by the parent's version. Child-only fields stay as they are. Otherwise the first save of a child style would wipe the values of new options.
+
 ## Custom CSS and JS
 
 - `media/templates/site/wmarka/css/user.css` and `js/user.js` are created on first install and **never overwritten** by updates. Put your rules there if you do not use a child template.
@@ -376,7 +378,7 @@ Back up a production site before updating — a rule for any extension.
 - overrides for all modules and the main components;
 - a fixed package structure.
 
-**4.0.1–4.0.12** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
+**4.0.1–4.0.13** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
 
 ## What changed since 3.0
 

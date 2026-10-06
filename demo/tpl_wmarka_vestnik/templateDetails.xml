@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="template" client="site" method="upgrade">
     <name>wmarka_vestnik</name>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <creationDate>October 2026</creationDate>
     <author>Webmarka</author>
     <authorEmail>support@webmarka.kz</authorEmail>
@@ -105,7 +105,7 @@
                 <field name="main_padding" label="TPL_WMARKA_F_MAIN_PADDING" type="list" default="" validate="options"><option value="xsmall">TPL_WMARKA_F_MAIN_PADDING_O_XSMALL</option><option value="small">TPL_WMARKA_F_MAIN_PADDING_O_SMALL</option><option value="">TPL_WMARKA_F_MAIN_PADDING_O_DEFAULT</option><option value="large">TPL_WMARKA_F_MAIN_PADDING_O_LARGE</option></field>
                 <field name="breadcrumbs_auto" label="TPL_WMARKA_F_BREADCRUMBS_AUTO" description="TPL_WMARKA_F_BREADCRUMBS_AUTO_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
                 <field name="blocks_style" label="TPL_WMARKA_F_BLOCKS_STYLE" type="list" default="default" validate="options"><option value="default">TPL_WMARKA_F_BLOCKS_STYLE_O_DEFAULT</option><option value="muted">TPL_WMARKA_F_BLOCKS_STYLE_O_MUTED</option></field>
-                <field name="home_positions_only" label="TPL_WMARKA_F_HOME_POSITIONS_ONLY" description="TPL_WMARKA_F_HOME_POSITIONS_ONLY_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="0" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
+                <field name="home_positions_only" label="TPL_WMARKA_F_HOME_POSITIONS_ONLY" description="TPL_WMARKA_F_HOME_POSITIONS_ONLY_DESC" type="list" default="auto" validate="options"><option value="auto">TPL_WMARKA_F_HOME_POSITIONS_ONLY_O_AUTO</option><option value="1">TPL_WMARKA_F_HOME_POSITIONS_ONLY_O_1</option><option value="0">TPL_WMARKA_F_HOME_POSITIONS_ONLY_O_0</option></field>
                 <field name="blocks_alternate" label="TPL_WMARKA_F_BLOCKS_ALTERNATE" description="TPL_WMARKA_F_BLOCKS_ALTERNATE_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
                 <field name="blocks_padding" label="TPL_WMARKA_F_BLOCKS_PADDING" type="list" default="" validate="options"><option value="small">TPL_WMARKA_F_BLOCKS_PADDING_O_SMALL</option><option value="">TPL_WMARKA_F_BLOCKS_PADDING_O_DEFAULT</option><option value="large">TPL_WMARKA_F_BLOCKS_PADDING_O_LARGE</option></field>
                 <field name="blocks_cols" label="TPL_WMARKA_F_BLOCKS_COLS" description="TPL_WMARKA_F_BLOCKS_COLS_DESC" type="list" default="auto" validate="options"><option value="auto">TPL_WMARKA_F_BLOCKS_COLS_O_AUTO</option><option value="1">TPL_WMARKA_F_BLOCKS_COLS_O_1</option><option value="2">TPL_WMARKA_F_BLOCKS_COLS_O_2</option><option value="3">TPL_WMARKA_F_BLOCKS_COLS_O_3</option><option value="4">TPL_WMARKA_F_BLOCKS_COLS_O_4</option></field>
@@ -153,7 +153,7 @@
             <fieldset name="seo" label="TPL_WMARKA_FS_SEO">
                 <field name="seo_enable" label="TPL_WMARKA_F_SEO_ENABLE" description="TPL_WMARKA_F_SEO_ENABLE_DESC" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
                 <field name="seo_canonical" label="TPL_WMARKA_F_SEO_CANONICAL" description="TPL_WMARKA_F_SEO_CANONICAL_DESC" showon="seo_enable:1" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
-                <field name="seo_canonical_mode" label="TPL_WMARKA_F_SEO_CANONICAL_MODE" description="TPL_WMARKA_F_SEO_CANONICAL_MODE_DESC" showon="seo_enable:1" type="list" default="self" validate="options"><option value="self">TPL_WMARKA_F_SEO_CANONICAL_MODE_O_SELF</option><option value="entity">TPL_WMARKA_F_SEO_CANONICAL_MODE_O_ENTITY</option></field>
+                <field name="seo_canonical_mode" label="TPL_WMARKA_F_SEO_CANONICAL_MODE" description="TPL_WMARKA_F_SEO_CANONICAL_MODE_DESC" showon="seo_enable:1" type="list" default="auto" validate="options"><option value="auto">TPL_WMARKA_F_SEO_CANONICAL_MODE_O_AUTO</option><option value="self">TPL_WMARKA_F_SEO_CANONICAL_MODE_O_SELF</option><option value="entity">TPL_WMARKA_F_SEO_CANONICAL_MODE_O_ENTITY</option></field>
                 <field name="seo_canonical_domain" label="TPL_WMARKA_F_SEO_CANONICAL_DOMAIN" description="TPL_WMARKA_F_SEO_CANONICAL_DOMAIN_DESC" showon="seo_enable:1" type="text" default="" />
                 <field name="seo_canonical_keep" label="TPL_WMARKA_F_SEO_CANONICAL_KEEP" description="TPL_WMARKA_F_SEO_CANONICAL_KEEP_DESC" showon="seo_enable:1" type="text" default="start" />
                 <field name="seo_og" label="TPL_WMARKA_F_SEO_OG" showon="seo_enable:1" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
@@ -189,7 +189,7 @@
                 <field name="uikit_icons" label="TPL_WMARKA_F_UIKIT_ICONS" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
                 <field name="disable_bootstrap" label="TPL_WMARKA_F_DISABLE_BOOTSTRAP" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
                 <field name="favicons" label="TPL_WMARKA_F_FAVICONS" type="radio" layout="joomla.form.field.radio.switcher" default="1" filter="integer"><option value="0">JNO</option><option value="1">JYES</option></field>
-                <field name="favicon_folder" label="TPL_WMARKA_F_FAVICON_FOLDER" description="TPL_WMARKA_F_FAVICON_FOLDER_DESC" showon="favicons:1" type="folderlist" directory="images" recursive="true" default="" hide_none="false" hide_default="true" />
+                <field name="favicon_folder" label="TPL_WMARKA_F_FAVICON_FOLDER" description="TPL_WMARKA_F_FAVICON_FOLDER_DESC" showon="favicons:1" type="folderlist" directory="images" recursive="true" default="" hide_none="true" hide_default="false" />
                 <field name="theme_color" label="TPL_WMARKA_F_THEME_COLOR" type="color" default="#ffffff" />
                 <field name="generator" label="TPL_WMARKA_F_GENERATOR" description="TPL_WMARKA_F_GENERATOR_DESC" type="text" default="" />
             </fieldset>

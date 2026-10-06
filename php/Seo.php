@@ -179,7 +179,7 @@ final class Seo
                 $uri = $sef;
             }
 
-            if (Config::str('seo_canonical_mode', 'self') === 'entity' && ($entity = $this->entityUrl()) !== '') {
+            if (Config::canonicalMode() === 'entity' && ($entity = $this->entityUrl()) !== '') {
                 $merged = new Uri($entity);
                 $merged->setQuery($uri->getQuery(true));
                 $uri = $merged;

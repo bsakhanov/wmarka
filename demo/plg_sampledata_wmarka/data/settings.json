@@ -39,7 +39,7 @@
   "logo_width": 170,
   "logo_alt": "Вестник",
   "favicons": 1,
-  "favicon_folder": "%IMG%",
+  "favicon_folder": "wmarka-demo",
   "theme_color": "#1e87f0",
   "img_intro_w": 720,
   "img_intro_h": 405,

@@ -85,6 +85,8 @@ class wmarkaInstallerScript
             }
         }
 
+        $this->syncChildren();
+
         $media = JPATH_ROOT . '/media/templates/site/wmarka';
         $seed  = JPATH_ROOT . '/templates/wmarka/seed';
 
@@ -96,7 +98,7 @@ class wmarkaInstallerScript
         }
 
         $message = $type === 'install' ? 'установлен' : 'обновлён';
-        echo '<div class="alert alert-success"><h3 class="alert-heading">Wmarka 4.0.12 ' . $message . '</h3>'
+        echo '<div class="alert alert-success"><h3 class="alert-heading">Wmarka 4.0.13 ' . $message . '</h3>'
             . '<p>Ключевые настройки — в стиле шаблона (Система → Стили шаблонов сайта → wmarka). '
             . 'Свои стили — media/templates/site/wmarka/css/user.css: файл не перезаписывается обновлением.</p></div>';
     }
@@ -113,6 +115,97 @@ class wmarkaInstallerScript
         }
 
         @rmdir($dir);
+    }
+
+    /**
+     * Дочерние шаблоны хранят копию настроек родителя в своём манифесте: форма стиля
+     * дочернего шаблона строится по нему (так их создаёт ядро, TemplateModel::child()).
+     * После обновления wmarka поля родителя переносятся во все дочерние шаблоны
+     * (<parent>wmarka</parent>): новые дописываются, прежние заменяются версией родителя.
+     * Иначе сохранение стиля дочернего шаблона в админке стирало бы значения новых
+     * параметров, а исправленные поля оставались бы старыми. Поля и наборы, которые есть
+     * только у дочернего шаблона, не трогаются.
+     */
+    private function syncChildren(): void
+    {
+        $parentFile = JPATH_ROOT . '/templates/wmarka/templateDetails.xml';
+        $parent     = new \DOMDocument();
+        $parent->preserveWhiteSpace = false;
+
+        if (!is_file($parentFile) || !@$parent->load($parentFile)) {
+            return;
+        }
+
+        $pFields = (new \DOMXPath($parent))->query('/extension/config/fields[@name="params"]')->item(0);
+
+        if (!$pFields instanceof \DOMElement) {
+            return;
+        }
+
+        foreach (glob(JPATH_ROOT . '/templates/*/templateDetails.xml') ?: [] as $file) {
+            $child = new \DOMDocument();
+            $child->preserveWhiteSpace = false;
+            $child->formatOutput       = true;
+
+            if ($file === $parentFile || !@$child->load($file)) {
+                continue;
+            }
+
+            $xp = new \DOMXPath($child);
+
+            if (trim((string) $xp->evaluate('string(/extension/parent)')) !== 'wmarka') {
+                continue;
+            }
+
+            $cFields = $xp->query('/extension/config/fields[@name="params"]')->item(0);
+
+            if (!$cFields instanceof \DOMElement) {
+                $config = $xp->query('/extension/config')->item(0) ?: $child->documentElement->appendChild($child->createElement('config'));
+                $config->appendChild($child->importNode($pFields, true));
+                $child->save($file);
+                continue;
+            }
+
+            foreach ($pFields->attributes as $attr) {
+                $cFields->setAttribute($attr->nodeName, $attr->nodeValue);
+            }
+
+            foreach ($pFields->childNodes as $pSet) {
+                if (!$pSet instanceof \DOMElement || $pSet->nodeName !== 'fieldset') {
+                    continue;
+                }
+
+                $cSet = $xp->query('fieldset[@name="' . $pSet->getAttribute('name') . '"]', $cFields)->item(0);
+
+                if (!$cSet instanceof \DOMElement) {
+                    $cFields->appendChild($child->importNode($pSet, true));
+                    continue;
+                }
+
+                $prev = null;
+
+                foreach ($pSet->childNodes as $pField) {
+                    if (!$pField instanceof \DOMElement || $pField->nodeName !== 'field') {
+                        continue;
+                    }
+
+                    $node     = $child->importNode($pField, true);
+                    $existing = $xp->query('.//field[@name="' . $pField->getAttribute('name') . '"]', $cFields)->item(0);
+
+                    if ($existing instanceof \DOMElement) {
+                        $existing->parentNode->replaceChild($node, $existing);
+                    } elseif ($prev instanceof \DOMElement && $prev->parentNode === $cSet) {
+                        $cSet->insertBefore($node, $prev->nextSibling);
+                    } else {
+                        $cSet->insertBefore($node, $cSet->firstChild);
+                    }
+
+                    $prev = $node;
+                }
+            }
+
+            $child->save($file);
+        }
     }
 }
 
