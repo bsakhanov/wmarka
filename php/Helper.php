@@ -38,16 +38,84 @@ final class Helper
             $active = $menu->getActive();
 
             $this->home = $active !== null
-                && ($active === $menu->getDefault($app->getLanguage()->getTag()) || $active === $menu->getDefault('*'));
+                && ($active === $menu->getDefault($app->getLanguage()->getTag()) || $active === $menu->getDefault('*'))
+                && self::ownPage($active);
         }
 
         return $this->home;
     }
 
+    /**
+     * Запрошена ли страница самого пункта меню (тот же option, view и id). Если главный пункт — блог категории «Новости»
+     * (адреса материалов от корня сайта), активным пунктом у любого материала становится именно он, но главной страницей
+     * материал не является: токены главной (wm-blank), метка is-home, canonical и скрытие хлебных крошек к нему не относятся.
+     */
+    public static function ownPage(object $item): bool
+    {
+        $input = Factory::getApplication()->getInput();
+        $query = (array) ($item->query ?? []);
+
+        foreach (['option', 'view'] as $key) {
+            if (isset($query[$key]) && (string) $query[$key] !== $input->getCmd($key, '')) {
+                return false;
+            }
+        }
+
+        if (isset($query['id'])) {
+            $want = array_map('intval', (array) $query['id']);
+            $have = array_map('intval', (array) $input->get('id', [], 'array'));
+            sort($want);
+            sort($have);
+
+            return $want === $have;
+        }
+
+        return true;
+    }
+
+    /** Страница открыта через главный пункт меню, но главной не является (материал, когда главный пункт — блог категории) */
+    public function viaDefault(): bool
+    {
+        $app    = Factory::getApplication();
+        $menu   = $app->getMenu();
+        $active = $menu->getActive();
+
+        return $active !== null
+            && ($active === $menu->getDefault($app->getLanguage()->getTag()) || $active === $menu->getDefault('*'))
+            && !self::ownPage($active);
+    }
+
+    /** Ведут ли два пункта меню на один и тот же запрос (option, view, id) */
+    public static function sameTarget(object $a, object $b): bool
+    {
+        $qa = (array) ($a->query ?? []);
+        $qb = (array) ($b->query ?? []);
+
+        foreach (['option', 'view'] as $key) {
+            if (($qa[$key] ?? '') !== ($qb[$key] ?? '')) {
+                return false;
+            }
+        }
+
+        $ia = array_map('intval', (array) ($qa['id'] ?? []));
+        $ib = array_map('intval', (array) ($qb['id'] ?? []));
+        sort($ia);
+        sort($ib);
+
+        return $ia === $ib;
+    }
+
     /** CSS-класс страницы из пункта меню (токены wm-wide, wm-blank и т. п.) */
     public function pageClass(): string
     {
-        $active = Factory::getApplication()->getMenu()->getActive();
+        $app    = Factory::getApplication();
+        $menu   = $app->getMenu();
+        $active = $menu->getActive();
+
+        // Токены главного пункта (wm-blank и другие) — только на его собственной странице, а не на материалах, адрес которых строится через него
+        if ($active && ($active === $menu->getDefault($app->getLanguage()->getTag()) || $active === $menu->getDefault('*')) && !self::ownPage($active)) {
+            return '';
+        }
 
         return $active ? trim((string) $active->getParams()->get('pageclass_sfx', '')) : '';
     }

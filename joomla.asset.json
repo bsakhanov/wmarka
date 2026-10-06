@@ -1,8 +1,8 @@
 {
   "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
   "name": "wmarka",
-  "version": "4.0.11",
-  "description": "WMARKA 4.0.11 — UIkit 3.25.25. Относительные пути: файлы ищутся в media/templates/site/{шаблон}/css|js, дочерний шаблон может подменить любой файл.",
+  "version": "4.0.12",
+  "description": "WMARKA 4.0.12 — UIkit 3.25.25. Относительные пути: файлы ищутся в media/templates/site/{шаблон}/css|js, дочерний шаблон может подменить любой файл.",
   "license": "GPL-2.0-or-later",
   "assets": [
     { "name": "template.wmarka.fonts", "type": "style", "uri": "fonts.css" },

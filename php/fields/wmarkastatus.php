@@ -53,6 +53,14 @@ class JFormFieldWmarkastatus extends FormField
             [Text::_('TPL_WMARKA_STATUS_CACHE'), $count . ' · ' . number_format($bytes / 1048576, 1, ',', ' ') . ' МБ · /' . htmlspecialchars($cache)],
         ];
 
+        // SEO-окружение: строгая маршрутизация ядра склеивает адреса 301-м перенаправлением,
+        // плагин Schema.org ядра добавляет второй граф JSON-LD рядом с графом шаблона
+        $sef    = \Joomla\CMS\Plugin\PluginHelper::getPlugin('system', 'sef');
+        $strict = $sef && (new \Joomla\Registry\Registry($sef->params ?? ''))->get('strictrouting');
+        $schema = \Joomla\CMS\Plugin\PluginHelper::isEnabled('system', 'schemaorg');
+        $rows[] = [Text::_('TPL_WMARKA_STATUS_STRICT'), sprintf($strict ? $ok : $bad, Text::_($strict ? 'TPL_WMARKA_STATUS_ON' : 'TPL_WMARKA_STATUS_STRICT_OFF'))];
+        $rows[] = [Text::_('TPL_WMARKA_STATUS_SCHEMAORG'), sprintf($schema ? $bad : $ok, Text::_($schema ? 'TPL_WMARKA_STATUS_SCHEMAORG_ON' : 'TPL_WMARKA_STATUS_OFF'))];
+
         $html = '<table class="table table-sm mb-0" style="max-width: 640px"><tbody>';
 
         foreach ($rows as [$label, $value]) {

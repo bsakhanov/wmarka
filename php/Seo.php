@@ -116,62 +116,191 @@ final class Seo
         $active = $menu->getActive();
 
         return $active !== null
-            && ($active === $menu->getDefault($app->getLanguage()->getTag()) || $active === $menu->getDefault('*'));
+            && ($active === $menu->getDefault($app->getLanguage()->getTag()) || $active === $menu->getDefault('*'))
+            && Helper::ownPage($active);
     }
 
-    /** Canonical без дублей: один URL на сущность, независимо от пункта меню */
+    /**
+     * Canonical по образцу Aimy Canonical и плагина «Система — SEF» ядра: адрес самой
+     * запрошенной страницы, приведённый к одному виду, а не адрес, который роутер строит
+     * заново по option/view/id. Роутер, отвечая на вопрос «где живёт эта сущность»,
+     * выбирает пункт меню по своим правилам и может назвать соседний пункт (пункты-близнецы)
+     * или корень сайта — тогда страница сама просит поисковик себя не индексировать.
+     * Адрес запроса этой ошибки не допускает: страница указывает на себя.
+     *
+     * Порядок:
+     *  1. Чужой canonical (компонент, плагин SEF ядра с «Доменом сайта») берётся за основу
+     *     и снимается — на странице остаётся один тег.
+     *  2. Страница с robots noindex canonical не получает (так же поступает Aimy Canonical).
+     *  3. Главная — корень сайта.
+     *  4. Неразобранный адрес вида index.php?option=… при включённых ЧПУ переводится в ЧПУ
+     *     по тем же параметрам запроса.
+     *  5. Режим «Склеивать адреса материала» (seo_canonical_mode = entity) для одной статьи,
+     *     открытой по нескольким адресам, выбирает адрес, который строит роутер, — только
+     *     если он заканчивается алиасом этой статьи и не ведёт на корень.
+     *  6. Приведение: домен и протокол (seo_canonical_domain), без /index.php при
+     *     перезаписи URL, из параметров остаются только разрешённые (seo_canonical_keep,
+     *     по умолчанию start), без фрагмента, не-ASCII в пути — в процентной записи.
+     */
     private function canonical(): void
     {
+        $app  = Factory::getApplication();
         $head = $this->doc->getHeadData();
+        $base = '';
 
         foreach ($head['links'] as $url => $info) {
             if (($info['relation'] ?? '') === 'canonical') {
+                $base = $base !== '' ? $base : html_entity_decode((string) $url, ENT_QUOTES, 'UTF-8');
                 unset($head['links'][$url]);
             }
         }
 
         $this->doc->setHeadData($head);
-        $app = Factory::getApplication();
 
-        if ($this->isHome()) {
-            $this->canonical = Uri::root();
-        } elseif ($this->option === '' || $this->view === '') {
-            $uri = clone Uri::getInstance();
-            $uri->setQuery('');
-            $this->canonical = $uri->toString(['scheme', 'host', 'port', 'path']);
-        } else {
-            $link = 'index.php?option=' . $this->option . '&view=' . $this->view;
+        if (stripos((string) $this->doc->getMetaData('robots'), 'noindex') !== false) {
+            $this->canonical = '';
 
-            if ($this->option === 'com_tags') {
-                $ids = array_values(array_filter(array_map('intval', (array) $app->getInput()->get('id', [], 'array'))));
-                sort($ids);
-
-                foreach ($ids as $i => $id) {
-                    $link .= '&id[' . $i . ']=' . $id;
-                }
-            } elseif ($this->option === 'com_finder') {
-                $link .= '';
-            } elseif ($id = $app->getInput()->getInt('id')) {
-                $link .= '&id=' . $id;
-            }
-
-            $layout = $app->getInput()->getCmd('layout', '');
-
-            if ($layout !== '' && $this->option === 'com_content' && $this->view === 'category' && $layout === 'blog') {
-                $link .= '&layout=blog';
-            }
-
-            $canonical = self::origin() . Route::_($link);
-            $start     = $app->getInput()->getInt('start');
-
-            if ($start > 0) {
-                $canonical .= (str_contains($canonical, '?') ? '&' : '?') . 'start=' . $start;
-            }
-
-            $this->canonical = $canonical;
+            return;
         }
 
+        $request = clone Uri::getInstance();
+
+        if ($this->isHome()) {
+            $uri = new Uri(Uri::root());
+            $uri->setQuery($request->getQuery());
+        } elseif ($base !== '') {
+            $uri = new Uri(self::absolute($base));
+        } else {
+            $uri = $request;
+
+            if ($app->get('sef') && $uri->getVar('option')) {
+                $sef = new Uri(self::absolute(Route::_($this->requestLink(), false)));
+                $sef->setQuery(array_merge($sef->getQuery(true), array_intersect_key($uri->getQuery(true), ['start' => 1, 'limitstart' => 1])));
+                $uri = $sef;
+            }
+
+            if (Config::str('seo_canonical_mode', 'self') === 'entity' && ($entity = $this->entityUrl()) !== '') {
+                $merged = new Uri($entity);
+                $merged->setQuery($uri->getQuery(true));
+                $uri = $merged;
+            }
+        }
+
+        $this->canonical = $this->normalize($uri);
         $this->doc->addHeadLink(htmlspecialchars($this->canonical, ENT_QUOTES, 'UTF-8'), 'canonical');
+    }
+
+    /** Запрос текущей страницы в виде index.php?… — для перевода неразобранного адреса в ЧПУ */
+    private function requestLink(): string
+    {
+        $input = Factory::getApplication()->getInput();
+        $vars  = ['option' => $this->option, 'view' => $this->view];
+
+        foreach (['layout', 'catid', 'Itemid'] as $key) {
+            if (($value = $input->getCmd($key, '')) !== '') {
+                $vars[$key] = $value;
+            }
+        }
+
+        $link = 'index.php?' . http_build_query($vars);
+        $ids  = $input->get('id', null, 'raw');
+
+        if (\is_array($ids)) {
+            foreach (array_values(array_map('intval', $ids)) as $i => $id) {
+                $link .= '&id[' . $i . ']=' . $id;
+            }
+        } elseif ($ids !== null && $ids !== '') {
+            $link .= '&id=' . rawurlencode((string) $ids);
+        }
+
+        return $link;
+    }
+
+    /**
+     * Адрес статьи, который строит роутер (режим «Склеивать адреса материала»). Принимается,
+     * только если путь кончается алиасом этой статьи и не равен корню: иначе — пусто, и
+     * canonical остаётся адресом запроса.
+     */
+    private function entityUrl(): string
+    {
+        if ($this->option !== 'com_content' || $this->view !== 'article') {
+            return '';
+        }
+
+        $id = Factory::getApplication()->getInput()->getInt('id');
+
+        if ($id <= 0) {
+            return '';
+        }
+
+        $db  = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+        $row = $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(['alias', 'catid', 'language']))
+                ->from($db->quoteName('#__content'))
+                ->where($db->quoteName('id') . ' = ' . $id)
+        )->loadObject();
+
+        if (!$row || $row->alias === '') {
+            return '';
+        }
+
+        $url  = self::absolute(Route::_(\Joomla\Component\Content\Site\Helper\RouteHelper::getArticleRoute($id . ':' . $row->alias, (int) $row->catid, $row->language), false));
+        $path = rtrim((string) (new Uri($url))->getPath(), '/');
+        $root = rtrim((string) (new Uri(Uri::root()))->getPath(), '/');
+
+        if ($path === $root || !preg_match('#(^|/)(' . $id . '-)?' . preg_quote($row->alias, '#') . '(\.[a-z0-9]+)?$#i', $path)) {
+            return '';
+        }
+
+        return $url;
+    }
+
+    /** Один вид адреса: домен и протокол, без index.php, только разрешённые параметры, путь в процентной записи */
+    private function normalize(Uri $uri): string
+    {
+        $domain = trim(Config::str('seo_canonical_domain', ''));
+
+        if ($domain !== '') {
+            $site = new Uri(preg_match('#^https?://#i', $domain) ? $domain : 'https://' . $domain);
+            $uri->setScheme($site->getScheme());
+            $uri->setHost($site->getHost());
+            $uri->setPort($site->getPort() ?: null);
+        } elseif ($uri->getHost() === null || $uri->getHost() === '') {
+            $current = Uri::getInstance();
+            $uri->setScheme($current->getScheme());
+            $uri->setHost($current->getHost());
+            $uri->setPort($current->getPort() ?: null);
+        }
+
+        $path = (string) $uri->getPath();
+
+        if (Factory::getApplication()->get('sef_rewrite')) {
+            $path = (string) preg_replace('#/index\.php(?=/|$)#', '', $path);
+        }
+
+        $path = '/' . ltrim($path, '/');
+
+        // Только разрешённые параметры; limitstart → start; нулевая страница не пишется
+        $vars = $uri->getQuery(true);
+
+        if (isset($vars['limitstart']) && !isset($vars['start'])) {
+            $vars['start'] = $vars['limitstart'];
+        }
+
+        $keep  = array_filter(array_map('trim', explode(',', Config::str('seo_canonical_keep', 'start'))));
+        $query = [];
+
+        foreach ($keep as $key) {
+            if (isset($vars[$key]) && $vars[$key] !== '' && !($key === 'start' && (int) $vars[$key] <= 0)) {
+                $query[$key] = $vars[$key];
+            }
+        }
+
+        $encoded = (string) preg_replace_callback('/[^\x21-\x7E]/', static fn (array $m): string => rawurlencode($m[0]), $path);
+        $port    = $uri->getPort();
+
+        return $uri->getScheme() . '://' . $uri->getHost() . ($port ? ':' . $port : '') . $encoded . ($query ? '?' . http_build_query($query) : '');
     }
 
     /** Title (без дублей), description (автогенерация из текста) */
@@ -381,7 +510,7 @@ final class Seo
             $graph[] = array_filter([
                 '@type'       => 'CollectionPage',
                 'name'        => $this->doc->getTitle(),
-                'url'         => $this->canonical,
+                'url'         => $this->canonical ?: Uri::current(),
                 'description' => (string) $this->doc->getDescription(),
             ]);
         }

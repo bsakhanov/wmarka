@@ -1,4 +1,4 @@
-# Wmarka 4.0.11 — starter template for Joomla 5 and 6 built on UIkit 3
+# Wmarka 4.0.12 — starter template for Joomla 5 and 6 built on UIkit 3
 
 *Русская версия: [README.md](README.md)*
 
@@ -40,17 +40,17 @@ Wmarka is a free starter template for Joomla 5 and 6 built on UIkit 3.25, with n
 
 ## What is in the package
 
-The full installation is one archive, **`pkg_wmarka-4.0.11.zip`**. It contains five extensions, installed in this order:
+The full installation is one archive, **`pkg_wmarka-4.0.12.zip`**. It contains five extensions, installed in this order:
 
 | Extension | What it is | Why |
 |---|---|---|
 | `lib_juimage` 5.21 | JUImage library (Denys Nosov, Joomla! Ukraine) | crops thumbnails and converts them to WebP |
-| `tpl_wmarka` 4.0.11 | the template | all site styling |
+| `tpl_wmarka` 4.0.12 | the template | all site styling |
 | `tpl_wmarka_vestnik` 1.0.0 | child template of the demo site | a child template built the way Joomla builds them |
 | `com_blank` 2.0.1 | "Blank page" component (Alek Volsk, Sergey Tolkachyov) | pages made of modules: homepage, landings |
 | `plg_sampledata_wmarka` | sample data installer | deploys the "Vestnik" demo site |
 
-The template alone is **`tpl_wmarka-4.0.11.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
+The template alone is **`tpl_wmarka-4.0.12.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
 
 ## Requirements
 
@@ -66,7 +66,7 @@ The template alone is **`tpl_wmarka-4.0.11.zip`**. JUImage and com_blank are the
 Good for trying the template and for a brand-new site.
 
 1. Install a clean Joomla 5 or 6.
-2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.0.11.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component and the installer.
+2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.0.12.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component and the installer.
 3. **System → Sample Data** (or the "Sample Data" box on the dashboard) → **wmarka demo site → Install**. Six steps run one after another; each reports what it did.
 4. Open the site: homepage, news, mega menus and the "Module positions" page are in place.
 
@@ -74,7 +74,7 @@ The demo changes the template style and the global options of Articles, Tags and
 
 ### Option 2. Template only
 
-1. Install `tpl_wmarka-4.0.11.zip`.
+1. Install `tpl_wmarka-4.0.12.zip`.
 2. Optionally install JUImage (from the package or <https://github.com/Joomla-Ukraine/JUImage>) and com_blank.
 3. **System → Site Template Styles → wmarka → Default**.
 4. Follow the [first steps](#first-steps).
@@ -204,6 +204,10 @@ Mega menus are switched on by tokens in the **"Link Class"** field of a first-le
 4. In the main menu, add `wm-mega:news-mega` to the "Link Class" of the "News" item.
 5. For a full-screen window use `wm-mega-modal:template-mega`. The note of the main item becomes the window title, the notes of the links become card captions.
 
+### Home page
+
+Only the default menu item's own page (its `option`, `view` and `id`) is the home page. With a category-blog default item, articles open through it but are not the home page: they get their own canonical, breadcrumbs, heading and logo link, and the default item's tokens (`wm-blank`) do not apply. To keep the home slider and blocks off those articles, turn on "Home blocks on the home page only" (Layout tab).
+
 ### Page tokens (menu item "Page Class")
 
 - `wm-blank` — a page without the component, modules only (a block-built homepage);
@@ -273,12 +277,14 @@ JUImage is required for thumbnails and is part of the full package. Without it t
 
 The template SEO engine (`php/Seo.php`) is switched on the "SEO & structured data" tab.
 
-- **Canonical** — one URL per article regardless of the menu item, no `Itemid` duplicates.
+- **Canonical points to the page itself**, like Aimy Canonical and the core System - SEF plugin: the requested address normalized — domain and scheme ("Canonical: domain and scheme"), no `/index.php`, no tracking parameters such as `utm_*` or `fbclid` (only the parameters listed in "Canonical: kept query parameters" stay, `start` by default). A canonical set by another extension is used as the base, so the page has one tag. Pages with `noindex` get no canonical. A raw `index.php?option=…` address is converted to its SEF form.
+- **"Merge article addresses" mode** — for an article reachable by several addresses, canonical points to the router's address, but only if it ends with the article alias and is not the site root. Lists, tags and menu item pages always point to themselves.
+- **Duplicate addresses** are best removed with redirects: turn on "Strict routing" in the System - SEF plugin. The "Template status" card shows whether it is on.
 - **OpenGraph and Twitter Card** — title, description, a 1200 × 630 image from the article or the default one.
 - **JSON-LD** — a single `@graph`: Organization (or the selected type), WebSite with SearchAction, BreadcrumbList, Article or NewsArticle, CollectionPage and ItemList for blogs and tags, Person for authors.
 - **Page title** — no "News | News | Site" duplication.
 
-If an SEO extension is installed (4SEO, JSitemap, etc.), turn the template engine off to avoid duplicate markup.
+If an SEO extension is installed (4SEO, JSitemap, Aimy Canonical, etc.), turn off the template engine or its canonical to avoid duplicates. The core System - Schema.org plugin is enabled by default and adds a second JSON-LD graph: turn it off or turn off the template JSON-LD — the status card warns about it.
 
 ## Blank page (com_blank)
 
@@ -370,7 +376,7 @@ Back up a production site before updating — a rule for any extension.
 - overrides for all modules and the main components;
 - a fixed package structure.
 
-**4.0.1–4.0.11** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
+**4.0.1–4.0.12** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
 
 ## What changed since 3.0
 
