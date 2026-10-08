@@ -58,6 +58,13 @@ $moduleById = static function (string $css): string {
         return '';
     }
 
+    // На странице ошибки компонента нет: модуль «Материалы» ядра просит параметры компонента
+    // с пустым именем, и PHP 8.5 предупреждает о ключе массива null (ComponentHelper ядра).
+    // Колонка-модуль мегаменю на странице ошибки не нужна — её не выводим
+    if (Factory::getApplication()->getDocument()->getType() === 'error') {
+        return '';
+    }
+
     $mod = ModuleHelper::getModuleById($m[1]);
 
     return ($mod && $mod->id) ? '<div class="uk-margin-small-top">' . ModuleHelper::renderModule($mod, ['style' => 'none']) . '</div>' : '';

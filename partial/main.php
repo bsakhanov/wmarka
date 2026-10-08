@@ -46,7 +46,7 @@ $pad   = Config::str('main_padding', '');
     <div class="<?php echo Config::container(); ?>">
         <div class="<?php echo $gap; ?>" uk-grid>
 
-            <div class="uk-width-expand@<?php echo $bp; ?>">
+            <div class="wm-main uk-width-1-1 uk-width-expand@<?php echo $bp; ?>">
                 <?php if ($this->count('main-top')) : ?>
                     <div class="uk-margin-medium-bottom uk-child-width-1-1" uk-grid><?php echo $this->modules('main-top'); ?></div>
                 <?php endif; ?>

@@ -1,4 +1,4 @@
-# Wmarka 4.0.13 — starter template for Joomla 5 and 6 built on UIkit 3
+# Wmarka 4.0.16 — starter template for Joomla 5 and 6 built on UIkit 3
 
 *Русская версия: [README.md](README.md)*
 
@@ -40,22 +40,26 @@ Wmarka is a free starter template for Joomla 5 and 6 built on UIkit 3.25, with n
 
 ## What is in the package
 
-The full installation is one archive, **`pkg_wmarka-4.0.13.zip`**. It contains five extensions, installed in this order:
+The full installation is one archive, **`pkg_wmarka-4.0.16.zip`**. It contains nine extensions, installed in this order:
 
 | Extension | What it is | Why |
 |---|---|---|
 | `lib_juimage` 5.21 | JUImage library (Denys Nosov, Joomla! Ukraine) | crops thumbnails and converts them to WebP |
-| `tpl_wmarka` 4.0.13 | the template | all site styling |
+| `tpl_wmarka` 4.0.16 | the template | all site styling |
 | `tpl_wmarka_vestnik` 1.0.0 | child template of the demo site | a child template built the way Joomla builds them |
 | `com_blank` 2.0.1 | "Blank page" component (Alek Volsk, Sergey Tolkachyov) | pages made of modules: homepage, landings |
+| `mod_wmarka_articles_grid` 1.0.0 | Webmarka Articles Grid — card grid with an on-page filter | news on the homepage |
+| `mod_wmarka_articles_slider` 1.0.0 | Webmarka Articles Slider — card carousel | "Culture and sport" |
+| `mod_wmarka_articles_portfolio` 1.0.0 | Webmarka Articles Portfolio — tiles that open in a modal | reference |
+| `mod_wmarka_articles_gallery` 1.0.0 | Webmarka Articles Gallery — lightbox gallery with a filter | photo and video news |
 | `plg_sampledata_wmarka` | sample data installer | deploys the "Vestnik" demo site |
 
-The template alone is **`tpl_wmarka-4.0.13.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
+The template alone is **`tpl_wmarka-4.0.16.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
 
 ## Requirements
 
 - Joomla 5.0 or later, tested on Joomla 6.1.4;
-- PHP 8.1 or later;
+- PHP 8.1 or later for Joomla 5, PHP 8.3 or later for Joomla 6 (a core requirement); tested on PHP 8.3 and 8.5.11;
 - for thumbnails, the PHP GD extension with WebP support (available on most hosts);
 - SEF URLs and `.htaccess` enabled, for clean URLs and Smart Search at `/search`.
 
@@ -66,7 +70,7 @@ The template alone is **`tpl_wmarka-4.0.13.zip`**. JUImage and com_blank are the
 Good for trying the template and for a brand-new site.
 
 1. Install a clean Joomla 5 or 6.
-2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.0.13.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component and the installer.
+2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.0.16.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component and the installer.
 3. **System → Sample Data** (or the "Sample Data" box on the dashboard) → **wmarka demo site → Install**. Six steps run one after another; each reports what it did.
 4. Open the site: homepage, news, mega menus and the "Module positions" page are in place.
 
@@ -74,7 +78,7 @@ The demo changes the template style and the global options of Articles, Tags and
 
 ### Option 2. Template only
 
-1. Install `tpl_wmarka-4.0.13.zip`.
+1. Install `tpl_wmarka-4.0.16.zip`.
 2. Optionally install JUImage (from the package or <https://github.com/Joomla-Ukraine/JUImage>) and com_blank.
 3. **System → Site Template Styles → wmarka → Default**.
 4. Follow the [first steps](#first-steps).
@@ -261,7 +265,10 @@ The presentation follows Kazakhstan news portals (zakon.kz, nur.kz, baq.kz) and 
 - **quotes** (`<blockquote>` with a `<footer>` for attribution) get a large quote glyph as a backdrop and a pale background;
 - **share** — WhatsApp, Telegram, Facebook, X as plain links, no third-party scripts;
 - **YouTube video** in the text (`<iframe>` with `width` and `height`) becomes responsive by itself; a video article does not repeat its cover above the player;
-- **photo galleries** — `uk-lightbox` markup in the article text.
+- **photo galleries** — `uk-lightbox` markup in the article text;
+- **tables in the text** are styled on the server, before the first paint and without JavaScript: `uk-table` classes, `<td>` header cells become `<th>`, and below 959 px cells stack (`uk-table-responsive`) with the column name on every value (`data-label`). A table with merged cells or uneven rows stays a table and scrolls inside its box. The page never gets wider than a phone screen.
+
+> In your own grids (child template, `user.css`) give text columns `minmax(0, 1fr)` rather than `1fr`, and grid items `min-width: 0`: `1fr` keeps a column from shrinking below its content, and a wide table would widen the page.
 
 ## Images
 
@@ -339,7 +346,7 @@ The sample data installer creates a news site.
 | authors | 4 author users with contacts and portraits, plus an editorial contact |
 | illustrations | 39 files in `images/wmarka-demo` |
 | menus | main, two mega menus (News — dropdown, Template — full screen), service menu |
-| modules | 67, including a block-built homepage and the "Module positions" page |
+| modules | 68, including a block-built homepage, the "Module positions" page and the "Webmarka modules" page with the four Webmarka Articles modules |
 
 News items, names and contacts are fictional; this is stated in the toolbar, the footer and at the end of every news item. Reference articles are real. Videos are Blender open movies (CC BY), embedded from YouTube via `youtube-nocookie.com`.
 
@@ -378,14 +385,14 @@ Back up a production site before updating — a rule for any extension.
 - overrides for all modules and the main components;
 - a fixed package structure.
 
-**4.0.1–4.0.13** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
+**4.0.1–4.0.16** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
 
 ## What changed since 3.0
 
 | | 3.0 | 4.0 |
 |---|---|---|
 | Settings | language overrides and file edits | over 120 options in nine style tabs, status card |
-| PHP | 8.3 | 8.1 or later |
+| PHP | 8.3 | 8.1 or later (Joomla 6 — 8.3 or later), tested on 8.5 |
 | UIkit | 3.25.14 | 3.25.25, no Bootstrap or Font Awesome |
 | Images | JUImage required; sizes in layout files; up to eight thumbnails per photo | JUImage recommended; sizes in settings; one thumbnail for the whole site plus one for the article; srcset |
 | Cards | custom markup variants | UIkit Card component: top, bottom, left, right, `uk-cover` |
@@ -444,5 +451,6 @@ media/templates/site/wmarka/
 - **UIkit 3** — YOOtheme, MIT license.
 - **JUImage** — Denys Nosov, Joomla! Ukraine, GNU GPL v2+ (<https://github.com/Joomla-Ukraine/JUImage>). The package includes the library built from its sources without changes.
 - **com_blank** — Alek Volsk, Sergey Tolkachyov, GNU GPL.
+- **Webmarka Articles Grid, Slider, Portfolio, Gallery** — Webmarka · Beibit Sakhanov: <https://github.com/bsakhanov/mod_wmarka_articles_grid>, `…_slider`, `…_portfolio`, `…_gallery`.
 - **Noto Sans SemiCondensed** — Google, SIL Open Font License.
 - **Demo illustrations** were drawn for the package. Videos are Blender Foundation and Blender Studio open movies (CC BY).

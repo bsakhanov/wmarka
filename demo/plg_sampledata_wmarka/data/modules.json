@@ -583,7 +583,7 @@
   },
   "showtitle": 0,
   "ordering": 1,
-  "content": "<section class=\"uk-section uk-section-muted\"><div class=\"uk-container\"><div class=\"uk-margin-medium-bottom\"><span class=\"uk-label\">block-e</span><h2 class=\"uk-h2 uk-margin-small-top uk-margin-remove-bottom\">Отзывы</h2><p class=\"uk-text-lead uk-margin-small-top uk-margin-remove-bottom\">Карусель uk-slider с карточками-цитатами.</p></div><div uk-slider=\"finite: true\"><ul class=\"uk-slider-items uk-grid-small\"><li class=\"uk-width-1-1 uk-width-1-2@m\"><div class=\"uk-card uk-card-default uk-card-body uk-margin-small-right\"><blockquote class=\"uk-margin-remove\"><p>Шаблон собрали так, что редактор меняет главную, не трогая код.</p></blockquote><div class=\"uk-flex uk-flex-middle uk-margin-top\"><img class=\"uk-border-circle\" src=\"%R%/%IMG%/portrait-1.jpg\" width=\"44\" height=\"44\" alt=\"\"><span class=\"uk-margin-small-left uk-text-small\">Айгерим Сапарова</span></div></div></li><li class=\"uk-width-1-1 uk-width-1-2@m\"><div class=\"uk-card uk-card-default uk-card-body uk-margin-small-right\"><blockquote class=\"uk-margin-remove\"><p>Карточки, метки, авторы — всё штатное Joomla, просто аккуратно оформленное.</p></blockquote><div class=\"uk-flex uk-flex-middle uk-margin-top\"><img class=\"uk-border-circle\" src=\"%R%/%IMG%/portrait-2.jpg\" width=\"44\" height=\"44\" alt=\"\"><span class=\"uk-margin-small-left uk-text-small\">Данияр Ахметов</span></div></div></li><li class=\"uk-width-1-1 uk-width-1-2@m\"><div class=\"uk-card uk-card-default uk-card-body uk-margin-small-right\"><blockquote class=\"uk-margin-remove\"><p>Позиции можно включать и выключать, и вёрстка не разваливается.</p></blockquote><div class=\"uk-flex uk-flex-middle uk-margin-top\"><img class=\"uk-border-circle\" src=\"%R%/%IMG%/portrait-3.jpg\" width=\"44\" height=\"44\" alt=\"\"><span class=\"uk-margin-small-left uk-text-small\">Мария Ким</span></div></div></li></ul><ul class=\"uk-slider-nav uk-dotnav uk-flex-center uk-margin\"></ul></div></div></section>",
+  "content": "<section class=\"uk-section uk-section-muted\"><div class=\"uk-container\"><div class=\"uk-margin-medium-bottom\"><span class=\"uk-label\">block-e</span><h2 class=\"uk-h2 uk-margin-small-top uk-margin-remove-bottom\">Отзывы</h2><p class=\"uk-text-lead uk-margin-small-top uk-margin-remove-bottom\">Карусель uk-slider с карточками-цитатами.</p></div><div uk-slider=\"finite: true\"><div class=\"uk-slider-container\"><ul class=\"uk-slider-items uk-grid-small\"><li class=\"uk-width-1-1 uk-width-1-2@m\"><div class=\"uk-card uk-card-default uk-card-body uk-margin-small-right\"><blockquote class=\"uk-margin-remove\"><p>Шаблон собрали так, что редактор меняет главную, не трогая код.</p></blockquote><div class=\"uk-flex uk-flex-middle uk-margin-top\"><img class=\"uk-border-circle\" src=\"%R%/%IMG%/portrait-1.jpg\" width=\"44\" height=\"44\" alt=\"\"><span class=\"uk-margin-small-left uk-text-small\">Айгерим Сапарова</span></div></div></li><li class=\"uk-width-1-1 uk-width-1-2@m\"><div class=\"uk-card uk-card-default uk-card-body uk-margin-small-right\"><blockquote class=\"uk-margin-remove\"><p>Карточки, метки, авторы — всё штатное Joomla, просто аккуратно оформленное.</p></blockquote><div class=\"uk-flex uk-flex-middle uk-margin-top\"><img class=\"uk-border-circle\" src=\"%R%/%IMG%/portrait-2.jpg\" width=\"44\" height=\"44\" alt=\"\"><span class=\"uk-margin-small-left uk-text-small\">Данияр Ахметов</span></div></div></li><li class=\"uk-width-1-1 uk-width-1-2@m\"><div class=\"uk-card uk-card-default uk-card-body uk-margin-small-right\"><blockquote class=\"uk-margin-remove\"><p>Позиции можно включать и выключать, и вёрстка не разваливается.</p></blockquote><div class=\"uk-flex uk-flex-middle uk-margin-top\"><img class=\"uk-border-circle\" src=\"%R%/%IMG%/portrait-3.jpg\" width=\"44\" height=\"44\" alt=\"\"><span class=\"uk-margin-small-left uk-text-small\">Мария Ким</span></div></div></li></ul></div><ul class=\"uk-slider-nav uk-dotnav uk-flex-center uk-margin\"></ul></div></div></section>",
   "params": {
    "prepare_content": 0,
    "style": "wmarka-blank"
@@ -962,40 +962,6 @@
   }
  },
  {
-  "key": "h-latest",
-  "title": "Новости",
-  "module": "mod_articles",
-  "position": "block-b",
-  "assign": "home",
-  "showtitle": 1,
-  "params": {
-   "mode": "normal",
-   "catid": [
-    "news"
-   ],
-   "count": 6,
-   "show_featured": "hide",
-   "article_ordering": "a.publish_up",
-   "article_ordering_direction": "DESC",
-   "show_child_category_articles": 1,
-   "levels": 2,
-   "layout": "_:wm-cards",
-   "articles_layout": 1,
-   "layout_columns": 3,
-   "img_intro_full": "intro",
-   "show_introtext": 0,
-   "introtext_limit": 120,
-   "show_date": 1,
-   "show_date_field": "publish_up",
-   "show_date_format": "d.m.Y",
-   "show_category": 1,
-   "show_tags": 0,
-   "item_heading": "h3",
-   "header_tag": "h2",
-   "header_class": ""
-  }
- },
- {
   "key": "h-economy",
   "title": "Экономика",
   "module": "mod_articles",
@@ -1106,47 +1072,10 @@
   "module": "mod_custom",
   "position": "block-d",
   "assign": "home",
-  "content": "<section class=\"uk-section uk-section-secondary uk-light\"><div class=\"uk-container\"><div class=\"uk-flex uk-flex-between uk-flex-middle uk-margin\"><h2 class=\"uk-h3 uk-margin-remove\"><span uk-icon=\"icon: play-circle; ratio: 1.3\"></span> Видео</h2><a class=\"uk-button uk-button-text\" href=\"%MENU:m-video%\">Все видео</a></div><div class=\"uk-grid-medium\" uk-grid><div class=\"uk-width-2-3@m\"><ul id=\"wm-video-player\" class=\"uk-switcher\"><li><div class=\"uk-inline uk-width-1-1\"><iframe src=\"https://www.youtube-nocookie.com/embed/UXqq0ZvbOnk\" width=\"1280\" height=\"720\" title=\"Charge\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></div><p class=\"uk-text-small uk-margin-small-top\">«Charge» — четырнадцатый открытый фильм Blender Studio</p></li><li><div class=\"uk-inline uk-width-1-1\"><iframe src=\"https://www.youtube-nocookie.com/embed/gWw23EYM9VM\" width=\"1280\" height=\"720\" title=\"Elephants Dream\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></div><p class=\"uk-text-small uk-margin-small-top\">«Elephants Dream» — первый открытый фильм Blender</p></li><li><div class=\"uk-inline uk-width-1-1\"><iframe src=\"https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ\" width=\"1280\" height=\"720\" title=\"Big Buck Bunny\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></div><p class=\"uk-text-small uk-margin-small-top\">«Big Buck Bunny» — второй открытый фильм Blender</p></li><li><div class=\"uk-inline uk-width-1-1\"><iframe src=\"https://www.youtube-nocookie.com/embed/eRsGyueVLvQ\" width=\"1280\" height=\"720\" title=\"Sintel\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></div><p class=\"uk-text-small uk-margin-small-top\">«Sintel» — третий открытый фильм Blender</p></li></ul></div><div class=\"uk-width-1-3@m\"><ul class=\"uk-nav uk-nav-default\" uk-switcher=\"connect: #wm-video-player; animation: uk-animation-fade\"><li><a href=\"#\"><div class=\"uk-grid-small uk-flex-middle\" uk-grid><div class=\"uk-width-1-3\"><img src=\"https://i.ytimg.com/vi/UXqq0ZvbOnk/mqdefault.jpg\" width=\"320\" height=\"180\" alt=\"\" loading=\"lazy\"></div><div class=\"uk-width-expand uk-text-small\">«Charge»</div></div></a></li><li><a href=\"#\"><div class=\"uk-grid-small uk-flex-middle\" uk-grid><div class=\"uk-width-1-3\"><img src=\"https://i.ytimg.com/vi/gWw23EYM9VM/mqdefault.jpg\" width=\"320\" height=\"180\" alt=\"\" loading=\"lazy\"></div><div class=\"uk-width-expand uk-text-small\">«Elephants Dream»</div></div></a></li><li><a href=\"#\"><div class=\"uk-grid-small uk-flex-middle\" uk-grid><div class=\"uk-width-1-3\"><img src=\"https://i.ytimg.com/vi/aqz-KE-bpKQ/mqdefault.jpg\" width=\"320\" height=\"180\" alt=\"\" loading=\"lazy\"></div><div class=\"uk-width-expand uk-text-small\">«Big Buck Bunny»</div></div></a></li><li><a href=\"#\"><div class=\"uk-grid-small uk-flex-middle\" uk-grid><div class=\"uk-width-1-3\"><img src=\"https://i.ytimg.com/vi/eRsGyueVLvQ/mqdefault.jpg\" width=\"320\" height=\"180\" alt=\"\" loading=\"lazy\"></div><div class=\"uk-width-expand uk-text-small\">«Sintel»</div></div></a></li></ul></div></div></div></section>",
+  "content": "<section class=\"uk-section uk-section-secondary uk-light\"><div class=\"uk-container\"><div class=\"uk-flex uk-flex-between uk-flex-middle uk-margin\"><h2 class=\"uk-h3 uk-margin-remove\"><span uk-icon=\"icon: play-circle; ratio: 1.3\"></span> Видео</h2><a class=\"uk-button uk-button-text\" href=\"%MENU:m-video%\">Все видео</a></div><div class=\"uk-grid-medium\" uk-grid><div class=\"uk-width-2-3@m\"><ul id=\"wm-video-player\" class=\"uk-switcher\"><li><div class=\"uk-inline uk-width-1-1\"><iframe class=\"uk-width-1-1\" src=\"https://www.youtube-nocookie.com/embed/UXqq0ZvbOnk\" width=\"1280\" height=\"720\" title=\"Charge\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></div><p class=\"uk-text-small uk-margin-small-top\">«Charge» — четырнадцатый открытый фильм Blender Studio</p></li><li><div class=\"uk-inline uk-width-1-1\"><iframe class=\"uk-width-1-1\" src=\"https://www.youtube-nocookie.com/embed/gWw23EYM9VM\" width=\"1280\" height=\"720\" title=\"Elephants Dream\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></div><p class=\"uk-text-small uk-margin-small-top\">«Elephants Dream» — первый открытый фильм Blender</p></li><li><div class=\"uk-inline uk-width-1-1\"><iframe class=\"uk-width-1-1\" src=\"https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ\" width=\"1280\" height=\"720\" title=\"Big Buck Bunny\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></div><p class=\"uk-text-small uk-margin-small-top\">«Big Buck Bunny» — второй открытый фильм Blender</p></li><li><div class=\"uk-inline uk-width-1-1\"><iframe class=\"uk-width-1-1\" src=\"https://www.youtube-nocookie.com/embed/eRsGyueVLvQ\" width=\"1280\" height=\"720\" title=\"Sintel\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe></div><p class=\"uk-text-small uk-margin-small-top\">«Sintel» — третий открытый фильм Blender</p></li></ul></div><div class=\"uk-width-1-3@m\"><ul class=\"uk-nav uk-nav-default\" uk-switcher=\"connect: #wm-video-player; animation: uk-animation-fade\"><li><a href=\"#\"><div class=\"uk-grid-small uk-flex-middle\" uk-grid><div class=\"uk-width-1-3\"><img src=\"https://i.ytimg.com/vi/UXqq0ZvbOnk/mqdefault.jpg\" width=\"320\" height=\"180\" alt=\"\" loading=\"lazy\"></div><div class=\"uk-width-expand uk-text-small\">«Charge»</div></div></a></li><li><a href=\"#\"><div class=\"uk-grid-small uk-flex-middle\" uk-grid><div class=\"uk-width-1-3\"><img src=\"https://i.ytimg.com/vi/gWw23EYM9VM/mqdefault.jpg\" width=\"320\" height=\"180\" alt=\"\" loading=\"lazy\"></div><div class=\"uk-width-expand uk-text-small\">«Elephants Dream»</div></div></a></li><li><a href=\"#\"><div class=\"uk-grid-small uk-flex-middle\" uk-grid><div class=\"uk-width-1-3\"><img src=\"https://i.ytimg.com/vi/aqz-KE-bpKQ/mqdefault.jpg\" width=\"320\" height=\"180\" alt=\"\" loading=\"lazy\"></div><div class=\"uk-width-expand uk-text-small\">«Big Buck Bunny»</div></div></a></li><li><a href=\"#\"><div class=\"uk-grid-small uk-flex-middle\" uk-grid><div class=\"uk-width-1-3\"><img src=\"https://i.ytimg.com/vi/eRsGyueVLvQ/mqdefault.jpg\" width=\"320\" height=\"180\" alt=\"\" loading=\"lazy\"></div><div class=\"uk-width-expand uk-text-small\">«Sintel»</div></div></a></li></ul></div></div></div></section>",
   "params": {
    "prepare_content": 0,
    "style": "wmarka-blank"
-  }
- },
- {
-  "key": "h-photo",
-  "title": "Фото",
-  "module": "mod_articles",
-  "position": "block-e",
-  "assign": "home",
-  "showtitle": 1,
-  "params": {
-   "mode": "normal",
-   "catid": [
-    "news"
-   ],
-   "count": 6,
-   "show_featured": "show",
-   "article_ordering": "a.publish_up",
-   "article_ordering_direction": "DESC",
-   "show_child_category_articles": 1,
-   "levels": 2,
-   "layout": "_:wm-slider",
-   "articles_layout": 1,
-   "layout_columns": 3,
-   "img_intro_full": "intro",
-   "show_introtext": 0,
-   "introtext_limit": 120,
-   "show_date": 1,
-   "show_date_field": "publish_up",
-   "show_date_format": "d.m.Y",
-   "show_category": 1,
-   "show_tags": 0,
-   "item_heading": "h3",
-   "header_tag": "h2",
-   "header_class": "",
-   "filter_tag": [
-    "photo"
-   ]
   }
  },
  {
@@ -1255,40 +1184,6 @@
   }
  },
  {
-  "key": "h-ref",
-  "title": "Справочник",
-  "module": "mod_articles",
-  "position": "block-g",
-  "assign": "home",
-  "showtitle": 1,
-  "params": {
-   "mode": "normal",
-   "catid": [
-    "reference"
-   ],
-   "count": 3,
-   "show_featured": "show",
-   "article_ordering": "a.publish_up",
-   "article_ordering_direction": "DESC",
-   "show_child_category_articles": 1,
-   "levels": 2,
-   "layout": "_:wm-cards",
-   "articles_layout": 1,
-   "layout_columns": 3,
-   "img_intro_full": "intro",
-   "show_introtext": 1,
-   "introtext_limit": 120,
-   "show_date": 0,
-   "show_date_field": "publish_up",
-   "show_date_format": "d.m.Y",
-   "show_category": 1,
-   "show_tags": 0,
-   "item_heading": "h3",
-   "header_tag": "h2",
-   "header_class": ""
-  }
- },
- {
   "key": "h-promo",
   "title": "Главная: шаблон",
   "module": "mod_custom",
@@ -1366,6 +1261,234 @@
    "count": 5,
    "show_front": 1,
    "layout": "_:wm-media"
+  }
+ },
+ {
+  "key": "wm-grid",
+  "title": "Новости",
+  "module": "mod_wmarka_articles_grid",
+  "position": "block-b",
+  "assign": {
+   "only": [
+    "home",
+    "wm-modules"
+   ]
+  },
+  "showtitle": 1,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "economy",
+    "energy",
+    "society",
+    "tech",
+    "science",
+    "culture",
+    "sport"
+   ],
+   "show_child_category_articles": "1",
+   "levels": "2",
+   "count": "9",
+   "show_featured": "hide",
+   "article_ordering": "a.created",
+   "article_ordering_direction": "DESC",
+   "show_introtext": "1",
+   "introtext_limit": "120",
+   "introtext_truncate": "words",
+   "image_source": "intro",
+   "image_processing": "juimage",
+   "srcset": "1",
+   "img_w": "720",
+   "img_h": "405",
+   "mob_w": "480",
+   "mob_h": "270",
+   "img_q": "80",
+   "structured_data": "jsonld",
+   "og_images": "off",
+   "uikit_load": "none",
+   "custom_header": "",
+   "header_class": "",
+   "owncache": "1",
+   "cache_time": "900",
+   "frontend_filter": "1",
+   "frontend_filter_by": "category",
+   "frontend_filter_style": "uk-subnav uk-subnav-pill",
+   "frontend_filter_align": "uk-flex-left",
+   "frontend_filter_all": "Все",
+   "card_media_pos": "top",
+   "card_structure": "body-footer",
+   "grid_match": "1",
+   "grid_gutter": "uk-grid-medium",
+   "cols_s": "uk-child-width-1-2@s",
+   "cols_m": "uk-child-width-1-3@m",
+   "cols_l": "uk-child-width-1-3@l",
+   "item_heading_size": "uk-h4"
+  }
+ },
+ {
+  "key": "wm-gallery",
+  "title": "Фото и видео",
+  "module": "mod_wmarka_articles_gallery",
+  "position": "block-e",
+  "assign": {
+   "only": [
+    "home",
+    "wm-modules"
+   ]
+  },
+  "showtitle": 1,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "economy",
+    "energy",
+    "society",
+    "tech",
+    "science",
+    "culture",
+    "sport"
+   ],
+   "show_child_category_articles": "1",
+   "levels": "2",
+   "count": "8",
+   "show_featured": "show",
+   "article_ordering": "a.created",
+   "article_ordering_direction": "DESC",
+   "show_introtext": "0",
+   "introtext_limit": "120",
+   "introtext_truncate": "words",
+   "image_source": "intro",
+   "image_processing": "juimage",
+   "srcset": "1",
+   "img_w": "800",
+   "img_h": "600",
+   "mob_w": "480",
+   "mob_h": "270",
+   "img_q": "80",
+   "structured_data": "none",
+   "og_images": "off",
+   "uikit_load": "none",
+   "custom_header": "",
+   "header_class": "",
+   "owncache": "1",
+   "cache_time": "900",
+   "filter_tag": [
+    "photo",
+    "video"
+   ],
+   "frontend_filter": "1",
+   "frontend_filter_by": "category",
+   "frontend_filter_style": "uk-subnav uk-subnav-divider",
+   "frontend_filter_all": "Все",
+   "tile_caption": "overlay",
+   "tile_overlay": "uk-overlay-primary",
+   "lightbox_anim": "slide",
+   "grid_masonry": "0",
+   "grid_gutter": "uk-grid-small",
+   "cols_s": "uk-child-width-1-2@s",
+   "cols_m": "uk-child-width-1-3@m",
+   "cols_l": "uk-child-width-1-4@l"
+  }
+ },
+ {
+  "key": "wm-portfolio",
+  "title": "Справочник",
+  "module": "mod_wmarka_articles_portfolio",
+  "position": "block-g",
+  "assign": {
+   "only": [
+    "home",
+    "wm-modules"
+   ]
+  },
+  "showtitle": 1,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "reference"
+   ],
+   "show_child_category_articles": "1",
+   "levels": "2",
+   "count": "3",
+   "show_featured": "show",
+   "article_ordering": "a.created",
+   "article_ordering_direction": "ASC",
+   "show_introtext": "1",
+   "introtext_limit": "120",
+   "introtext_truncate": "words",
+   "image_source": "intro",
+   "image_processing": "juimage",
+   "srcset": "1",
+   "img_w": "720",
+   "img_h": "405",
+   "mob_w": "480",
+   "mob_h": "270",
+   "img_q": "80",
+   "structured_data": "none",
+   "og_images": "off",
+   "uikit_load": "none",
+   "custom_header": "",
+   "header_class": "",
+   "owncache": "1",
+   "cache_time": "900",
+   "portfolio_layout": "grid",
+   "card_structure": "body-only",
+   "modal_size": "uk-modal-large",
+   "modal_media_pos": "top",
+   "cols_s": "uk-child-width-1-2@s",
+   "cols_m": "uk-child-width-1-3@m",
+   "cols_l": "uk-child-width-1-3@l",
+   "item_heading_size": "uk-h4"
+  }
+ },
+ {
+  "key": "wm-slider",
+  "title": "Культура и спорт",
+  "module": "mod_wmarka_articles_slider",
+  "position": "block-i",
+  "assign": {
+   "only": [
+    "home",
+    "wm-modules"
+   ]
+  },
+  "showtitle": 1,
+  "params": {
+   "mode": "normal",
+   "catid": [
+    "culture",
+    "sport"
+   ],
+   "show_child_category_articles": "1",
+   "levels": "2",
+   "count": "6",
+   "show_featured": "show",
+   "article_ordering": "a.created",
+   "article_ordering_direction": "DESC",
+   "show_introtext": "1",
+   "introtext_limit": "120",
+   "introtext_truncate": "words",
+   "image_source": "intro",
+   "image_processing": "juimage",
+   "srcset": "1",
+   "img_w": "720",
+   "img_h": "405",
+   "mob_w": "480",
+   "mob_h": "270",
+   "img_q": "80",
+   "structured_data": "none",
+   "og_images": "off",
+   "uikit_load": "none",
+   "custom_header": "",
+   "header_class": "",
+   "owncache": "1",
+   "cache_time": "900",
+   "card_media_pos": "top",
+   "card_structure": "body-only",
+   "slidenav": "1",
+   "dotnav": "1",
+   "cols_m": "uk-child-width-1-3@m",
+   "item_heading_size": "uk-h4"
   }
  }
 ]

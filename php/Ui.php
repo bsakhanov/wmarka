@@ -339,4 +339,178 @@ final class Ui
     {
         return \in_array($tag, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div'], true) ? $tag : $default;
     }
+
+    /**
+     * Таблицы в тексте материала — на сервере, до первого кадра и без JavaScript
+     * (по разбору VRK News: широкая таблица раздвигала страницу на телефоне).
+     * Для каждой таблицы верхнего уровня:
+     *  - классы uk-table uk-table-divider uk-table-small, если своих uk-table нет;
+     *  - <td> в <thead> → <th scope="col">; шапка из одних <th> в начале <tbody> переносится в <thead>;
+     *  - uk-table-responsive (до 959 px ячейки идут столбиком) и подписи столбцов в data-label
+     *    каждой ячейки — UIkit прячет <thead> в такой раскладке; если подписи разложить
+     *    нельзя (слияние ячеек, строки разной длины), таблица остаётся таблицей с прокруткой;
+     *  - обёртка <div class="uk-overflow-auto">, снятые устаревшие width и height.
+     * Разбирается только сама таблица, остальной текст не трогается. Повторный вызов
+     * ничего не меняет (data-wm-table). Скрипт шаблона остаётся запасным путём.
+     */
+    public static function tables(string $html): string
+    {
+        if (stripos($html, '<table') === false || !class_exists(\DOMDocument::class)) {
+            return $html;
+        }
+
+        $out = '';
+        $pos = 0;
+
+        while (($start = stripos($html, '<table', $pos)) !== false) {
+            $depth = 0;
+            $end   = null;
+            $i     = $start;
+
+            while (preg_match('~<(/?)table\b[^>]*>~i', $html, $m, PREG_OFFSET_CAPTURE, $i)) {
+                $depth += $m[1][0] === '/' ? -1 : 1;
+                $i      = $m[0][1] + \strlen($m[0][0]);
+
+                if ($depth === 0) {
+                    $end = $i;
+                    break;
+                }
+            }
+
+            if ($end === null) {
+                break;
+            }
+
+            $before  = substr($html, $pos, $start - $pos);
+            $wrapped = (bool) preg_match('~<div\b[^>]*\bclass="[^"]*\buk-overflow-auto\b[^"]*"[^>]*>\s*$~i', $before);
+            $out    .= $before . self::table(substr($html, $start, $end - $start), $wrapped);
+            $pos     = $end;
+        }
+
+        return $out . substr($html, $pos);
+    }
+
+    /** Одна таблица верхнего уровня (см. tables()) */
+    private static function table(string $source, bool $wrapped): string
+    {
+        if (preg_match('~^<table\b[^>]*\bdata-wm-table\b~i', $source)) {
+            return $source;
+        }
+
+        $doc      = new \DOMDocument('1.0', 'UTF-8');
+        $previous = libxml_use_internal_errors(true);
+        $loaded   = $doc->loadHTML('<?xml encoding="UTF-8"?><html><body>' . $source . '</body></html>', LIBXML_NONET);
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous);
+
+        $table = $loaded ? $doc->getElementsByTagName('table')->item(0) : null;
+
+        if (!$table instanceof \DOMElement) {
+            return $source;
+        }
+
+        $xp = new \DOMXPath($doc);
+
+        // Устаревшие размеры — у самой таблицы и её строк и ячеек (вложенные таблицы не трогаем)
+        foreach (array_merge([$table], iterator_to_array($xp->query('./thead/tr | ./tbody/tr | ./tfoot/tr | ./tr | ./*/tr/* | ./tr/* | ./colgroup/col | ./col', $table)))  as $el) {
+            if ($el instanceof \DOMElement) {
+                $el->removeAttribute('width');
+                $el->removeAttribute('height');
+            }
+        }
+
+        $rename = static function (\DOMElement $cell) use ($doc): \DOMElement {
+            $th = $doc->createElement('th');
+
+            foreach (iterator_to_array($cell->attributes) as $attr) {
+                $th->setAttribute($attr->nodeName, $attr->nodeValue);
+            }
+
+            while ($cell->firstChild) {
+                $th->appendChild($cell->firstChild);
+            }
+
+            $th->setAttribute('scope', 'col');
+            $cell->parentNode->replaceChild($th, $cell);
+
+            return $th;
+        };
+
+        $thead = $xp->query('./thead', $table)->item(0);
+
+        if ($thead instanceof \DOMElement) {
+            foreach (iterator_to_array($xp->query('./tr/td', $thead)) as $td) {
+                $rename($td);
+            }
+        } else {
+            // Шапка из одних <th> первой строкой — в <thead>
+            $first = $xp->query('./tbody/tr[1] | ./tr[1]', $table)->item(0);
+
+            if ($first instanceof \DOMElement) {
+                $cells = $xp->query('./td | ./th', $first);
+                $ths   = $xp->query('./th', $first);
+
+                if ($cells->length > 1 && $cells->length === $ths->length) {
+                    $thead = $doc->createElement('thead');
+                    $table->insertBefore($thead, $table->firstChild);
+                    $thead->appendChild($first);
+
+                    foreach (iterator_to_array($ths) as $th) {
+                        if ($th instanceof \DOMElement && !$th->hasAttribute('scope')) {
+                            $th->setAttribute('scope', 'col');
+                        }
+                    }
+                }
+            }
+        }
+
+        // Подписи столбцов: шапка в одну строку без слияния, строки тела той же длины
+        $headRows = $thead instanceof \DOMElement ? $xp->query('./tr', $thead) : null;
+        $bodyRows = $xp->query('./tbody/tr | ./tr | ./tfoot/tr', $table);
+        $merged   = $xp->query('./*/tr/*[@colspan > 1 or @rowspan > 1] | ./tr/*[@colspan > 1 or @rowspan > 1]', $table)->length > 0;
+        $labels   = [];
+
+        if ($headRows && $headRows->length === 1) {
+            foreach ($xp->query('./th | ./td', $headRows->item(0)) as $cell) {
+                $labels[] = trim(preg_replace('/\s+/u', ' ', $cell->textContent) ?? '');
+            }
+        }
+
+        $consistent = !$merged;
+
+        foreach ($bodyRows as $row) {
+            if ($labels && $xp->query('./td | ./th', $row)->length !== \count($labels)) {
+                $consistent = false;
+            }
+        }
+
+        $responsive = $consistent && ($labels === [] ? !$headRows : \count($labels) > 1);
+
+        if ($responsive && $labels) {
+            foreach ($bodyRows as $row) {
+                foreach ($xp->query('./td | ./th', $row) as $j => $cell) {
+                    if ($cell instanceof \DOMElement && ($labels[$j] ?? '') !== '' && !$cell->hasAttribute('data-label')) {
+                        $cell->setAttribute('data-label', $labels[$j]);
+                    }
+                }
+            }
+        }
+
+        $class = trim($table->getAttribute('class'));
+
+        if (!preg_match('/\buk-table\b/', $class)) {
+            $class = trim($class . ' uk-table uk-table-divider uk-table-small');
+        }
+
+        if ($responsive && !preg_match('/\buk-table-responsive\b/', $class)) {
+            $class .= ' uk-table-responsive';
+        }
+
+        $table->setAttribute('class', $class);
+        $table->setAttribute('data-wm-table', $responsive ? 'responsive' : 'scroll');
+
+        $html = (string) $doc->saveHTML($table);
+
+        return $wrapped ? $html : '<div class="uk-overflow-auto">' . $html . '</div>';
+    }
 }

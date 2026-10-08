@@ -26,3 +26,15 @@ label.invalid{color:#f0506e}
 [data-wm-content] blockquote p + p{margin-top:.75em}
 [data-wm-content] blockquote footer,[data-wm-content] blockquote cite{display:block;margin-top:.9em;font-size:.875rem;font-style:normal;color:#666}
 [data-wm-content] blockquote footer::before{content:"— "}
+
+/* Колонка контента и текст материала сжимаются до ширины экрана: элемент сетки по умолчанию
+   не уже своего содержимого (min-width: auto), и широкая таблица раздвигала бы страницу */
+.wm-main,[data-wm-content]{min-width:0}
+/* Таблица текста на телефоне — столбиком (uk-table-responsive), с подписями столбцов из data-label */
+@media (max-width:959px){
+.uk-table-responsive td[data-label]::before,.uk-table-responsive tbody th[data-label]::before{content:attr(data-label);display:block;margin-bottom:2px;font-size:.75rem;line-height:1.4;color:#999}
+.uk-table-responsive tbody tr{padding:8px 0}
+}
+/* Встроенные плееры не шире колонки — и до загрузки скриптов, и без них */
+[data-wm-content] iframe,.wm-module iframe{max-width:100%}
+iframe[src*="youtube.com/embed"],iframe[src*="youtube-nocookie.com/embed"],iframe[src*="player.vimeo.com"]{width:100%;height:auto;aspect-ratio:16/9}

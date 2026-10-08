@@ -1,5 +1,5 @@
 /*!
- * WMARKA 4.0.13 — поведение шаблона поверх UIkit 3 (без зависимостей).
+ * WMARKA 4.0.16 — поведение шаблона поверх UIkit 3 (без зависимостей).
  * 1. Переключатель «сетка / список» ([data-wm-switch], [data-wm-set-view]) с памятью в localStorage.
  * 2. Показ пароля ([data-wm-password]).
  * 3. Текст материалов ([data-wm-content]): таблицы со скроллом, адаптивные видео.
@@ -70,7 +70,8 @@
     document.querySelectorAll('[data-wm-lead] > p:first-child').forEach(function (p) { p.classList.add('uk-text-lead'); });
 
     document.querySelectorAll('[data-wm-content]').forEach(function (body) {
-      body.querySelectorAll('table').forEach(function (t) {
+      // Запасной путь: таблицы, которые шаблон не разобрал на сервере (data-wm-table)
+      body.querySelectorAll('table:not([data-wm-table])').forEach(function (t) {
         if (!t.className) { t.className = 'uk-table uk-table-divider uk-table-small'; }
         if (!t.parentElement.classList.contains('uk-overflow-auto')) {
           var wrap = document.createElement('div');

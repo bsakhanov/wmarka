@@ -69,7 +69,7 @@ $width = \in_array($width, ['xsmall', 'small', 'medium', 'large', 'xlarge', '1-1
 
     <?php if ($text !== '') : ?>
         <div class="<?php echo $width === '1-1' ? '' : 'uk-width-' . $width . '@m'; ?><?php echo $center ? ' uk-margin-auto' : ''; ?>" data-wm-content>
-            <?php echo HTMLHelper::_('content.prepare', $text, '', 'com_blank.blank'); ?>
+            <?php echo \Wmarka\Template\Ui::tables(HTMLHelper::_('content.prepare', $text, '', 'com_blank.blank')); ?>
         </div>
     <?php endif; ?>
 </article>

@@ -8,6 +8,6 @@
 | `plg_sampledata_wmarka/` | установщик образцов данных «Демо-сайт wmarka» |
 | `pkg_wmarka/` | манифест и сценарий пакета |
 
-Как собрать пакет вручную: заархивируйте корень репозитория (без папки `demo`) в `tpl_wmarka.zip`, папки `tpl_wmarka_vestnik` и `plg_sampledata_wmarka` — в одноимённые архивы, добавьте `com_blank.zip` (компонент «Пустая страница», Alek Volsk, Sergey Tolkachyov) и `lib_juimage.zip` (github.com/Joomla-Ukraine/JUImage), положите всё в `packages/` рядом с `pkg_wmarka.xml` и `script.php` и заархивируйте. Готовые архивы — во вкладке Releases.
+Как собрать пакет вручную: заархивируйте корень репозитория (без папки `demo`) в `tpl_wmarka.zip`, папки `tpl_wmarka_vestnik` и `plg_sampledata_wmarka` — в одноимённые архивы, добавьте модули `mod_wmarka_articles_grid.zip`, `…_slider.zip`, `…_portfolio.zip`, `…_gallery.zip` (выпуски v1.0.0 в репозиториях bsakhanov/mod_wmarka_articles_*), `com_blank.zip` (компонент «Пустая страница», Alek Volsk, Sergey Tolkachyov) и `lib_juimage.zip` (github.com/Joomla-Ukraine/JUImage), положите всё в `packages/` рядом с `pkg_wmarka.xml` и `script.php` и заархивируйте. Готовые архивы — во вкладке Releases.
 
 Подробно о шаблоне — в [README.md](../README.md).

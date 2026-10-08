@@ -2,7 +2,7 @@
 <extension type="package" method="upgrade">
 	<name>Wmarka</name>
 	<packagename>wmarka</packagename>
-	<version>4.0.13</version>
+	<version>4.0.16</version>
 	<creationDate>2026-10-03</creationDate>
 	<author>Webmarka · Beibit Sakhanov</author>
 	<authorEmail>support@webmarka.kz</authorEmail>
@@ -10,7 +10,7 @@
 	<copyright>(C) 2016–2026 Webmarka</copyright>
 	<license>GNU General Public License version 2 or later</license>
 	<description><![CDATA[
-		<p>Шаблон wmarka 4.0.13 одним архивом с демо-сайтом: библиотеку изображений JUImage (Denys Nosov, Joomla! Ukraine), шаблон, дочерний шаблон демо-сайта wmarka_vestnik, компонент пустой страницы com_blank (Alek Volsk, Sergey Tolkachyov) и установщик образцов данных.</p>
+		<p>Шаблон wmarka 4.0.16 одним архивом с демо-сайтом: библиотеку изображений JUImage (Denys Nosov, Joomla! Ukraine), шаблон, дочерний шаблон демо-сайта wmarka_vestnik, компонент пустой страницы com_blank (Alek Volsk, Sergey Tolkachyov), модули Webmarka Articles — сетка, слайдер, портфолио и галерея материалов и установщик образцов данных.</p>
 		<p>Демо разворачивается из <b>Система → Образцы данных → Демо-сайт wmarka → Применить</b>: шесть шагов, повторный запуск безопасен. Ставьте демо на чистую Joomla.</p>
 		<p>Подробная инструкция — README.md (русский) и README.en.md (английский) в папке шаблона и в репозитории github.com/bsakhanov/wmarka.</p>
 	]]></description>
@@ -20,6 +20,10 @@
 		<file type="template" id="wmarka" client="site">tpl_wmarka.zip</file>
 		<file type="template" id="wmarka_vestnik" client="site">tpl_wmarka_vestnik.zip</file>
 		<file type="component" id="com_blank">com_blank.zip</file>
+		<file type="module" id="mod_wmarka_articles_grid" client="site">mod_wmarka_articles_grid.zip</file>
+		<file type="module" id="mod_wmarka_articles_slider" client="site">mod_wmarka_articles_slider.zip</file>
+		<file type="module" id="mod_wmarka_articles_portfolio" client="site">mod_wmarka_articles_portfolio.zip</file>
+		<file type="module" id="mod_wmarka_articles_gallery" client="site">mod_wmarka_articles_gallery.zip</file>
 		<file type="plugin" id="wmarka" group="sampledata">plg_sampledata_wmarka.zip</file>
 	</files>
 </extension>

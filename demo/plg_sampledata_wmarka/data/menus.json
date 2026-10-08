@@ -682,6 +682,19 @@
    "module": "mega-top"
   },
   {
+   "key": "wm-modules",
+   "menutype": "service",
+   "alias": "webmarka-modules",
+   "title": "Модули Webmarka",
+   "type": "blank",
+   "params": {
+    "show_page_heading": 1,
+    "wm_blank_lead": "Сетка, слайдер, портфолио и галерея материалов — модули Webmarka Articles в оформлении шаблона.",
+    "wm_blank_text": "<p>Четыре модуля материалов для Joomla 5 и 6 на UIkit 3 — наша разработка. Каждый ставится отдельно, сам подключает библиотеку JUImage, если её нет на сайте, и UIkit, если шаблон его не дал. На этом сайте все четыре стоят в пакете шаблона.</p><table class=\"uk-table uk-table-divider uk-table-small\"><thead><tr><th>Модуль</th><th>Что показывает</th><th>На этой странице</th><th>Выпуск</th></tr></thead><tbody><tr><td>Webmarka Articles Grid</td><td>сетку карточек с фильтром на странице</td><td>новости с фильтром по рубрикам</td><td><a href=\"https://github.com/bsakhanov/mod_wmarka_articles_grid/releases/tag/v1.0.0\">1.0.0</a></td></tr><tr><td>Webmarka Articles Slider</td><td>карусель карточек</td><td>культура и спорт</td><td><a href=\"https://github.com/bsakhanov/mod_wmarka_articles_slider/releases/tag/v1.0.0\">1.0.0</a></td></tr><tr><td>Webmarka Articles Portfolio</td><td>плитки, которые раскрываются в окне</td><td>справочник</td><td><a href=\"https://github.com/bsakhanov/mod_wmarka_articles_portfolio/releases/tag/v1.0.0\">1.0.0</a></td></tr><tr><td>Webmarka Articles Gallery</td><td>галерею с лайтбоксом и фильтром</td><td>фото- и видеоновости</td><td><a href=\"https://github.com/bsakhanov/mod_wmarka_articles_gallery/releases/tag/v1.0.0\">1.0.0</a></td></tr></tbody></table>",
+    "wm_blank_width": "large"
+   }
+  },
+  {
    "key": "tc-features",
    "menutype": "template-mega",
    "alias": "mega-features",
@@ -847,6 +860,17 @@
    "target": "m-download",
    "css": "uk-icon:download",
    "note": "Что умеет шаблон и как его поставить"
+  },
+  {
+   "key": "tm-wm-modules",
+   "menutype": "template-mega",
+   "parent": "tc-docs",
+   "alias": "mega-modules",
+   "title": "Модули Webmarka",
+   "type": "alias",
+   "target": "wm-modules",
+   "css": "uk-icon:thumbnails",
+   "note": "Сетка, слайдер, портфолио и галерея материалов"
   },
   {
    "key": "gh",

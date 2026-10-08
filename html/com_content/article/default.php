@@ -121,7 +121,7 @@ Seo::page([
         <?php endif; ?>
 
         <div class="com-content-article__body" itemprop="articleBody" data-wm-content data-wm-lead>
-            <?php echo $item->text; ?>
+            <?php echo \Wmarka\Template\Ui::tables((string) $item->text); ?>
         </div>
 
         <?php if ($tagsBottom && $params->get('show_tags', 1) && !empty($item->tags->itemTags)) : ?>
