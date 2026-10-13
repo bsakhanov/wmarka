@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="system" method="upgrade">
+    <name>plg_system_wmarka</name>
+    <author>Webmarka · Beibit Sakhanov</author>
+    <creationDate>2026-10-13</creationDate>
+    <copyright>(C) 2026 Webmarka. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorUrl>https://webmarka.kz</authorUrl>
+    <version>1.0.0</version>
+    <description>PLG_SYSTEM_WMARKA_XML_DESCRIPTION</description>
+    <namespace path="src">Webmarka\Plugin\System\Wmarka</namespace>
+    <files>
+        <folder plugin="wmarka">services</folder>
+        <folder>src</folder>
+        <filename>LICENSE.txt</filename>
+    </files>
+    <languages folder="language">
+        <language tag="ru-RU">ru-RU/plg_system_wmarka.ini</language>
+        <language tag="ru-RU">ru-RU/plg_system_wmarka.sys.ini</language>
+        <language tag="en-GB">en-GB/plg_system_wmarka.ini</language>
+        <language tag="en-GB">en-GB/plg_system_wmarka.sys.ini</language>
+    </languages>
+</extension>

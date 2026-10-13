@@ -38,6 +38,15 @@ class wmarkaInstallerScript
         'templates/wmarka/partial/content.php',
         'templates/wmarka/partial/_block.php',
         'templates/wmarka/readme.md',
+        // 4.1.0: копии XML штатных макетов Joomla не читала (только для «шаблон:макет»);
+        // поля WMARKA теперь в forms/menu/ и добавляются плагином «Система — wmarka»
+        'templates/wmarka/html/com_content/category/blog.xml',
+        'templates/wmarka/html/com_content/category/default.xml',
+        'templates/wmarka/html/com_content/featured/default.xml',
+        'templates/wmarka/html/com_tags/tag/default.xml',
+        'templates/wmarka/html/com_tags/tag/list.xml',
+        'templates/wmarka/html/com_contact/category/default.xml',
+        'templates/wmarka/html/com_blank/blank/default.xml',
         'media/templates/site/wmarka/joomla.asset.json',
         'media/templates/site/wmarka/js/wmarka-icons-min.js',
     ];
@@ -98,7 +107,7 @@ class wmarkaInstallerScript
         }
 
         $message = $type === 'install' ? 'установлен' : 'обновлён';
-        echo '<div class="alert alert-success"><h3 class="alert-heading">Wmarka 4.0.16 ' . $message . '</h3>'
+        echo '<div class="alert alert-success"><h3 class="alert-heading">Wmarka 4.1.0 ' . $message . '</h3>'
             . '<p>Ключевые настройки — в стиле шаблона (Система → Стили шаблонов сайта → wmarka). '
             . 'Свои стили — media/templates/site/wmarka/css/user.css: файл не перезаписывается обновлением.</p></div>';
     }

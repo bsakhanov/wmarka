@@ -27,6 +27,8 @@ if ($this->maxLevel == 0 || empty($this->children[$this->category->id])) {
             <?php continue; ?>
         <?php endif; ?>
         <li>
+            <?php $wmImg = \Wmarka\Template\Ui::subcatImage($child, $this->params); ?>
+            <?php if ($wmImg !== '') : ?><div class="uk-grid-small" uk-grid><div class="uk-width-small"><?php echo $wmImg; ?></div><div class="uk-width-expand"><?php endif; ?>
             <a class="uk-link-heading uk-text-bold" href="<?php echo Route::_(RouteHelper::getCategoryRoute($child->id, $child->language)); ?>"><?php echo Ui::title($child->title); ?></a>
             <?php if ($this->params->get('show_cat_num_articles', 1)) : ?>
                 <span class="uk-badge uk-margin-small-left" title="<?php echo Ui::esc(\Joomla\CMS\Language\Text::_('COM_CONTENT_NUM_ITEMS')); ?>"><?php echo (int) $child->numitems; ?></span>
@@ -44,6 +46,7 @@ if ($this->maxLevel == 0 || empty($this->children[$this->category->id])) {
                 $this->maxLevel++;
                 ?>
             <?php endif; ?>
+            <?php if ($wmImg !== '') : ?></div></div><?php endif; ?>
         </li>
     <?php endforeach; ?>
 </ul>

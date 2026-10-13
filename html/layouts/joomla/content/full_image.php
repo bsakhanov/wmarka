@@ -59,11 +59,11 @@ $wide = $align === '' ? '(min-width: 1200px) 1200px, 100vw' : '(min-width: 960px
 ?>
 <figure class="uk-margin-medium-bottom<?php echo $align; ?>">
     <?php if (!empty($full['srcset']) || !$mobile || $mobile['src'] === $full['src']) : ?>
-        <?php echo Image::img($full, $source['alt'], ['class' => 'uk-width-1-1', 'loading' => 'eager', 'fetchpriority' => 'high', 'sizes' => $wide]); ?>
+        <?php echo Image::img($full, $source['alt'], ['class' => trim('uk-width-1-1 ' . Image::imageClass($item, 'fulltext')), 'loading' => 'eager', 'fetchpriority' => 'high', 'sizes' => $wide]); ?>
     <?php else : ?>
         <picture>
             <source media="(max-width: 639px)" srcset="<?php echo Ui::esc($mobile['src']); ?>"<?php echo $mobile['width'] ? ' width="' . (int) $mobile['width'] . '" height="' . (int) $mobile['height'] . '"' : ''; ?>>
-            <?php echo Image::img($full, $source['alt'], ['class' => 'uk-width-1-1', 'loading' => 'eager', 'fetchpriority' => 'high']); ?>
+            <?php echo Image::img($full, $source['alt'], ['class' => trim('uk-width-1-1 ' . Image::imageClass($item, 'fulltext')), 'loading' => 'eager', 'fetchpriority' => 'high']); ?>
         </picture>
     <?php endif; ?>
     <?php if ($caption !== '') : ?>

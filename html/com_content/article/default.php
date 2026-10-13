@@ -30,7 +30,12 @@ $params   = $item->params;
 $canEdit  = $params->get('access-edit');
 $user     = $this->getCurrentUser();
 $info     = (int) $params->get('info_block_position', 0);
-$htag     = $this->params->get('show_page_heading') ? 'h2' : 'h1';
+// Заголовок страницы пункта меню печатается, только когда пункт — сама эта статья. У статьи, открытой через блог категории или избранное, он
+// повторялся бы над каждым материалом («Популярные новости Казахстана и мира…» перед заголовком статьи), а H1 доставался бы не статье.
+$menuItem = Factory::getApplication()->getMenu()->getActive();
+$ownMenu  = $menuItem && ($menuItem->query['view'] ?? '') === 'article' && (int) ($menuItem->query['id'] ?? 0) === (int) $item->id;
+$showHead = $this->params->get('show_page_heading') && $ownMenu;
+$htag     = $showHead ? 'h2' : 'h1';
 $assoc    = Associations::isEnabled() && $params->get('show_associations');
 $now      = Factory::getDate()->format('Y-m-d H:i:s');
 $notYet   = $item->publish_up > $now;
@@ -55,7 +60,7 @@ Seo::page([
 <article class="uk-article com-content-article item-page<?php echo $this->pageclass_sfx; ?>" itemscope itemtype="https://schema.org/Article">
     <meta itemprop="inLanguage" content="<?php echo ($item->language === '*') ? Factory::getApplication()->get('language') : $item->language; ?>">
 
-    <?php if ($this->params->get('show_page_heading')) : ?>
+    <?php if ($showHead) : ?>
         <h1 class="uk-heading-small"><?php echo $this->escape($this->params->get('page_heading')); ?></h1>
     <?php endif; ?>
 

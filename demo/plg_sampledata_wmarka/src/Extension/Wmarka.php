@@ -314,18 +314,18 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
         $existing = $this->lookup('#__users', ['username' => $row['username']]);
 
         if (!$existing) {
-            $db->setQuery($db->getQuery(true)->insert($db->quoteName('#__users'))
+            $db->setQuery($db->createQuery()->insert($db->quoteName('#__users'))
                 ->columns($db->quoteName(['name', 'username', 'email', 'password', 'block', 'sendEmail', 'registerDate', 'params', 'requireReset']))
                 ->values(implode(', ', [$db->quote($row['name']), $db->quote($row['username']), $db->quote($row['email']), $db->quote(\Joomla\CMS\User\UserHelper::hashPassword(bin2hex(random_bytes(16)))), 1, 0, $db->quote(Factory::getDate()->toSql()), $db->quote('{}'), 0])))->execute();
             $existing = (int) $db->insertid();
         } else {
-            $db->setQuery($db->getQuery(true)->update($db->quoteName('#__users'))->set($db->quoteName('name') . ' = ' . $db->quote($row['name']))->where($db->quoteName('id') . ' = ' . $existing))->execute();
+            $db->setQuery($db->createQuery()->update($db->quoteName('#__users'))->set($db->quoteName('name') . ' = ' . $db->quote($row['name']))->where($db->quoteName('id') . ' = ' . $existing))->execute();
         }
 
-        $mapped = (int) $db->setQuery($db->getQuery(true)->select('COUNT(*)')->from($db->quoteName('#__user_usergroup_map'))->where($db->quoteName('user_id') . ' = ' . $existing))->loadResult();
+        $mapped = (int) $db->setQuery($db->createQuery()->select('COUNT(*)')->from($db->quoteName('#__user_usergroup_map'))->where($db->quoteName('user_id') . ' = ' . $existing))->loadResult();
 
         if (!$mapped) {
-            $db->setQuery($db->getQuery(true)->insert($db->quoteName('#__user_usergroup_map'))->columns($db->quoteName(['user_id', 'group_id']))->values($existing . ', 3'))->execute();
+            $db->setQuery($db->createQuery()->insert($db->quoteName('#__user_usergroup_map'))->columns($db->quoteName(['user_id', 'group_id']))->values($existing . ', 3'))->execute();
         }
 
         return $existing;
@@ -347,7 +347,7 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
 
         $copied = 0;
 
-        foreach ((array) glob($source . '/*.{jpg,jpeg,png,webp,svg}', GLOB_BRACE) as $file) {
+        foreach ((array) glob($source . '/*.{jpg,jpeg,png,webp,svg,ico}', GLOB_BRACE) as $file) {
             $name = basename((string) $file);
 
             if (!is_file($target . '/' . $name) && copy((string) $file, $target . '/' . $name)) {
@@ -410,7 +410,7 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
         // Просмотры: без них модуль «Популярное» пуст, а счётчик в карточках — сплошные нули
         if (isset($row['hits'])) {
             $db = $this->db();
-            $db->setQuery($db->getQuery(true)->update($db->quoteName('#__content'))->set($db->quoteName('hits') . ' = ' . (int) $row['hits'])->where($db->quoteName('id') . ' = ' . $id))->execute();
+            $db->setQuery($db->createQuery()->update($db->quoteName('#__content'))->set($db->quoteName('hits') . ' = ' . (int) $row['hits'])->where($db->quoteName('id') . ' = ' . $id))->execute();
         }
 
         return $id;
@@ -556,8 +556,8 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
         $id = (int) $table->id;
 
         if (!empty($row['home'])) {
-            $db->setQuery($db->getQuery(true)->update($db->quoteName('#__menu'))->set($db->quoteName('home') . ' = 0')->where($db->quoteName('client_id') . ' = 0')->where($db->quoteName('language') . ' = ' . $db->quote('*')))->execute();
-            $db->setQuery($db->getQuery(true)->update($db->quoteName('#__menu'))->set($db->quoteName('home') . ' = 1')->where($db->quoteName('id') . ' = ' . $id))->execute();
+            $db->setQuery($db->createQuery()->update($db->quoteName('#__menu'))->set($db->quoteName('home') . ' = 0')->where($db->quoteName('client_id') . ' = 0')->where($db->quoteName('language') . ' = ' . $db->quote('*')))->execute();
+            $db->setQuery($db->createQuery()->update($db->quoteName('#__menu'))->set($db->quoteName('home') . ' = 1')->where($db->quoteName('id') . ' = ' . $id))->execute();
         }
 
         return $id;
@@ -570,13 +570,13 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
 
         foreach ([['#__content', ['introtext', 'fulltext'], 'articles'], ['#__contact_details', ['misc'], 'contacts']] as [$table, $columns, $bucket]) {
             foreach ($this->registry[$bucket] ?? [] as $id) {
-                $row = $db->setQuery($db->getQuery(true)->select($db->quoteName($columns))->from($db->quoteName($table))->where($db->quoteName('id') . ' = ' . (int) $id))->loadAssoc();
+                $row = $db->setQuery($db->createQuery()->select($db->quoteName($columns))->from($db->quoteName($table))->where($db->quoteName('id') . ' = ' . (int) $id))->loadAssoc();
 
                 if (!$row) {
                     continue;
                 }
 
-                $query = $db->getQuery(true)->update($db->quoteName($table))->where($db->quoteName('id') . ' = ' . (int) $id);
+                $query = $db->createQuery()->update($db->quoteName($table))->where($db->quoteName('id') . ' = ' . (int) $id);
 
                 foreach ($columns as $column) {
                     $query->set($db->quoteName($column) . ' = ' . $db->quote($this->tokens((string) $row[$column])));
@@ -639,7 +639,7 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
 
         $id = (int) $table->id;
 
-        $db->setQuery($db->getQuery(true)->delete($db->quoteName('#__modules_menu'))->where($db->quoteName('moduleid') . ' = ' . $id))->execute();
+        $db->setQuery($db->createQuery()->delete($db->quoteName('#__modules_menu'))->where($db->quoteName('moduleid') . ' = ' . $id))->execute();
 
         // Привязка: all — все страницы; home — главная; {"only": [...]} — только эти пункты;
         // {"except": [...]} — все, кроме этих (ключи пунктов из menus.json)
@@ -652,7 +652,7 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
         };
 
         foreach ($targets as $menuId) {
-            $db->setQuery($db->getQuery(true)->insert($db->quoteName('#__modules_menu'))->columns([$db->quoteName('moduleid'), $db->quoteName('menuid')])->values($id . ', ' . (int) $menuId))->execute();
+            $db->setQuery($db->createQuery()->insert($db->quoteName('#__modules_menu'))->columns([$db->quoteName('moduleid'), $db->quoteName('menuid')])->values($id . ', ' . (int) $menuId))->execute();
         }
 
         $this->remember('modules', $row['key'], $id);
@@ -680,15 +680,15 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
             return Text::_('PLG_SAMPLEDATA_WMARKA_STEP6_NOSTYLE');
         }
 
-        $current = (string) $db->setQuery($db->getQuery(true)->select($db->quoteName('params'))->from($db->quoteName('#__template_styles'))->where($db->quoteName('id') . ' = ' . $row))->loadResult();
+        $current = (string) $db->setQuery($db->createQuery()->select($db->quoteName('params'))->from($db->quoteName('#__template_styles'))->where($db->quoteName('id') . ' = ' . $row))->loadResult();
         $params  = new Registry($current);
 
         foreach ($this->json('settings.json')['template'] as $key => $value) {
             $params->set($key, \is_string($value) ? $this->tokens($value) : $value);
         }
 
-        $db->setQuery($db->getQuery(true)->update($db->quoteName('#__template_styles'))->set($db->quoteName('params') . ' = ' . $db->quote($params->toString()))->set($db->quoteName('home') . ' = ' . $db->quote('1'))->where($db->quoteName('id') . ' = ' . $row))->execute();
-        $db->setQuery($db->getQuery(true)->update($db->quoteName('#__template_styles'))->set($db->quoteName('home') . ' = ' . $db->quote('0'))->where($db->quoteName('client_id') . ' = 0')->where($db->quoteName('id') . ' <> ' . $row))->execute();
+        $db->setQuery($db->createQuery()->update($db->quoteName('#__template_styles'))->set($db->quoteName('params') . ' = ' . $db->quote($params->toString()))->set($db->quoteName('home') . ' = ' . $db->quote('1'))->where($db->quoteName('id') . ' = ' . $row))->execute();
+        $db->setQuery($db->createQuery()->update($db->quoteName('#__template_styles'))->set($db->quoteName('home') . ' = ' . $db->quote('0'))->where($db->quoteName('client_id') . ' = 0')->where($db->quoteName('id') . ' <> ' . $row))->execute();
 
         // Дополнительные стили (например, страница позиций с шапкой «логотип над меню»):
         // копия основного стиля с изменёнными параметрами, назначенная пунктам меню
@@ -711,7 +711,7 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
             ];
 
             if ($styleId) {
-                $query = $db->getQuery(true)->update($db->quoteName('#__template_styles'))->where($db->quoteName('id') . ' = ' . $styleId);
+                $query = $db->createQuery()->update($db->quoteName('#__template_styles'))->where($db->quoteName('id') . ' = ' . $styleId);
 
                 foreach ($cols as $name => $value) {
                     $query->set($db->quoteName($name) . ' = ' . $db->quote((string) $value));
@@ -719,14 +719,14 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
 
                 $db->setQuery($query)->execute();
             } else {
-                $db->setQuery($db->getQuery(true)->insert($db->quoteName('#__template_styles'))->columns($db->quoteName(['template', 'client_id', 'home', 'title', 'inheritable', 'parent', 'params']))
+                $db->setQuery($db->createQuery()->insert($db->quoteName('#__template_styles'))->columns($db->quoteName(['template', 'client_id', 'home', 'title', 'inheritable', 'parent', 'params']))
                     ->values(implode(', ', [$db->quote($target), 0, $db->quote('0'), $db->quote($style['title']), (int) $cols['inheritable'], $db->quote($cols['parent']), $db->quote($cols['params'])])))->execute();
                 $styleId = (int) $db->insertid();
             }
 
             foreach ($this->json('menus.json')['items'] as $item) {
                 if (($item['style'] ?? '') === $key) {
-                    $db->setQuery($db->getQuery(true)->update($db->quoteName('#__menu'))->set($db->quoteName('template_style_id') . ' = ' . $styleId)->where($db->quoteName('id') . ' = ' . $this->id('menu', $item['key'])))->execute();
+                    $db->setQuery($db->createQuery()->update($db->quoteName('#__menu'))->set($db->quoteName('template_style_id') . ' = ' . $styleId)->where($db->quoteName('id') . ' = ' . $this->id('menu', $item['key'])))->execute();
                 }
             }
         }
@@ -746,20 +746,20 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
                 $params->set($key, $value);
             }
 
-            $db->setQuery($db->getQuery(true)->update($db->quoteName('#__extensions'))->set($db->quoteName('params') . ' = ' . $db->quote($params->toString()))->where($db->quoteName('type') . ' = ' . $db->quote('component'))->where($db->quoteName('element') . ' = ' . $db->quote($element)))->execute();
+            $db->setQuery($db->createQuery()->update($db->quoteName('#__extensions'))->set($db->quoteName('params') . ' = ' . $db->quote($params->toString()))->where($db->quoteName('type') . ' = ' . $db->quote('component'))->where($db->quoteName('element') . ' = ' . $db->quote($element)))->execute();
         }
 
         // Плагины: «Постраничная навигация» показывает названия соседних статей
         foreach ($this->json('settings.json')['plugins'] ?? [] as $name => $values) {
             [$folder, $element] = explode('/', $name, 2);
-            $current = (string) $db->setQuery($db->getQuery(true)->select($db->quoteName('params'))->from($db->quoteName('#__extensions'))->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))->where($db->quoteName('folder') . ' = ' . $db->quote($folder))->where($db->quoteName('element') . ' = ' . $db->quote($element)))->loadResult();
+            $current = (string) $db->setQuery($db->createQuery()->select($db->quoteName('params'))->from($db->quoteName('#__extensions'))->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))->where($db->quoteName('folder') . ' = ' . $db->quote($folder))->where($db->quoteName('element') . ' = ' . $db->quote($element)))->loadResult();
             $params  = new Registry($current);
 
             foreach ($values as $key => $value) {
                 $params->set($key, $value);
             }
 
-            $db->setQuery($db->getQuery(true)->update($db->quoteName('#__extensions'))->set($db->quoteName('params') . ' = ' . $db->quote($params->toString()))->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))->where($db->quoteName('folder') . ' = ' . $db->quote($folder))->where($db->quoteName('element') . ' = ' . $db->quote($element)))->execute();
+            $db->setQuery($db->createQuery()->update($db->quoteName('#__extensions'))->set($db->quoteName('params') . ' = ' . $db->quote($params->toString()))->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))->where($db->quoteName('folder') . ' = ' . $db->quote($folder))->where($db->quoteName('element') . ' = ' . $db->quote($element)))->execute();
         }
 
         return Text::_('PLG_SAMPLEDATA_WMARKA_STEP6_COMPONENTS');
@@ -769,7 +769,7 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
     private function enableBlank(): void
     {
         $db = $this->db();
-        $db->setQuery($db->getQuery(true)->update($db->quoteName('#__extensions'))->set($db->quoteName('enabled') . ' = 1')->where($db->quoteName('type') . ' = ' . $db->quote('component'))->where($db->quoteName('element') . ' = ' . $db->quote('com_blank')))->execute();
+        $db->setQuery($db->createQuery()->update($db->quoteName('#__extensions'))->set($db->quoteName('enabled') . ' = 1')->where($db->quoteName('type') . ' = ' . $db->quote('component'))->where($db->quoteName('element') . ' = ' . $db->quote('com_blank')))->execute();
     }
 
     private function db(): DatabaseInterface
@@ -832,7 +832,7 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
     private function lookup(string $table, array $where): int
     {
         $db    = $this->db();
-        $query = $db->getQuery(true)->select($db->quoteName('id'))->from($db->quoteName($table));
+        $query = $db->createQuery()->select($db->quoteName('id'))->from($db->quoteName($table));
 
         foreach ($where as $column => $value) {
             $query->where($db->quoteName($column) . ' = ' . $db->quote((string) $value));
@@ -845,7 +845,7 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
     {
         $db = $this->db();
 
-        return (int) ($db->setQuery($db->getQuery(true)->select($db->quoteName('extension_id'))->from($db->quoteName('#__extensions'))->where($db->quoteName('type') . ' = ' . $db->quote('component'))->where($db->quoteName('element') . ' = ' . $db->quote($element)), 0, 1)->loadResult() ?? 0);
+        return (int) ($db->setQuery($db->createQuery()->select($db->quoteName('extension_id'))->from($db->quoteName('#__extensions'))->where($db->quoteName('type') . ' = ' . $db->quote('component'))->where($db->quoteName('element') . ' = ' . $db->quote($element)), 0, 1)->loadResult() ?? 0);
     }
 
     private function remember(string $bucket, string $key, int $id): void
@@ -859,7 +859,7 @@ final class Wmarka extends CMSPlugin implements SubscriberInterface
         $params = new Registry($this->params->toArray());
         $params->set('registry', json_encode($this->registry, JSON_UNESCAPED_UNICODE));
 
-        $db->setQuery($db->getQuery(true)->update($db->quoteName('#__extensions'))->set($db->quoteName('params') . ' = ' . $db->quote($params->toString()))->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))->where($db->quoteName('folder') . ' = ' . $db->quote('sampledata'))->where($db->quoteName('element') . ' = ' . $db->quote('wmarka')))->execute();
+        $db->setQuery($db->createQuery()->update($db->quoteName('#__extensions'))->set($db->quoteName('params') . ' = ' . $db->quote($params->toString()))->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))->where($db->quoteName('folder') . ' = ' . $db->quote('sampledata'))->where($db->quoteName('element') . ' = ' . $db->quote('wmarka')))->execute();
 
         $this->params->set('registry', $params->get('registry'));
     }

@@ -235,7 +235,7 @@ final class Seo
 
         $db  = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
         $row = $db->setQuery(
-            $db->getQuery(true)
+            $db->createQuery()
                 ->select($db->quoteName(['alias', 'catid', 'language']))
                 ->from($db->quoteName('#__content'))
                 ->where($db->quoteName('id') . ' = ' . $id)

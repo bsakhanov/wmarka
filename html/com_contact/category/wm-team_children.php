@@ -21,6 +21,8 @@ if ($this->maxLevel == 0 || empty($this->children[$this->category->id])) {
     <?php foreach ($this->children[$this->category->id] as $child) : ?>
         <?php if (!$this->params->get('show_empty_categories') && !$child->numitems && !\count($child->getChildren())) { continue; } ?>
         <li>
+            <?php $wmImg = \Wmarka\Template\Ui::subcatImage($child, $this->params); ?>
+            <?php if ($wmImg !== '') : ?><div class="uk-grid-small" uk-grid><div class="uk-width-small"><?php echo $wmImg; ?></div><div class="uk-width-expand"><?php endif; ?>
             <a class="uk-link-heading" href="<?php echo Route::_(RouteHelper::getCategoryRoute($child->id, $child->language)); ?>"><?php echo Ui::title($child->title); ?></a>
             <?php if ($this->params->get('show_cat_items', 1)) : ?><span class="uk-badge uk-margin-small-left"><?php echo (int) $child->numitems; ?></span><?php endif; ?>
             <?php if ($this->params->get('show_subcat_desc') == 1 && $child->description) : ?>
@@ -36,6 +38,7 @@ if ($this->maxLevel == 0 || empty($this->children[$this->category->id])) {
                 $this->maxLevel++;
                 ?>
             <?php endif; ?>
+            <?php if ($wmImg !== '') : ?></div></div><?php endif; ?>
         </li>
     <?php endforeach; ?>
 </ul>

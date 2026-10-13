@@ -361,7 +361,7 @@ final class Helper
         if (!\array_key_exists($userId, $cache)) {
             $db  = \Joomla\CMS\Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
             $row = $db->setQuery(
-                $db->getQuery(true)
+                $db->createQuery()
                     ->select($db->quoteName(['c.id', 'c.alias', 'c.catid', 'c.name', 'c.con_position', 'c.image', 'c.language']))
                     ->from($db->quoteName('#__contact_details', 'c'))
                     ->where($db->quoteName('c.user_id') . ' = ' . $userId)
@@ -542,22 +542,31 @@ final class Helper
         $base   = JPATH_ROOT . '/' . $folder . '/';
         $url    = Uri::root(true) . '/' . $folder . '/';
 
-        $links = [
-            ['favicon.svg', 'icon', ['type' => 'image/svg+xml']],
-            ['favicon-32x32.png', 'icon', ['type' => 'image/png', 'sizes' => '32x32']],
-            ['favicon-16x16.png', 'icon', ['type' => 'image/png', 'sizes' => '16x16']],
-            ['apple-touch-icon.png', 'apple-touch-icon', ['sizes' => '180x180']],
-            ['site.webmanifest', 'manifest', []],
+        // Набор как у Cassiopeia: SVG как «icon» (sizes="any": иначе Chromium может предпочесть растровый значок масштабируемому),
+        // .ico как «alternate icon», маска закреплённой вкладки Safari. Растровые 16 и 32 — только если SVG нет: рядом с SVG они давали браузеру
+        // право выбрать растр, и значок, меняющий цвет по теме вкладки, не показывался. К адресу добавляется метка изменения файла:
+        // браузеры годами хранят значок сайта и не перечитывают его, а адрес с новой меткой — это новый файл.
+        $hasSvg = is_file($base . 'favicon.svg');
+        $links  = [
+            ['favicon.svg', 'icon', ['type' => 'image/svg+xml', 'sizes' => 'any'], false],
+            ['favicon.ico', 'alternate icon', ['type' => 'image/vnd.microsoft.icon'], false],
+            ['favicon-32x32.png', 'icon', ['type' => 'image/png', 'sizes' => '32x32'], true],
+            ['favicon-16x16.png', 'icon', ['type' => 'image/png', 'sizes' => '16x16'], true],
+            ['apple-touch-icon.png', 'apple-touch-icon', ['sizes' => '180x180'], false],
+            ['site.webmanifest', 'manifest', [], false],
+            // Маска закреплённой вкладки Safari рисуется цветом темы; белый (значение по умолчанию) на светлой панели не виден
+            ['safari-pinned-tab.svg', 'mask-icon', ['color' => preg_match('/^#[0-9a-f]{3,8}$/i', $color) && !preg_match('/^#f{3}(f{3})?$/i', $color) ? $color : '#000000'], false],
         ];
 
-        foreach ($links as [$file, $rel, $attribs]) {
-            if (is_file($base . $file)) {
-                $this->doc->addHeadLink($url . $file, $rel, 'rel', $attribs);
+        foreach ($links as [$file, $rel, $attribs, $rasterOnly]) {
+            if (($rasterOnly && $hasSvg) || !is_file($base . $file)) {
+                continue;
             }
+
+            $this->doc->addHeadLink($url . $file . '?v=' . dechex((int) filemtime($base . $file)), $rel, 'rel', $attribs);
         }
 
-        if (is_file($base . 'favicon.ico')) {
-            $this->doc->addFavicon($url . 'favicon.ico');
-        }
+        // .ico уже выведен как «alternate icon»; прежний addFavicon() добавлял его ещё раз как «icon»,
+        // и браузер снова мог выбрать растр вместо SVG
     }
 }

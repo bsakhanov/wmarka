@@ -82,7 +82,7 @@ $navbarOpts = 'align: ' . (Config::str('dropdown_align', 'left') === 'center' ? 
 
                         <?php if ($this->count('login')) : ?>
                             <a class="uk-navbar-toggle uk-visible@<?php echo $bp; ?>" href="#" uk-icon="user" aria-label="<?php echo Ui::esc(Text::_('TPL_WMARKA_ACCOUNT')); ?>"></a>
-                            <div class="uk-navbar-dropdown uk-width-medium" uk-drop="mode: click; pos: bottom-right; offset: 0">
+                            <div class="uk-drop uk-navbar-dropdown uk-width-medium" uk-drop="mode: click; pos: bottom-right; offset: 0">
                                 <?php echo $this->modules('login', 'none'); ?>
                             </div>
                         <?php endif; ?>

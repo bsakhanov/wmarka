@@ -38,3 +38,6 @@ label.invalid{color:#f0506e}
 /* Встроенные плееры не шире колонки — и до загрузки скриптов, и без них */
 [data-wm-content] iframe,.wm-module iframe{max-width:100%}
 iframe[src*="youtube.com/embed"],iframe[src*="youtube-nocookie.com/embed"],iframe[src*="player.vimeo.com"]{width:100%;height:auto;aspect-ratio:16/9}
+/* Меню навбара под присмотром navFit (wmarka.js): подписи в одну строку, лишние пункты уходят в «Ещё» */
+.wm-nav-fit>li>a{white-space:nowrap}
+.wm-nav-fit-group>*{flex-shrink:0}

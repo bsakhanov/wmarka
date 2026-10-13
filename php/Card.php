@@ -104,6 +104,7 @@ final class Card
             'link'     => $params->get('link_titles', 1) ? $link : '',
             'imageLink'=> $link,
             'thumb'    => $showImage ? Image::intro($item, (bool) ($opts['placeholder'] ?? true)) : [],
+            'imgClass' => Image::imageClass($item, 'intro'),
             'meta'     => $meta,
             'badges'   => $badges,
             'text'     => $text,

@@ -31,8 +31,8 @@ class pkg_wmarkaInstallerScript
 
         $db = Factory::getContainer()->get(DatabaseInterface::class);
 
-        foreach ([['plugin', 'sampledata', 'wmarka'], ['component', '', 'com_blank']] as [$kind, $folder, $element]) {
-            $query = $db->getQuery(true)
+        foreach ([['plugin', 'sampledata', 'wmarka'], ['plugin', 'system', 'wmarka'], ['component', '', 'com_blank']] as [$kind, $folder, $element]) {
+            $query = $db->createQuery()
                 ->update($db->quoteName('#__extensions'))
                 ->set($db->quoteName('enabled') . ' = 1')
                 ->where($db->quoteName('type') . ' = ' . $db->quote($kind))
@@ -49,6 +49,6 @@ class pkg_wmarkaInstallerScript
             }
         }
 
-        Factory::getApplication()->enqueueMessage('<b>Wmarka 4.0.16 установлен.</b> Демо-сайт: <b>Система → Образцы данных → Демо-сайт wmarka → Применить</b>. Повторный запуск безопасен: дублей не будет.', 'notice');
+        Factory::getApplication()->enqueueMessage('<b>Wmarka 4.1.0 установлен.</b> Демо-сайт: <b>Система → Образцы данных → Демо-сайт wmarka → Применить</b>. Повторный запуск безопасен: дублей не будет.', 'notice');
     }
 }

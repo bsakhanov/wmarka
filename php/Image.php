@@ -455,4 +455,22 @@ final class Image
 
         return $out;
     }
+
+    /**
+     * Класс самого изображения (Joomla 6.2: поля «Класс изображения» imgclass_intro и imgclass_fulltext,
+     * отдельно от класса обёртки figure — float_intro и float_fulltext). Пусто в 5.x и 6.1: там поля нет.
+     * Значение материала, иначе значение по умолчанию из настроек материалов.
+     */
+    public static function imageClass(object $item, string $kind = 'intro'): string
+    {
+        $key    = $kind === 'intro' ? 'imgclass_intro' : 'imgclass_fulltext';
+        $images = json_decode((string) ($item->images ?? ''), true) ?: [];
+        $value  = (string) ($images[$key] ?? '');
+
+        if ($value === '' && ($item->params ?? null) instanceof \Joomla\Registry\Registry) {
+            $value = (string) $item->params->get($key, '');
+        }
+
+        return trim((string) preg_replace('/[^A-Za-z0-9_@: -]/', '', $value));
+    }
 }

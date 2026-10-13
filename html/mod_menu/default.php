@@ -339,7 +339,7 @@ endif;
             <?php if ($modal !== null) : ?>
                 <?php $cols = $megaColumns($item, $modal); ?>
                 <a href="#wm-mega-<?php echo (int) $item->id; ?>" uk-toggle><?php echo $icon($css) . (str_contains($css, 'wm-icon-only') ? '<span class="uk-hidden-visually">' . Ui::esc($item->title) . '</span>' : Ui::esc($item->title)); ?></a>
-                <div id="wm-mega-<?php echo (int) $item->id; ?>" class="uk-modal-full" uk-modal>
+                <div id="wm-mega-<?php echo (int) $item->id; ?>" class="uk-modal uk-modal-full" uk-modal>
                     <div class="uk-modal-dialog" uk-height-viewport>
                         <button class="uk-modal-close-full uk-close-large" type="button" uk-close aria-label="<?php echo Ui::esc(Text::_('JLIB_HTML_BEHAVIOR_CLOSE')); ?>"></button>
                         <div class="uk-section uk-section-large">
@@ -357,16 +357,21 @@ endif;
                 <?php $cols = $megaColumns($item, $mega); $n = max(1, min(5, \count($cols))); $w = $n >= 3 ? min(5, $n + 1) : $n; ?>
                 <?php echo $anchor($item, ' <span uk-navbar-parent-icon></span>'); ?>
                 <?php if ($cols) : ?>
-                    <div class="uk-navbar-dropdown uk-navbar-dropdown-large uk-navbar-dropdown-width-<?php echo $w; ?>">
+                    <div class="uk-drop uk-navbar-dropdown uk-navbar-dropdown-large uk-navbar-dropdown-width-<?php echo $w; ?>">
                         <div class="uk-grid-medium uk-grid-divider uk-child-width-1-2@s uk-child-width-1-<?php echo $n; ?>@m" uk-grid><?php echo implode('', array_map($dropColumn, $cols)); ?></div>
                     </div>
                 <?php endif; ?>
             <?php elseif ($children) : ?>
                 <?php echo $anchor($item, ' <span uk-navbar-parent-icon></span>'); ?>
-                <div class="uk-navbar-dropdown"><?php echo $sub((int) $item->id, 'uk-nav uk-navbar-dropdown-nav'); ?></div>
+                <div class="uk-drop uk-navbar-dropdown"><?php echo $sub((int) $item->id, 'uk-nav uk-navbar-dropdown-nav'); ?></div>
             <?php else : ?>
                 <?php echo $anchor($item); ?>
             <?php endif; ?>
         </li>
     <?php endforeach; ?>
+    <?php // «Ещё»: пункты, которые не поместились в строку, переезжают сюда (media/js/wmarka.js, navFit); без скрипта пункт скрыт ?>
+    <li class="wm-nav-more" hidden>
+        <a href="#" role="button" aria-haspopup="true"><?php echo Ui::esc(Text::_('TPL_WMARKA_NAV_MORE')); ?> <span uk-navbar-parent-icon></span></a>
+        <div class="uk-drop uk-navbar-dropdown"><ul class="uk-nav uk-navbar-dropdown-nav" data-wm-overflow></ul></div>
+    </li>
 </ul>

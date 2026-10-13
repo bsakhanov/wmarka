@@ -49,13 +49,14 @@ if (!$params->exists('show_publishing_options')) {
                 <?php echo HTMLHelper::_('uitab.addTab', $this->tab_name, 'images', Text::_('COM_CONTENT_IMAGES_AND_URLS')); ?>
                     <div class="uk-grid-large uk-child-width-1-2@m" uk-grid>
                         <div>
-                            <?php foreach (['image_intro', 'image_intro_alt', 'image_intro_alt_empty', 'image_intro_caption', 'float_intro'] as $field) : ?>
-                                <?php echo $this->form->renderField($field, 'images'); ?>
+                            <?php foreach (['image_intro', 'image_intro_alt', 'image_intro_alt_empty', 'imgclass_intro', 'image_intro_caption', 'float_intro'] as $field) : ?>
+                                <?php // imgclass_* — поле Joomla 6.2; в 5.x и 6.1 его нет, и renderField() вернул бы пусто ?>
+                                <?php echo $this->form->getField($field, 'images') ? $this->form->renderField($field, 'images') : ''; ?>
                             <?php endforeach; ?>
                         </div>
                         <div>
-                            <?php foreach (['image_fulltext', 'image_fulltext_alt', 'image_fulltext_alt_empty', 'image_fulltext_caption', 'float_fulltext'] as $field) : ?>
-                                <?php echo $this->form->renderField($field, 'images'); ?>
+                            <?php foreach (['image_fulltext', 'image_fulltext_alt', 'image_fulltext_alt_empty', 'imgclass_fulltext', 'image_fulltext_caption', 'float_fulltext'] as $field) : ?>
+                                <?php echo $this->form->getField($field, 'images') ? $this->form->renderField($field, 'images') : ''; ?>
                             <?php endforeach; ?>
                         </div>
                     </div>

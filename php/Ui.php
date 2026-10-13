@@ -111,17 +111,34 @@ final class Ui
             return $day === $today ? $time : \sprintf('%02d.%02d', $d, $m);
         }
 
+        // Порядок слов и знаки берутся из языковых строк, а не зашиты: по-китайски «2025年10月2日 14:32», по-английски «2 October 2025»
+        $dm  = self::pattern('TPL_WMARKA_DATE_DM', '{d} {m}', ['{d}' => (string) $d, '{m}' => $month]);
+        $dmy = self::pattern('TPL_WMARKA_DATE_DMY', '{d} {m} {y}', ['{d}' => (string) $d, '{m}' => $month, '{y}' => (string) $y]);
+        $at  = static fn (string $date, bool $timeFirst): string => self::pattern(
+            $timeFirst ? 'TPL_WMARKA_TIME_AND_DATE' : 'TPL_WMARKA_DATE_AND_TIME',
+            $timeFirst ? '{t}, {date}' : '{date}, {t}',
+            ['{date}' => $date, '{t}' => $time]
+        );
+
         if ($day === $today || $day === $yest) {
             $word = Text::_($day === $today ? 'TPL_WMARKA_TODAY' : 'TPL_WMARKA_YESTERDAY');
 
-            return $mode === 'full' ? $time . ', ' . mb_strtolower($word) : $word . ', ' . $time;
+            return $mode === 'full' ? $at(mb_strtolower($word), true) : $at($word, false);
         }
 
         if ($mode === 'full') {
-            return $time . ', ' . $d . ' ' . $month . ' ' . $y;
+            return $at($dmy, true);
         }
 
-        return $y === (int) HTMLHelper::_('date', 'now', 'Y') ? $d . ' ' . $month . ', ' . $time : $d . ' ' . $month . ' ' . $y;
+        return $y === (int) HTMLHelper::_('date', 'now', 'Y') ? $at($dm, false) : $dmy;
+    }
+
+    /** Шаблон из языкового файла с подстановками; строки нет — прежний (русский) порядок слов */
+    private static function pattern(string $key, string $default, array $replace): string
+    {
+        $text = Text::_($key);
+
+        return strtr($text === $key ? $default : $text, $replace);
     }
 
     /** Метки материала как хэштеги «#Город» (до $max штук) */
@@ -512,5 +529,27 @@ final class Ui
         $html = (string) $doc->saveHTML($table);
 
         return $wrapped ? $html : '<div class="uk-overflow-auto">' . $html . '</div>';
+    }
+
+    /**
+     * Изображение подкатегории (Joomla 6.2: параметр «Изображения подкатегорий», show_subcat_image,
+     * в блоге и списке категории материалов и контактов). В 5.x и 6.1 параметра нет — пусто.
+     */
+    public static function subcatImage(object $child, \Joomla\Registry\Registry $params): string
+    {
+        if (!$params->get('show_subcat_image') || !method_exists($child, 'getParams')) {
+            return '';
+        }
+
+        $cp  = $child->getParams();
+        $src = Image::clean((string) $cp->get('image', ''));
+
+        if ($src === '') {
+            return '';
+        }
+
+        $thumb = Image::thumb($src, 'intro', false);
+
+        return $thumb ? Image::img($thumb, (string) $cp->get('image_alt', ''), ['class' => 'uk-border-rounded']) : '';
     }
 }

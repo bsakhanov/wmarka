@@ -1,4 +1,4 @@
-# Wmarka 4.0.16 — starter template for Joomla 5 and 6 built on UIkit 3
+# Wmarka 4.1.0 — starter template for Joomla 5 and 6 built on UIkit 3
 
 *Русская версия: [README.md](README.md)*
 
@@ -40,13 +40,14 @@ Wmarka is a free starter template for Joomla 5 and 6 built on UIkit 3.25, with n
 
 ## What is in the package
 
-The full installation is one archive, **`pkg_wmarka-4.0.16.zip`**. It contains nine extensions, installed in this order:
+The full installation is one archive, **`pkg_wmarka-4.1.0.zip`**. It contains ten extensions, installed in this order:
 
 | Extension | What it is | Why |
 |---|---|---|
 | `lib_juimage` 5.21 | JUImage library (Denys Nosov, Joomla! Ukraine) | crops thumbnails and converts them to WebP |
-| `tpl_wmarka` 4.0.16 | the template | all site styling |
-| `tpl_wmarka_vestnik` 1.0.0 | child template of the demo site | a child template built the way Joomla builds them |
+| `tpl_wmarka` 4.1.0 | the template | all site styling |
+| `plg_system_wmarka` 1.0.0 | "System - wmarka" plugin | the WMARKA options tab in menu items |
+| `tpl_wmarka_vestnik` 1.0.3 | child template of the demo site | a child template built the way Joomla builds them |
 | `com_blank` 2.0.1 | "Blank page" component (Alek Volsk, Sergey Tolkachyov) | pages made of modules: homepage, landings |
 | `mod_wmarka_articles_grid` 1.0.0 | Webmarka Articles Grid — card grid with an on-page filter | news on the homepage |
 | `mod_wmarka_articles_slider` 1.0.0 | Webmarka Articles Slider — card carousel | "Culture and sport" |
@@ -54,7 +55,7 @@ The full installation is one archive, **`pkg_wmarka-4.0.16.zip`**. It contains n
 | `mod_wmarka_articles_gallery` 1.0.0 | Webmarka Articles Gallery — lightbox gallery with a filter | photo and video news |
 | `plg_sampledata_wmarka` | sample data installer | deploys the "Vestnik" demo site |
 
-The template alone is **`tpl_wmarka-4.0.16.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
+The template alone is **`tpl_wmarka-4.1.0.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
 
 ## Requirements
 
@@ -70,7 +71,7 @@ The template alone is **`tpl_wmarka-4.0.16.zip`**. JUImage and com_blank are the
 Good for trying the template and for a brand-new site.
 
 1. Install a clean Joomla 5 or 6.
-2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.0.16.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component and the installer.
+2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.1.0.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component and the installer.
 3. **System → Sample Data** (or the "Sample Data" box on the dashboard) → **wmarka demo site → Install**. Six steps run one after another; each reports what it did.
 4. Open the site: homepage, news, mega menus and the "Module positions" page are in place.
 
@@ -78,7 +79,7 @@ The demo changes the template style and the global options of Articles, Tags and
 
 ### Option 2. Template only
 
-1. Install `tpl_wmarka-4.0.16.zip`.
+1. Install `tpl_wmarka-4.1.0.zip`.
 2. Optionally install JUImage (from the package or <https://github.com/Joomla-Ukraine/JUImage>) and com_blank.
 3. **System → Site Template Styles → wmarka → Default**.
 4. Follow the [first steps](#first-steps).
@@ -212,6 +213,10 @@ Mega menus are switched on by tokens in the **"Link Class"** field of a first-le
 
 Only the default menu item's own page (its `option`, `view` and `id`) is the home page. With a category-blog default item, articles open through it but are not the home page: they get their own canonical, breadcrumbs, heading and logo link, and the default item's tokens (`wm-blank`) do not apply. This scheme needs two options, both set to "Auto" by default: "Home blocks on the home page only" (Layout tab) hides the home slider and blocks around articles, and "Canonical mode" merges article addresses. "Auto" turns them on when the default item is a category blog or featured articles; the status card shows what is in effect.
 
+### The "More" item
+
+If the main menu items do not fit the navbar row (long labels, another language, a narrow screen), the extra ones move into a "More" dropdown from the end of the list. The browser decides by measuring, not by counting items. Items with a dropdown or a mega menu stay in place. Without JavaScript "More" is hidden and the menu looks as before.
+
 ### Page tokens (menu item "Page Class")
 
 - `wm-blank` — a page without the component, modules only (a block-built homepage);
@@ -221,7 +226,9 @@ Only the default menu item's own page (its `option`, `view` and `id`) is the hom
 
 ### The "WMARKA options" tab of a menu item
 
-"Category Blog", "Featured Articles" and "Tag" menu items get their own tab:
+The tab is added by the "System - wmarka" plugin (installed by the package). Joomla builds a menu item form from the component layout XML and reads a template XML only for an alternative `template:layout`; so template fields come through the plugin, while core fields are whatever your Joomla version provides. Without the plugin there is no tab, and values written by the demo installer are lost on the first save of the item. The status card shows whether the plugin is enabled.
+
+"Category Blog", "Featured Articles" and "Tag" menu items get:
 
 - default view: grid or list;
 - grid/list switcher for visitors (the choice is remembered);
@@ -237,6 +244,10 @@ Cards are built on the UIkit Card component: `uk-card-media-top` for the top ima
 ### Joomla's own options keep working
 
 The template does not replace standard Joomla options: columns, tag "Maximum Characters", images and descriptions in tag lists, "Icons or text" in contacts, full-text image float and info block position all work. Template options are added only where core has none.
+
+Joomla 6.2 options work too: a class for the image itself separate from its figure (`imgclass_intro`, `imgclass_fulltext`), subcategory images in content and contact category blogs and lists, hiding the "Forgot your password/username?" links in the login module. 5.x and 6.1 have no such fields, and the markup is unchanged.
+
+> Since Joomla 6.2 TinyMCE follows the Joomla text filter. UIkit attributes in article text (`uk-lightbox`, `uk-grid`, etc.) survive for groups without filtering; allow them for filtered groups in "Global Configuration → Text Filters".
 
 ### Tags
 
@@ -258,7 +269,7 @@ The contact category layout "Team" (`wm-team`) shows authors as cards with round
 The presentation follows Kazakhstan news portals (zakon.kz, nur.kz, baq.kz) and uses only UIkit classes:
 
 - **section** as a line above the title, in cards and articles;
-- **news-style dates**: "Today, 14:32", "Yesterday, 18:50", "2 October, 17:14"; in an article "18:11, 2 October 2026"; time only in a feed ("Date style" option);
+- **news-style dates**: "Today, 14:32", "Yesterday, 18:50", "2 October, 17:14"; in an article "18:11, 2 October 2026"; time only in a feed ("Date style" option). Word order comes from the language strings `TPL_WMARKA_DATE_DM`, `TPL_WMARKA_DATE_DMY`, `TPL_WMARKA_DATE_AND_TIME`, `TPL_WMARKA_TIME_AND_DATE` (`{d}`, `{m}`, `{y}`, `{t}`, `{date}`): `{y}年{m}{d}日` for Chinese, `{m} {d}, {y}` for US English;
 - **tags** as hashtags in the card meta line and as chips at the end of an article (`uk-button-small uk-border-pill`);
 - **video and photo news** get a play or camera badge over the image. The tags are set by "Video news tag" and "Photo news tag" (aliases `video` and `foto` by default);
 - **lead**: the first paragraph of an article gets `uk-text-lead`;
@@ -352,6 +363,10 @@ News items, names and contacts are fictional; this is stated in the toolbar, the
 
 All created records are tagged and listed in the "Sample Data - wmarka demo site" plugin options ("Created records") for manual cleanup.
 
+## Site icons
+
+In the favicon folder ("Favicon folder" option or the template's `images/favicon`) the template looks for the Cassiopeia set: `favicon.svg` (main icon, `sizes="any"`), `favicon.ico` (fallback, `alternate icon`), `safari-pinned-tab.svg` (Safari pinned-tab mask, colored with "Theme color"), `apple-touch-icon.png`, `site.webmanifest`. Raster `favicon-32x32.png` and `favicon-16x16.png` are output only when there is no SVG. Every icon URL gets a file-change stamp, so a replaced file is fetched anew instead of from cache.
+
 ## Updating
 
 Updates are safe for the site:
@@ -385,7 +400,7 @@ Back up a production site before updating — a rule for any extension.
 - overrides for all modules and the main components;
 - a fixed package structure.
 
-**4.0.1–4.0.16** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
+**4.0.1–4.1.0** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
 
 ## What changed since 3.0
 

@@ -40,7 +40,7 @@ if ($link === '' && !empty($item->wmLink)) {
     $link = Route::_(RouteHelper::getArticleRoute($item->slug, $item->catid, $item->language));
 }
 
-$img = Image::img($thumb, $thumb['alt'], ['class' => 'uk-width-1-1 uk-transition-scale-up uk-transition-opaque', 'sizes' => Image::sizes(3)]);
+$img = Image::img($thumb, $thumb['alt'], ['class' => trim('uk-width-1-1 uk-transition-scale-up uk-transition-opaque ' . Image::imageClass($item, 'intro')), 'sizes' => Image::sizes(3)]);
 ?>
 <div class="uk-inline-clip uk-transition-toggle uk-display-block uk-margin-bottom">
     <?php if ($link) : ?>

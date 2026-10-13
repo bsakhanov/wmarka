@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Пункт меню com_tags → tags → wm-catalog: своих полей WMARKA у каталога нет; плагин «Система — wmarka» добавляет к макету поля ядра из макета «default» компонента -->
+<form base="default">
+    <fields name="params"/>
+</form>

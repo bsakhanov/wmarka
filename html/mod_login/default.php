@@ -66,8 +66,13 @@ $id = (int) $module->id;
     </div>
 
     <ul class="uk-list uk-text-small uk-margin-small">
-        <li><a href="<?php echo Route::_('index.php?option=com_users&view=reset'); ?>"><?php echo Text::_('MOD_LOGIN_FORGOT_YOUR_PASSWORD'); ?></a></li>
-        <li><a href="<?php echo Route::_('index.php?option=com_users&view=remind'); ?>"><?php echo Text::_('MOD_LOGIN_FORGOT_YOUR_USERNAME'); ?></a></li>
+        <?php // Joomla 6.2: ссылки скрываются параметрами модуля; в 5.x и 6.1 параметров нет — ссылки видны, как прежде ?>
+        <?php if ($params->get('showPasswordReset', 1)) : ?>
+            <li><a href="<?php echo Route::_('index.php?option=com_users&view=reset'); ?>"><?php echo Text::_('MOD_LOGIN_FORGOT_YOUR_PASSWORD'); ?></a></li>
+        <?php endif; ?>
+        <?php if ($params->get('showUsernameReminder', 1)) : ?>
+            <li><a href="<?php echo Route::_('index.php?option=com_users&view=remind'); ?>"><?php echo Text::_('MOD_LOGIN_FORGOT_YOUR_USERNAME'); ?></a></li>
+        <?php endif; ?>
         <?php if (ComponentHelper::getParams('com_users')->get('allowUserRegistration')) : ?>
             <li><a href="<?php echo Route::_($registerLink); ?>"><?php echo Text::_('MOD_LOGIN_REGISTER'); ?></a></li>
         <?php endif; ?>

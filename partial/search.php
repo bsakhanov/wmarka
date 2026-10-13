@@ -20,7 +20,7 @@ if (!Config::bool('search_show', true)) {
 $itemId = Config::int('search_itemid', 0);
 $action = Route::_('index.php?option=com_finder&view=search' . ($itemId ? '&Itemid=' . $itemId : ''));
 ?>
-<div id="wm-search" class="uk-modal-full" uk-modal>
+<div id="wm-search" class="uk-modal uk-modal-full" uk-modal>
     <div class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle" uk-height-viewport>
         <button class="uk-modal-close-full uk-close-large" type="button" uk-close aria-label="<?php echo Ui::esc(Text::_('JLIB_HTML_BEHAVIOR_CLOSE')); ?>"></button>
         <form class="uk-search uk-search-large uk-width-xlarge@m uk-width-1-1 uk-padding" action="<?php echo $action; ?>" method="get" role="search">

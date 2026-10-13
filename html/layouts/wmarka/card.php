@@ -116,14 +116,14 @@ if ($mode === 'plain') : ?>
     <?php echo $badge . $body; ?>
 </article>
 <?php elseif ($mode === 'top' || $mode === 'bottom') :
-    $img      = Image::img($thumb, $alt, ['class' => 'uk-width-1-1 uk-transition-scale-up uk-transition-opaque', 'itemprop' => 'image', 'sizes' => $vSizes]);
+    $img      = Image::img($thumb, $alt, ['class' => trim('uk-width-1-1 uk-transition-scale-up uk-transition-opaque ' . ($d['imgClass'] ?? '')), 'itemprop' => 'image', 'sizes' => $vSizes]);
     $mediaDiv = '<div class="uk-card-media-' . $mode . ' uk-inline-clip uk-transition-toggle uk-display-block">' . $img . $kindBadge . $overlay . '</div>'; ?>
 <article class="<?php echo $card; ?> uk-flex uk-flex-column"<?php echo $attrs; ?>>
     <?php echo $badge; ?>
     <?php echo $mode === 'top' ? $mediaDiv . $body : $body . $mediaDiv; ?>
 </article>
 <?php elseif ($mode === 'side') :
-    $img = Image::img($thumb, $alt, ['uk-cover' => true, 'itemprop' => 'image', 'sizes' => $hSizes]); ?>
+    $img = Image::img($thumb, $alt, array_filter(['class' => $d['imgClass'] ?? '', 'uk-cover' => true, 'itemprop' => 'image', 'sizes' => $hSizes], static fn ($v) => $v !== '')); ?>
 <article class="<?php echo trim($card . ' uk-grid-collapse ' . $hCard); ?>" uk-grid<?php echo $attrs; ?>>
     <div class="<?php echo $hMedia; ?>"><?php echo $img . $canvas . $kindBadge . $overlay; ?></div>
     <div class="<?php echo $hBody; ?>"><?php echo $badge . $body; ?></div>
@@ -131,7 +131,7 @@ if ($mode === 'plain') : ?>
 <?php else :
     // switch: одна структура, классы меняет переключатель «сетка / список»
     $sizes = $view === 'list' ? $hSizes : $vSizes;
-    $img   = Image::img($thumb, $alt, ['uk-cover' => true, 'itemprop' => 'image', 'sizes' => $sizes, 'data-wm-sizes-grid' => $vSizes, 'data-wm-sizes-list' => $hSizes]);
+    $img   = Image::img($thumb, $alt, ['class' => ($d['imgClass'] ?? '') ?: null, 'uk-cover' => true, 'itemprop' => 'image', 'sizes' => $sizes, 'data-wm-sizes-grid' => $vSizes, 'data-wm-sizes-list' => $hSizes]);
     $gCard = 'uk-child-width-1-1 uk-flex-column';
     $gMed  = 'uk-card-media-top uk-cover-container';
     $gBody = 'uk-flex uk-flex-column uk-flex-1'; ?>

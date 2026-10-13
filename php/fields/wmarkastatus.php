@@ -74,6 +74,9 @@ class JFormFieldWmarkastatus extends FormField
         } catch (\Throwable $e) {
         }
 
+        // Плагин «Система — wmarka»: без него у пунктов меню нет вкладки «Опции WMARKA»
+        $wmPlugin = \Joomla\CMS\Plugin\PluginHelper::isEnabled('system', 'wmarka');
+        $rows[]   = [Text::_('TPL_WMARKA_STATUS_PLUGIN'), sprintf($wmPlugin ? $ok : $bad, Text::_($wmPlugin ? 'TPL_WMARKA_STATUS_ON' : 'TPL_WMARKA_STATUS_PLUGIN_OFF'))];
         $rows[] = [Text::_('TPL_WMARKA_STATUS_SCHEMAORG'), sprintf($schema ? $bad : $ok, Text::_($schema ? 'TPL_WMARKA_STATUS_SCHEMAORG_ON' : 'TPL_WMARKA_STATUS_OFF'))];
 
         $html = '<table class="table table-sm mb-0" style="max-width: 640px"><tbody>';
