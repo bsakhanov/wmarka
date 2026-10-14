@@ -1,0 +1,51 @@
+name: Release assets
+
+# При публикации выпуска собирает архивы и прикладывает их к выпуску:
+# шаблон, плагин «Система — wmarka», дочерний шаблон, установщик демо и полный пакет.
+# Сторонние расширения пакета (JUImage, com_blank, модули Webmarka Articles) лежат
+# готовыми архивами в demo/pkg_wmarka/packages/.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to build and attach to
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  assets:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+
+      - name: Build archives
+        run: |
+          set -euo pipefail
+          ver() { grep -oP '(?<=<version>)[^<]+' "$1" | head -1; }
+          V=$(ver templateDetails.xml)
+          mkdir -p dist build/packages
+          zip -qr dist/tpl_wmarka-$V.zip . -x '.git/*' '.github/*' 'demo/*' 'updates/*' 'dist/*' 'build/*'
+          (cd demo/plg_system_wmarka && zip -qr ../../dist/plg_system_wmarka-$(ver wmarka.xml).zip .)
+          (cd demo/tpl_wmarka_vestnik && zip -qr ../../dist/tpl_wmarka_vestnik-$(ver templateDetails.xml).zip .)
+          cp dist/tpl_wmarka-$V.zip build/packages/tpl_wmarka.zip
+          cp dist/plg_system_wmarka-*.zip build/packages/plg_system_wmarka.zip
+          cp dist/tpl_wmarka_vestnik-*.zip build/packages/tpl_wmarka_vestnik.zip
+          (cd demo/plg_sampledata_wmarka && zip -qr ../../build/packages/plg_sampledata_wmarka.zip .)
+          cp demo/pkg_wmarka/packages/*.zip build/packages/
+          cp demo/pkg_wmarka/pkg_wmarka.xml demo/pkg_wmarka/script.php build/
+          (cd build && zip -qr ../dist/pkg_wmarka-$(ver pkg_wmarka.xml).zip pkg_wmarka.xml script.php packages)
+          (cd dist && sha256sum *.zip > SHA256SUMS && cat SHA256SUMS)
+
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" dist/*.zip dist/SHA256SUMS --clobber
