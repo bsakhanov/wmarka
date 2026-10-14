@@ -1,43 +1,27 @@
 <?php
+
 /**
- * WMARKA — системные сообщения: алерты UIkit на сервере (без мигания JS).
- * Контейнер #system-message-container сохранён для сообщений, которые
- * дорисовывает Joomla.renderMessages (валидация форм, ajax).
+ * Системные сообщения.
  *
- * @var array $displayData ['msgList']
+ * Макет ядра (layouts/joomla/system/message.php) на каждой странице подключает стили и
+ * скрипты сообщений — core.js, messages.js, joomla-alert.css и строки для JavaScript, —
+ * даже если сообщений нет. Здесь они подключаются, только когда сообщение есть или на
+ * странице работает проверка форм (её ошибки выводит тот же скрипт сообщений). Иначе —
+ * пустой контейнер: в него могут писать скрипты, если сообщение появится позже.
  */
 
 \defined('_JEXEC') or die;
 
-use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 
-$msgList = $displayData['msgList'];
-$map     = [
-    CMSApplication::MSG_EMERGENCY => 'danger', CMSApplication::MSG_ALERT => 'danger', CMSApplication::MSG_CRITICAL => 'danger',
-    CMSApplication::MSG_ERROR => 'danger', CMSApplication::MSG_WARNING => 'warning', CMSApplication::MSG_NOTICE => 'primary',
-    CMSApplication::MSG_INFO => 'primary', CMSApplication::MSG_DEBUG => 'primary', CMSApplication::MSG_MESSAGE => 'success',
-    'error' => 'danger', 'warning' => 'warning', 'notice' => 'primary', 'message' => 'success', 'success' => 'success', 'info' => 'primary',
-];
+$msgList = $displayData['msgList'] ?? [];
+$wa      = Factory::getApplication()->getDocument()->getWebAssetManager();
 
-foreach (['ERROR', 'MESSAGE', 'NOTICE', 'WARNING', 'SUCCESS', 'JCLOSE', 'JOK', 'JOPEN'] as $key) {
-    Text::script($key);
+if ((\is_array($msgList) && $msgList) || $wa->isAssetActive('script', 'form.validate')) {
+    // Есть что показать — штатный макет ядра целиком
+    require JPATH_ROOT . '/layouts/joomla/system/message.php';
+
+    return;
 }
 
-Factory::getApplication()->getDocument()->getWebAssetManager()->useStyle('webcomponent.joomla-alert')->useScript('messages');
-?>
-<div id="system-message-container" aria-live="polite">
-    <?php if (\is_array($msgList)) : ?>
-        <?php foreach ($msgList as $type => $msgs) : ?>
-            <?php if (!empty($msgs)) : ?>
-                <div class="uk-alert-<?php echo $map[$type] ?? 'primary'; ?>" uk-alert role="alert">
-                    <a href="#" class="uk-alert-close" uk-close aria-label="<?php echo Text::_('JCLOSE'); ?>"></a>
-                    <?php foreach ($msgs as $msg) : ?>
-                        <p><?php echo $msg; ?></p>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-        <?php endforeach; ?>
-    <?php endif; ?>
-</div>
+echo '<div id="system-message-container" aria-live="polite"></div>';

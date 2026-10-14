@@ -19,7 +19,13 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 
-$app->getDocument()->getWebAssetManager()->useScript('core')->useScript('keepalive');
+// Поддержка сессии (keepalive) гостю не нужна: модуль входа часто стоит в шапке на каждой странице,
+// и скрипт раз в несколько минут стучался бы на сервер из каждой открытой вкладки. Если форма
+// пролежит дольше времени жизни сессии, Joomla попросит отправить её ещё раз. Скрипт ядра (core)
+// нужен только кнопкам входа плагинов (например, по ключу доступа)
+if (!empty($extraButtons)) {
+    $app->getDocument()->getWebAssetManager()->useScript('core');
+}
 $id = (int) $module->id;
 ?>
 <form id="login-form-<?php echo $id; ?>" class="uk-form-stacked" action="<?php echo Route::_('index.php', true); ?>" method="post">

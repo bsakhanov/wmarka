@@ -91,6 +91,17 @@ final class Seo
         }
 
         if (Config::bool('seo_jsonld', true)) {
+            // Плагин ядра «Система — Schema.org» добавляет свой граф позже, на onBeforeCompileHead
+            // (ассет inline.schemaorg). Слушатель с низким приоритетом снимает его: на странице
+            // остаётся один граф — шаблона
+            Factory::getApplication()->getDispatcher()->addListener('onBeforeCompileHead', static function (): void {
+                $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+
+                if ($wa->assetExists('script', 'inline.schemaorg')) {
+                    $wa->disableScript('inline.schemaorg');
+                }
+            }, -100);
+
             $this->jsonLd();
         }
     }

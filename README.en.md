@@ -1,4 +1,4 @@
-# Wmarka 4.1.0 — starter template for Joomla 5 and 6 built on UIkit 3
+# Wmarka 4.1.1 — starter template for Joomla 5 and 6 built on UIkit 3
 
 *Русская версия: [README.md](README.md)*
 
@@ -40,12 +40,12 @@ Wmarka is a free starter template for Joomla 5 and 6 built on UIkit 3.25, with n
 
 ## What is in the package
 
-The full installation is one archive, **`pkg_wmarka-4.1.0.zip`**. It contains ten extensions, installed in this order:
+The full installation is one archive, **`pkg_wmarka-4.1.1.zip`**. It contains ten extensions, installed in this order:
 
 | Extension | What it is | Why |
 |---|---|---|
 | `lib_juimage` 5.21 | JUImage library (Denys Nosov, Joomla! Ukraine) | crops thumbnails and converts them to WebP |
-| `tpl_wmarka` 4.1.0 | the template | all site styling |
+| `tpl_wmarka` 4.1.1 | the template | all site styling |
 | `plg_system_wmarka` 1.0.0 | "System - wmarka" plugin | the WMARKA options tab in menu items |
 | `tpl_wmarka_vestnik` 1.0.3 | child template of the demo site | a child template built the way Joomla builds them |
 | `com_blank` 2.0.1 | "Blank page" component (Alek Volsk, Sergey Tolkachyov) | pages made of modules: homepage, landings |
@@ -55,7 +55,7 @@ The full installation is one archive, **`pkg_wmarka-4.1.0.zip`**. It contains te
 | `mod_wmarka_articles_gallery` 1.0.0 | Webmarka Articles Gallery — lightbox gallery with a filter | photo and video news |
 | `plg_sampledata_wmarka` | sample data installer | deploys the "Vestnik" demo site |
 
-The template alone is **`tpl_wmarka-4.1.0.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
+The template alone is **`tpl_wmarka-4.1.1.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
 
 ## Requirements
 
@@ -71,7 +71,7 @@ The template alone is **`tpl_wmarka-4.1.0.zip`**. JUImage and com_blank are then
 Good for trying the template and for a brand-new site.
 
 1. Install a clean Joomla 5 or 6.
-2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.1.0.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component and the installer.
+2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.1.1.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component and the installer.
 3. **System → Sample Data** (or the "Sample Data" box on the dashboard) → **wmarka demo site → Install**. Six steps run one after another; each reports what it did.
 4. Open the site: homepage, news, mega menus and the "Module positions" page are in place.
 
@@ -79,7 +79,7 @@ The demo changes the template style and the global options of Articles, Tags and
 
 ### Option 2. Template only
 
-1. Install `tpl_wmarka-4.1.0.zip`.
+1. Install `tpl_wmarka-4.1.1.zip`.
 2. Optionally install JUImage (from the package or <https://github.com/Joomla-Ukraine/JUImage>) and com_blank.
 3. **System → Site Template Styles → wmarka → Default**.
 4. Follow the [first steps](#first-steps).
@@ -378,6 +378,10 @@ Updates are safe for the site:
 
 Back up a production site before updating — a rule for any extension.
 
+## The clean build: wmarka clean
+
+If you want a template with no settings — for building a site by hand and editing files — there is **[wmarka clean](https://github.com/bsakhanov/wmarka-clean)**. The same positions, block rule, phone-friendly tables and JUImage thumbnails, but no options in the administrator: the layout is in `index.php`, image sizes in the intro and full image layouts (720 × 405 and 1200 × 675), styling in `clean.css`. No SEO engine (core plugins provide canonical and markup) and no token mega menus. The README is in Russian, Kazakh and English.
+
 ## History
 
 **Roots.** Wmarka grew out of clean-markup Joomla starter templates. As the 3.0 description puts it, the clean philosophy comes from the **J!Blank** skeleton (without LESS and SASS generation), and the position scheme from the **Master3** template. Styling was built on **UIkit** from the start, image processing on the **JUImage** library.
@@ -400,7 +404,7 @@ Back up a production site before updating — a rule for any extension.
 - overrides for all modules and the main components;
 - a fixed package structure.
 
-**4.0.1–4.1.0** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
+**4.0.1–4.1.1** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
 
 ## What changed since 3.0
 
