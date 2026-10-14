@@ -238,6 +238,19 @@ final class Helper
             . '</div></div></section>';
     }
 
+    /**
+     * Адрес главной страницы текущего языка. На многоязычном сайте это главный пункт меню
+     * своего языка (/kk/, /ru/), а не корень, который языковой фильтр всё равно перенаправит.
+     */
+    public static function homeUrl(): string
+    {
+        $app  = Factory::getApplication();
+        $menu = $app->getMenu();
+        $home = $menu->getDefault($app->getLanguage()->getTag()) ?: $menu->getDefault();
+
+        return $home ? \Joomla\CMS\Router\Route::_('index.php?Itemid=' . (int) $home->id) : Uri::base(true) . '/';
+    }
+
     /** Логотип: картинка из настроек и/или название со слоганом */
     public function logo(string $context = 'navbar'): string
     {
@@ -271,10 +284,10 @@ final class Helper
 
         $class = 'uk-logo' . ($context === 'navbar' ? ' uk-navbar-item' : '') . ($showImage && $showText ? ' uk-flex uk-flex-middle' : '');
 
-        // На главной логотип не ссылается сам на себя
-        return $this->isHome()
-            ? '<div class="' . $class . '">' . $html . '</div>'
-            : '<a href="' . Ui::esc(Uri::base(true) . '/') . '" class="' . $class . '" aria-label="' . Ui::esc($title . ' — ' . Text::_('TPL_WMARKA_HOME')) . '">' . $html . '</a>';
+        // Логотип ведёт на главную на всех страницах — так его ищут посетители; на самой
+        // главной ссылка помечена aria-current="page"
+        return '<a href="' . Ui::esc(self::homeUrl()) . '" class="' . $class . '"' . ($this->isHome() ? ' aria-current="page"' : '')
+            . ' aria-label="' . Ui::esc($title . ' — ' . Text::_('TPL_WMARKA_HOME')) . '">' . $html . '</a>';
     }
 
     /**

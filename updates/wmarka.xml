@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сервер обновлений шаблона wmarka. Новую версию добавляйте сверху; Joomla берёт самую новую из подходящих. -->
+<updates>
+    <update>
+        <name>wmarka</name>
+        <description>wmarka — стартовый шаблон для Joomla 5 и 6 на UIkit 3</description>
+        <element>wmarka</element>
+        <type>template</type>
+        <client>site</client>
+        <version>4.1.2</version>
+        <infourl title="wmarka 4.1.2">https://github.com/bsakhanov/wmarka/releases/tag/v4.1.2</infourl>
+        <downloads>
+            <downloadurl type="full" format="zip">https://github.com/bsakhanov/wmarka/archive/refs/tags/v4.1.2.zip</downloadurl>
+        </downloads>
+        <tags><tag>stable</tag></tags>
+        <maintainer>Beibit Sakhanov</maintainer>
+        <maintainerurl>https://webmarka.kz</maintainerurl>
+        <targetplatform name="joomla" version="(5|6)\..*"/>
+        <php_minimum>8.1</php_minimum>
+    </update>
+</updates>

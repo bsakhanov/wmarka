@@ -58,6 +58,14 @@ class JFormFieldWmarkastatus extends FormField
         $sef    = \Joomla\CMS\Plugin\PluginHelper::getPlugin('system', 'sef');
         $strict = $sef && (new \Joomla\Registry\Registry($sef->params ?? ''))->get('strictrouting');
         $schema = \Joomla\CMS\Plugin\PluginHelper::isEnabled('system', 'schemaorg');
+        // Языковой фильтр включён, а язык сайта по умолчанию не опубликован в «Языках контента»:
+        // фильтр не находит его префикс и бесконечно перенаправляет главную на «//»
+        if (\Joomla\CMS\Plugin\PluginHelper::isEnabled('system', 'languagefilter')) {
+            $siteLang  = (string) \Joomla\CMS\Component\ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
+            $published = array_key_exists($siteLang, \Joomla\CMS\Language\LanguageHelper::getLanguages('lang_code'));
+            $rows[]    = [Text::_('TPL_WMARKA_STATUS_LANGFILTER'), sprintf($published ? $ok : $bad, $published ? Text::_('TPL_WMARKA_STATUS_LANGFILTER_OK') : Text::sprintf('TPL_WMARKA_STATUS_LANGFILTER_BAD', $siteLang))];
+        }
+
         $rows[] = [Text::_('TPL_WMARKA_STATUS_STRICT'), sprintf($strict ? $ok : $bad, Text::_($strict ? 'TPL_WMARKA_STATUS_ON' : 'TPL_WMARKA_STATUS_STRICT_OFF'))];
         // Схема главной: для главного пункта «блог категории» режимы «Авто» включаются сами.
         // Строка справочная: любая ошибка здесь не должна ломать форму стиля

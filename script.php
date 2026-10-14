@@ -107,7 +107,7 @@ class wmarkaInstallerScript
         }
 
         $message = $type === 'install' ? 'установлен' : 'обновлён';
-        echo '<div class="alert alert-success"><h3 class="alert-heading">Wmarka 4.1.1 ' . $message . '</h3>'
+        echo '<div class="alert alert-success"><h3 class="alert-heading">Wmarka 4.1.2 ' . $message . '</h3>'
             . '<p>Ключевые настройки — в стиле шаблона (Система → Стили шаблонов сайта → wmarka). '
             . 'Свои стили — media/templates/site/wmarka/css/user.css: файл не перезаписывается обновлением.</p></div>';
     }

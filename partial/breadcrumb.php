@@ -41,7 +41,7 @@ if (!$hasModule) {
         <?php else : ?>
             <nav aria-label="<?php echo Ui::esc(Text::_('TPL_WMARKA_BREADCRUMBS')); ?>">
                 <ul class="uk-breadcrumb uk-margin-remove">
-                    <li><a href="<?php echo Ui::esc(Uri::base(true) . '/'); ?>"><?php echo Text::_('TPL_WMARKA_HOME'); ?></a></li>
+                    <li><a href="<?php echo Ui::esc(\Wmarka\Template\Helper::homeUrl()); ?>"><?php echo Text::_('TPL_WMARKA_HOME'); ?></a></li>
                     <?php $last = \count($pathway) - 1; ?>
                     <?php foreach (array_values($pathway) as $i => $crumb) : ?>
                         <?php if ($i < $last && !empty($crumb->link)) : ?>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="template" client="site" method="upgrade">
     <name>wmarka</name>
-    <version>4.1.1</version>
+    <version>4.1.2</version>
     <creationDate>2026-10-03</creationDate>
     <author>Webmarka · Beibit Sakhanov</author>
     <authorEmail>support@webmarka.kz</authorEmail>
@@ -90,6 +90,9 @@
         <language tag="en-GB">en-GB/tpl_wmarka.ini</language>
         <language tag="en-GB">en-GB/tpl_wmarka.sys.ini</language>
     </languages>
+    <updateservers>
+        <server type="extension" priority="1" name="wmarka">https://raw.githubusercontent.com/bsakhanov/wmarka/main/updates/wmarka.xml</server>
+    </updateservers>
 
     <config>
         <fields name="params" addfieldpath="/templates/wmarka/php/fields">
