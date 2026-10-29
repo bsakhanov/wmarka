@@ -212,7 +212,7 @@ final class Ui
         $cut   = mb_substr($text, 0, $limit + 1);
         $space = mb_strrpos($cut, ' ');
 
-        return rtrim(mb_substr($cut, 0, ($space !== false && $space > $limit * 0.6) ? $space : $limit), " ,.;:—–-") . '…';
+        return preg_replace('/[ ,.;:—–-]+$/u', '', mb_substr($cut, 0, ($space !== false && $space > $limit * 0.6) ? $space : $limit)) . '…';
     }
 
     /** Лимит анонса: значение пункта меню (wm_intro_limit) → настройка шаблона */
