@@ -540,7 +540,7 @@ final class Seo
             $graph[] = $node;
         }
 
-        $json = json_encode(['@context' => 'https://schema.org', '@graph' => array_values(array_filter($graph))], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG);
+        $json = json_encode(['@context' => 'https://schema.org', '@graph' => array_values(array_filter($graph))], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE);
 
         if ($json) {
             $this->doc->getWebAssetManager()->addInlineScript($json, ['name' => 'inline.wmarka.jsonld'], ['type' => 'application/ld+json']);
