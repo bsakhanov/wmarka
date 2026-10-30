@@ -1,7 +1,8 @@
 name: Release assets
 
 # При публикации выпуска собирает архивы и прикладывает их к выпуску:
-# шаблон, плагин «Система — wmarka», дочерний шаблон, установщик демо и полный пакет.
+# шаблон, плагин «Система — wmarka», дочерний шаблон, установщик демо, полный пакет
+# и архив для распаковки в корень сайта.
 # Сторонние расширения пакета (JUImage, com_blank, модули Webmarka Articles) лежат
 # готовыми архивами в demo/pkg_wmarka/packages/.
 
@@ -43,6 +44,13 @@ jobs:
           cp demo/pkg_wmarka/packages/*.zip build/packages/
           cp demo/pkg_wmarka/pkg_wmarka.xml demo/pkg_wmarka/script.php build/
           (cd build && zip -qr ../dist/pkg_wmarka-$(ver pkg_wmarka.xml).zip pkg_wmarka.xml script.php packages)
+          # Архив для распаковки в корень сайта поверх установленного шаблона:
+          # templates/wmarka, media/templates/site/wmarka, language/<язык>/tpl_wmarka*.ini
+          mkdir -p root/templates/wmarka root/media/templates/site/wmarka root/language
+          rsync -a --exclude='.git' --exclude='.github' --exclude='demo' --exclude='updates' --exclude='media' --exclude='language' --exclude='dist' --exclude='build' --exclude='root' ./ root/templates/wmarka/
+          cp -r media/. root/media/templates/site/wmarka/
+          cp -r language/. root/language/
+          (cd root && zip -qr ../dist/tpl_wmarka-${V}_files.zip .)
           (cd dist && sha256sum *.zip > SHA256SUMS && cat SHA256SUMS)
 
       - name: Attach to the release
