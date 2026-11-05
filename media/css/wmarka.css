@@ -41,3 +41,21 @@ iframe[src*="youtube.com/embed"],iframe[src*="youtube-nocookie.com/embed"],ifram
 /* Меню навбара под присмотром navFit (wmarka.js): подписи в одну строку, лишние пункты уходят в «Ещё» */
 .wm-nav-fit>li>a{white-space:nowrap}
 .wm-nav-fit-group>*{flex-shrink:0}
+
+/* Панель над списками (wmarka.filterbar): одна высота у поля, списков и кнопок — переменная --wm-control-h;
+   кнопки и выбор количества — одна группа, не разрывается при переносе */
+.wm-filterbar { --wm-control-h: 40px; }
+.wm-filterbar__actions,
+.wm-filterbar__selects { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.wm-filterbar__selects > .uk-select { flex: 1 1 0; min-width: 0; }
+/* :not() — чтобы перебить .uk-form-small:not(textarea):not([multiple]):not([size]) из UIkit */
+.wm-filterbar :is(.uk-input, .uk-select, .uk-button):not(textarea):not([multiple]):not([size]) {
+  height: var(--wm-control-h);
+  line-height: calc(var(--wm-control-h) - 2px);
+  box-sizing: border-box;
+  margin: 0;
+}
+.wm-filterbar :is(.uk-input, .uk-select) { font-size: .875rem; }
+.wm-filterbar .uk-button { padding: 0 16px; }
+.wm-filterbar .uk-button-group > .uk-button { padding: 0 12px; }
+.wm-filterbar__actions .uk-select { width: auto; min-width: 76px; padding-top: 0; padding-bottom: 0; }
