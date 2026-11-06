@@ -159,7 +159,7 @@ final class WmarkaOg extends CMSPlugin implements SubscriberInterface
         try {
             $db  = \Joomla\CMS\Factory::getContainer()->get(DatabaseInterface::class);
             $row = $db->setQuery(
-                $db->getQuery(true)->select($db->quoteName(['images', 'title']))->from($db->quoteName('#__content'))->where($db->quoteName('id') . ' = :id')->bind(':id', $id, ParameterType::INTEGER)
+                $db->createQuery()->select($db->quoteName(['images', 'title']))->from($db->quoteName('#__content'))->where($db->quoteName('id') . ' = :id')->bind(':id', $id, ParameterType::INTEGER)
             )->loadObject();
         } catch (\Throwable $e) {
             return '';

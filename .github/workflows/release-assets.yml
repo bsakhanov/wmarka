@@ -1,7 +1,7 @@
 name: Release assets
 
 # При публикации выпуска собирает архивы и прикладывает их к выпуску:
-# шаблон, плагин «Система — wmarka», дочерний шаблон, установщик демо, полный пакет
+# шаблон, плагины «Система — wmarka» и «Карточки для соцсетей», дочерний шаблон, установщик демо, полный пакет
 # и архив для распаковки в корень сайта.
 # Сторонние расширения пакета (JUImage, com_blank, модули Webmarka Articles) лежат
 # готовыми архивами в demo/pkg_wmarka/packages/.
@@ -36,9 +36,11 @@ jobs:
           mkdir -p dist build/packages
           zip -qr dist/tpl_wmarka-$V.zip . -x '.git/*' '.github/*' 'demo/*' 'updates/*' 'dist/*' 'build/*'
           (cd demo/plg_system_wmarka && zip -qr ../../dist/plg_system_wmarka-$(ver wmarka.xml).zip .)
+          (cd demo/plg_system_wmarkaog && zip -qr ../../dist/plg_system_wmarkaog-$(ver wmarkaog.xml).zip .)
           (cd demo/tpl_wmarka_vestnik && zip -qr ../../dist/tpl_wmarka_vestnik-$(ver templateDetails.xml).zip .)
           cp dist/tpl_wmarka-$V.zip build/packages/tpl_wmarka.zip
-          cp dist/plg_system_wmarka-*.zip build/packages/plg_system_wmarka.zip
+          cp dist/plg_system_wmarka-[0-9]*.zip build/packages/plg_system_wmarka.zip
+          cp dist/plg_system_wmarkaog-*.zip build/packages/plg_system_wmarkaog.zip
           cp dist/tpl_wmarka_vestnik-*.zip build/packages/tpl_wmarka_vestnik.zip
           (cd demo/plg_sampledata_wmarka && zip -qr ../../build/packages/plg_sampledata_wmarka.zip .)
           cp demo/pkg_wmarka/packages/*.zip build/packages/

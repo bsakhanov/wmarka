@@ -1,8 +1,9 @@
 <?php
 /**
- * Пакет wmarka: после установки включает установщик демо-сайта и com_blank
- * и подсказывает, где запустить демо. Плагин «Карточки для соцсетей» (wmarkaog) включается,
- * только если до пакета его на сайте не было: стоявшую копию пакет обновляет, не меняя её включённости.
+ * Пакет wmarka: включает установщик демо-сайта, com_blank, плагины «Система — wmarka» и
+ * «Карточки для соцсетей» (wmarkaog) — только те, которых на сайте до пакета не было.
+ * Уже стоявшие расширения пакет обновляет, не меняя их включённости: выключенный
+ * администратором установщик демо на рабочем сайте при обновлении остаётся выключенным.
  */
 
 \defined('_JEXEC') or die;
@@ -13,8 +14,11 @@ use Joomla\Database\DatabaseInterface;
 
 class pkg_wmarkaInstallerScript
 {
-    /** Стоял ли плагин wmarkaog до установки пакета */
-    private bool $ogBefore = false;
+    /** Расширения, которые пакет включает, если до него их на сайте не было: [тип, папка, элемент] */
+    private const ENABLE = [['plugin', 'sampledata', 'wmarka'], ['plugin', 'system', 'wmarka'], ['plugin', 'system', 'wmarkaog'], ['component', '', 'com_blank']];
+
+    /** Какие из них стояли до установки пакета */
+    private array $before = [];
 
     public function preflight(string $type, InstallerAdapter $parent): bool
     {
@@ -24,13 +28,22 @@ class pkg_wmarkaInstallerScript
             return false;
         }
 
-        try {
-            $db = Factory::getContainer()->get(DatabaseInterface::class);
-            $this->ogBefore = (bool) $db->setQuery($db->createQuery()->select('COUNT(*)')->from($db->quoteName('#__extensions'))
-                ->where($db->quoteName('type') . " = 'plugin'")->where($db->quoteName('folder') . " = 'system'")
-                ->where($db->quoteName('element') . " = 'wmarkaog'"))->loadResult();
-        } catch (\Throwable $e) {
-            $this->ogBefore = true;   // не знаем — не трогаем
+        $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+        foreach (self::ENABLE as [$kind, $folder, $element]) {
+            try {
+                $query = $db->createQuery()->select('COUNT(*)')->from($db->quoteName('#__extensions'))
+                    ->where($db->quoteName('type') . ' = ' . $db->quote($kind))
+                    ->where($db->quoteName('element') . ' = ' . $db->quote($element));
+
+                if ($folder !== '') {
+                    $query->where($db->quoteName('folder') . ' = ' . $db->quote($folder));
+                }
+
+                $this->before[$kind . '/' . $folder . '/' . $element] = (bool) $db->setQuery($query)->loadResult();
+            } catch (\Throwable $e) {
+                $this->before[$kind . '/' . $folder . '/' . $element] = true;   // не знаем — не трогаем
+            }
         }
 
         return true;
@@ -44,13 +57,11 @@ class pkg_wmarkaInstallerScript
 
         $db = Factory::getContainer()->get(DatabaseInterface::class);
 
-        $enable = [['plugin', 'sampledata', 'wmarka'], ['plugin', 'system', 'wmarka'], ['component', '', 'com_blank']];
+        foreach (self::ENABLE as [$kind, $folder, $element]) {
+            if (!empty($this->before[$kind . '/' . $folder . '/' . $element])) {
+                continue;
+            }
 
-        if (!$this->ogBefore) {
-            $enable[] = ['plugin', 'system', 'wmarkaog'];
-        }
-
-        foreach ($enable as [$kind, $folder, $element]) {
             $query = $db->createQuery()
                 ->update($db->quoteName('#__extensions'))
                 ->set($db->quoteName('enabled') . ' = 1')
