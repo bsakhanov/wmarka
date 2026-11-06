@@ -1,4 +1,4 @@
-# Wmarka 4.1.5 — starter template for Joomla 5 and 6 built on UIkit 3
+# Wmarka 4.2.0 — starter template for Joomla 5 and 6 built on UIkit 3
 
 *Русская версия: [README.md](README.md)*
 
@@ -40,13 +40,14 @@ Wmarka is a free starter template for Joomla 5 and 6 built on UIkit 3.25, with n
 
 ## What is in the package
 
-The full installation is one archive, **`pkg_wmarka-4.1.5.zip`**. It contains ten extensions, installed in this order:
+The full installation is one archive, **`pkg_wmarka-4.2.0.zip`**. It contains eleven extensions, installed in this order:
 
 | Extension | What it is | Why |
 |---|---|---|
 | `lib_juimage` 5.21 | JUImage library (Denys Nosov, Joomla! Ukraine) | crops thumbnails and converts them to WebP |
-| `tpl_wmarka` 4.1.5 | the template | all site styling |
+| `tpl_wmarka` 4.2.0 | the template | all site styling |
 | `plg_system_wmarka` 1.0.0 | "System - wmarka" plugin | the WMARKA options tab in menu items |
+| `plg_system_wmarkaog` 1.1.0 | "System - Social cards (Wmarka)" plugin | article cards and `NewsArticle` when Joomla cache is on |
 | `tpl_wmarka_vestnik` 1.0.3 | child template of the demo site | a child template built the way Joomla builds them |
 | `com_blank` 2.0.1 | "Blank page" component (Alek Volsk, Sergey Tolkachyov) | pages made of modules: homepage, landings |
 | `mod_wmarka_articles_grid` 1.1.2 | Webmarka Articles Grid — card grid with an on-page filter | news on the homepage |
@@ -55,7 +56,7 @@ The full installation is one archive, **`pkg_wmarka-4.1.5.zip`**. It contains te
 | `mod_wmarka_articles_gallery` 1.1.2 | Webmarka Articles Gallery — lightbox gallery with a filter | photo and video news |
 | `plg_sampledata_wmarka` | sample data installer | deploys the "Vestnik" demo site |
 
-The template alone is **`tpl_wmarka-4.1.5.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
+The template alone is **`tpl_wmarka-4.2.0.zip`**. JUImage and com_blank are then optional: without JUImage images are shown as originals; without com_blank a module-built homepage needs another menu item type.
 
 ## Requirements
 
@@ -71,7 +72,7 @@ The template alone is **`tpl_wmarka-4.1.5.zip`**. JUImage and com_blank are then
 Good for trying the template and for a brand-new site.
 
 1. Install a clean Joomla 5 or 6.
-2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.1.5.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component and the installer.
+2. **System → Install Extensions → Upload Package File** → `pkg_wmarka-4.2.0.zip`. The package installs JUImage, the template, the child template, com_blank and the demo installer, and enables the component, the installer and the "Social cards" plugin (if the site did not have it).
 3. **System → Sample Data** (or the "Sample Data" box on the dashboard) → **wmarka demo site → Install**. Six steps run one after another; each reports what it did.
 4. Open the site: homepage, news, mega menus and the "Module positions" page are in place.
 
@@ -79,7 +80,7 @@ The demo changes the template style and the global options of Articles, Tags and
 
 ### Option 2. Template only
 
-1. Install `tpl_wmarka-4.1.5.zip`.
+1. Install `tpl_wmarka-4.2.0.zip`.
 2. Optionally install JUImage (from the package or <https://github.com/Joomla-Ukraine/JUImage>) and com_blank.
 3. **System → Site Template Styles → wmarka → Default**.
 4. Follow the [first steps](#first-steps).
@@ -298,7 +299,7 @@ The template SEO engine (`php/Seo.php`) is switched on the "SEO & structured dat
 - **Canonical points to the page itself**, like Aimy Canonical and the core System - SEF plugin: the requested address normalized — domain and scheme ("Canonical: domain and scheme"), no `/index.php`, no tracking parameters such as `utm_*` or `fbclid` (only the parameters listed in "Canonical: kept query parameters" stay, `start` by default). A canonical set by another extension is used as the base, so the page has one tag. Pages with `noindex` get no canonical. A raw `index.php?option=…` address is converted to its SEF form.
 - **"Merge article addresses" mode** — for an article reachable by several addresses, canonical points to the router's address, but only if it ends with the article alias and is not the site root. Lists, tags and menu item pages always point to themselves.
 - **Duplicate addresses** are best removed with redirects: turn on "Strict routing" in the System - SEF plugin. The "Template status" card shows whether it is on.
-- **OpenGraph and Twitter Card** — title, description, a 1200 × 630 image from the article or the default one.
+- **OpenGraph and Twitter Card** — title, description, a 1200 × 630 image from the article or the default one. With Joomla cache on (System → Global Configuration → Cache) article data is not restored from the cache: keep the "System - Social cards (Wmarka)" plugin from the package enabled — it does not serve article pages from the cache and adds size, type and alt to `og:image`.
 - **JSON-LD** — a single `@graph`: Organization (or the selected type), WebSite with SearchAction, BreadcrumbList, Article or NewsArticle, CollectionPage and ItemList for blogs and tags, Person for authors.
 - **Page title** — no "News | News | Site" duplication.
 
@@ -408,7 +409,7 @@ If you want a template with no settings — for building a site by hand and edit
 - overrides for all modules and the main components;
 - a fixed package structure.
 
-**4.0.1–4.1.5** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
+**4.0.1–4.2.0** — overrides audited against Joomla's original layouts, dosed teasers, srcset, Card-component cards, news presentation, card-based mega menus, a child template built by core rules, a full demo installation. Details are in [CHANGELOG.md](CHANGELOG.md).
 
 ## What changed since 3.0
 

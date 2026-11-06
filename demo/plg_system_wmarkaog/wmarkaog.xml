@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="plugin" group="system" method="upgrade">
+    <name>PLG_SYSTEM_WMARKAOG</name>
+    <author>Webmarka · Beibit Sakhanov</author>
+    <creationDate>2026-11-06</creationDate>
+    <copyright>(C) 2026 Webmarka. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorUrl>https://webmarka.kz</authorUrl>
+    <version>1.1.0</version>
+    <description>PLG_SYSTEM_WMARKAOG_XML_DESCRIPTION</description>
+    <namespace path="src">Webmarka\Plugin\System\WmarkaOg</namespace>
+    <files>
+        <folder plugin="wmarkaog">services</folder>
+        <folder>src</folder>
+        <filename>LICENSE.txt</filename>
+    </files>
+    <languages folder="language">
+        <language tag="ru-RU">ru-RU/plg_system_wmarkaog.ini</language>
+        <language tag="ru-RU">ru-RU/plg_system_wmarkaog.sys.ini</language>
+        <language tag="en-GB">en-GB/plg_system_wmarkaog.ini</language>
+        <language tag="en-GB">en-GB/plg_system_wmarkaog.sys.ini</language>
+    </languages>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="bypass_cache" type="list" label="PLG_SYSTEM_WMARKAOG_BYPASS" description="PLG_SYSTEM_WMARKAOG_BYPASS_DESC" default="1" filter="integer">
+                    <option value="0">PLG_SYSTEM_WMARKAOG_BYPASS_0</option>
+                    <option value="1">PLG_SYSTEM_WMARKAOG_BYPASS_1</option>
+                    <option value="2">PLG_SYSTEM_WMARKAOG_BYPASS_2</option>
+                </field>
+                <field name="og_extras" type="radio" label="PLG_SYSTEM_WMARKAOG_EXTRAS" description="PLG_SYSTEM_WMARKAOG_EXTRAS_DESC" layout="joomla.form.field.radio.switcher" default="1" filter="integer">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="header" type="radio" label="PLG_SYSTEM_WMARKAOG_HEADER" description="PLG_SYSTEM_WMARKAOG_HEADER_DESC" layout="joomla.form.field.radio.switcher" default="1" filter="integer">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+            </fieldset>
+        </fields>
+    </config>
+</extension>

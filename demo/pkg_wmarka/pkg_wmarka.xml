@@ -2,15 +2,15 @@
 <extension type="package" method="upgrade">
 	<name>Wmarka</name>
 	<packagename>wmarka</packagename>
-	<version>4.1.5</version>
-	<creationDate>2026-10-03</creationDate>
+	<version>4.2.0</version>
+	<creationDate>2026-11-06</creationDate>
 	<author>Webmarka · Beibit Sakhanov</author>
 	<authorEmail>support@webmarka.kz</authorEmail>
 	<authorUrl>https://webmarka.kz</authorUrl>
 	<copyright>(C) 2016–2026 Webmarka</copyright>
 	<license>GNU General Public License version 2 or later</license>
 	<description><![CDATA[
-		<p>Шаблон wmarka 4.1.5 одним архивом с демо-сайтом: библиотеку изображений JUImage (Denys Nosov, Joomla! Ukraine), шаблон, плагин «Система — wmarka» (опции шаблона в пунктах меню), дочерний шаблон демо-сайта wmarka_vestnik, компонент пустой страницы com_blank (Alek Volsk, Sergey Tolkachyov), модули Webmarka Articles — сетка, слайдер, портфолио и галерея материалов и установщик образцов данных.</p>
+		<p>Шаблон wmarka 4.2.0 одним архивом с демо-сайтом: библиотеку изображений JUImage (Denys Nosov, Joomla! Ukraine), шаблон, плагин «Система — wmarka» (опции шаблона в пунктах меню), плагин «Система — Карточки для соцсетей (Wmarka)» (карточки статей и NewsArticle при кеше Joomla), дочерний шаблон демо-сайта wmarka_vestnik, компонент пустой страницы com_blank (Alek Volsk, Sergey Tolkachyov), модули Webmarka Articles — сетка, слайдер, портфолио и галерея материалов и установщик образцов данных.</p>
 		<p>Демо разворачивается из <b>Система → Образцы данных → Демо-сайт wmarka → Применить</b>: шесть шагов, повторный запуск безопасен. Ставьте демо на чистую Joomla.</p>
 		<p>Подробная инструкция — README.md (русский) и README.en.md (английский) в папке шаблона и в репозитории github.com/bsakhanov/wmarka.</p>
 	]]></description>
@@ -19,6 +19,7 @@
 		<file type="library" id="juimage">lib_juimage.zip</file>
 		<file type="template" id="wmarka" client="site">tpl_wmarka.zip</file>
 		<file type="plugin" id="wmarka" group="system">plg_system_wmarka.zip</file>
+		<file type="plugin" id="wmarkaog" group="system">plg_system_wmarkaog.zip</file>
 		<file type="template" id="wmarka_vestnik" client="site">tpl_wmarka_vestnik.zip</file>
 		<file type="component" id="com_blank">com_blank.zip</file>
 		<file type="module" id="mod_wmarka_articles_grid" client="site">mod_wmarka_articles_grid.zip</file>
